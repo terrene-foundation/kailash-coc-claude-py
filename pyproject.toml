@@ -3,14 +3,14 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "client_project_template"
+name = ""
 version = "0.1.0"
-description = "Enterprise client project template using Kailash SDK"
+description = ""
 authors = [
-    {name = "Integrum", email = "info@integrum.com"}
+    {name = "", email = ""}
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -62,8 +62,8 @@ dev = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/integrum/new_project_template"
-"Bug Tracker" = "https://github.com/integrum/new_project_template/issues"
+"Homepage" = ""
+"Bug Tracker" = ""
 
 [tool.setuptools.packages.find]
 where = ["."]
