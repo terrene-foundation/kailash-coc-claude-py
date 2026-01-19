@@ -24,7 +24,7 @@ dependencies = [
     "kailash>=0.10.15",
     "kailash-nexus>=1.1.3",
     "kailash-dataflow>=0.10.15",
-    "kailash-kaizen>=0.9.4",
+    "kailash-kaizen>=0.9.5",
     # CLI Framework
     "click>=8.0",
     "rich>=13.0.0",
