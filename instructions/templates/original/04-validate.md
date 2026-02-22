@@ -3,8 +3,8 @@
    - test all the workflows end-to-end
      - using backend api endpoints only
      - using frontend api endpoints only
-     - using browser via Playwright only
-2. Ensure that the red team agents peruse docs/03-user-flows and fully understand the detailed storyboard for each user
+     - using browser via Playwright MCP only
+2. Ensure that the red team agents peruse `workspaces/<project-directory>/03-user-flows` and fully understand the detailed storyboard for each user
    - include tests written from these user workflow perspectives.
      - workflows must be extremely detailed
      - every step should include what is seen, what is clicked, what is expected, how to proceed, does it show value.
@@ -28,4 +28,4 @@
      - For all natural language based output:
        - DO NOT TEST VIA SIMPLE assertions using keywords and regex
          - You must use LLM to evaluate the output and output the confidence level + your rationale
-         - The LLM keys are in .env, use gpt-5.2-nano
+         - The LLM keys are in `.env`, use gpt-5.2-nano

@@ -4,23 +4,23 @@
    - Independent to each worktree with the detailed referencing to the detailed todos.
    - Integration between the worktrees
 3. Note that I will be pasting each instruction to a fresh terminal for each worktree accordingly.
-4. Put these instructions into docs/04-codegen-instructions, naming them sequentially as 01-, 02-, for easy referencing.
+4. Put these instructions into `workspaces/<project-directory>/04-codegen-instructions`, naming them sequentially as 01-, 02-, for easy referencing.
 
 # Pre-implementation (if using single repo)
 1. Write the detailed instructions for CodeGen to implement the codebase.
-2. Put these instructions into 04-codegen-instructions
+2. Put these instructions into `workspaces/<project-directory>/04-codegen-instructions`
    - use as many files as required and name them sequentially as 01-, 02-, for easy referencing.
 
 # For context loading (fresh start)
-1. Peruse docs/04-codegen-instructions and actively reference any docs so that you can achieve a high level of situational awareness on this project
-   - (if you are the ...-backend worktree) Follow the instructions given in docs/04-codegen-instructions/01-backend-worktree.md and implement.
-   - (if you are the ...-web worktree) Follow the instructions given in docs/04-codegen-instructions/02-web-worktree.md and implement.
-   - (if you are the ...-app worktree) Follow the instructions given in docs/04-codegen-instructions/03-mobile-worktree.md and implement.
-   - For reference (if required), consult docs/04-codegen-instructions/04-integration-guide.md to understand how the codebases will come together eventually.
+1. Peruse `workspaces/<project-directory>/04-codegen-instructions` and actively reference any docs so that you can achieve a high level of situational awareness on this project
+   - (if you are the ...-backend worktree) Follow the instructions given in `workspaces/<project-directory>/04-codegen-instructions/01-backend-worktree.md` and implement.
+   - (if you are the ...-web worktree) Follow the instructions given in `workspaces/<project-directory>/04-codegen-instructions/02-web-worktree.md` and implement.
+   - (if you are the ...-app worktree) Follow the instructions given in `workspaces/<project-directory>/04-codegen-instructions/03-mobile-worktree.md` and implement.
+   - For reference (if required), consult `workspaces/<project-directory>/04-codegen-instructions/04-integration-guide.md` to understand how the codebases will come together eventually.
 
 # From todos to implementation
 ## NOTE: Spam this repeatedly until all todos/active have been moved to todos/completed)
-1. You MUST always use the todo-manager to create the detailed todos FOR EVERY SINGLE TODO in 000-master.md
+1. You MUST always use the todo-manager to create the detailed todos FOR EVERY SINGLE TODO in `todos/000-master.md`
    - Review with agents, before implementation.
    - Ensure that both FE and BE detailed todos exist, if applicable
 2. Continue with the implementation of the next todo/phase using a team of agents, following our procedural directives.
@@ -44,14 +44,14 @@
      - Always assume that the model names in your memory are outdated and perform a web check on our model names in .env before declaring them invalid.
 5. At the end of each phase, create and update 
    - these docs
-      - docs/00-developers (complete detailed docs capturing every single details of the codebase)
+      - `docs` (complete detailed docs capturing every single details of the codebase)
         - This is the last resort document that agents try and find elusive and extremely deep documentation if agents and skills files can't resolve
-      - instructions/00-authority
+      - `docs/00-authority`
         - This is the set of authoritative documents that developers and codegen always read first to gain full situational awareness
-        - Ensure you create/update the README.md (navigating the authority documents) and the CLAUDE.md (preloaded instructions for developers and codegen)
+        - Ensure you create/update the `README.md` (navigating the authority documents) and the `CLAUDE.md` (preloaded instructions for developers and codegen)
       - Project agents and skills (do not touch the other agents and skills in .claude/)
-        - .claude/agents/project (Claude Code agents following the .claude/agents/_subagent-guide.md and .claude/guides/claude-code/05-the-agent-system.md)
-        - .claude/skills/project (Claude Code skills following the .claude/guides/claude-code/06-the-skill-system.md)
+        - `.claude/agents/project` (Claude Code agents following the `.claude/agents/_subagent-guide.md` and `.claude/guides/claude-code/05-the-agent-system.md`)
+        - `.claude/skills/project` (Claude Code skills following the `.claude/guides/claude-code/06-the-skill-system.md`)
    - using as many subdirectories and files as required, and naming them sequentially 00-, 01- for easy referencing.
    - focus on capturing the essence and intent, the 'what it is' and 'how to use it', and not status/progress/reports and other irrelevant information that consumes context unnecessarily.
 
