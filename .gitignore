@@ -56,3 +56,7 @@ secrets/
 **/scripts/outputs/
 **/scripts/*.log
 /docs/01-kailash-vibe-cc-internals/
+
+# Per-project learning data (generated at runtime)
+.claude/learning/
+.claude/rules/learned-instincts.md

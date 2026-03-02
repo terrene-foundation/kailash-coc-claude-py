@@ -20,6 +20,9 @@
 const fs = require("fs");
 const path = require("path");
 const { parseEnvFile, getModelProvider } = require("./lib/env-utils");
+const {
+  logObservation: logLearningObservation,
+} = require("./lib/learning-utils");
 
 const TIMEOUT_MS = 5000;
 const timeout = setTimeout(() => {
@@ -116,6 +119,11 @@ function validateFile(data) {
   if (messages.length === 0) {
     messages.push("All patterns validated");
   }
+
+  // --- Observation logging (Phase 2: enriched learning) ---
+  try {
+    logFileObservations(content, filePath, cwd, messages);
+  } catch {}
 
   return {
     continue: !shouldBlock,
@@ -458,6 +466,86 @@ function checkStubsAndSimulations(content, filePath, messages) {
         );
       }
     }
+  }
+}
+
+// =====================================================================
+// Observation logging for the learning system
+// =====================================================================
+
+/**
+ * Detect patterns in the file content and log enriched observations.
+ * Runs after validation; overhead is <5ms (fs.appendFileSync of JSONL lines).
+ */
+function logFileObservations(content, filePath, cwd, messages) {
+  const basename = path.basename(filePath);
+
+  // WorkflowBuilder / runtime.execute() → workflow_pattern
+  if (
+    /WorkflowBuilder/.test(content) ||
+    /runtime\s*\.\s*execute/.test(content)
+  ) {
+    logLearningObservation(cwd, "workflow_pattern", {
+      pattern_type: /WorkflowBuilder/.test(content)
+        ? "workflow_builder"
+        : "runtime_execute",
+      file: basename,
+    });
+  }
+
+  // add_node() calls → node_usage
+  const nodeMatches = content.match(/add_node\s*\(\s*["'](\w+)["']/g);
+  if (nodeMatches && nodeMatches.length > 0) {
+    const nodeTypes = [
+      ...new Set(
+        nodeMatches
+          .map((m) => {
+            const match = m.match(/add_node\s*\(\s*["'](\w+)["']/);
+            return match ? match[1] : null;
+          })
+          .filter(Boolean),
+      ),
+    ];
+    logLearningObservation(cwd, "node_usage", {
+      node_types: nodeTypes,
+      file: basename,
+    });
+  }
+
+  // @db.model → dataflow_model
+  const modelMatches = content.match(/@db\.model[\s\S]*?class\s+(\w+)/g);
+  if (modelMatches) {
+    for (const m of modelMatches) {
+      const nameMatch = m.match(/class\s+(\w+)/);
+      if (nameMatch) {
+        logLearningObservation(cwd, "dataflow_model", {
+          model_name: nameMatch[1],
+          file: basename,
+        });
+      }
+    }
+  }
+
+  // Stubs/TODOs detected → error_occurrence (stub_detected)
+  if (
+    messages.some((m) =>
+      /TODO marker|FIXME marker|STUB marker|todo!\(\)|unimplemented!\(\)/.test(
+        m,
+      ),
+    )
+  ) {
+    logLearningObservation(cwd, "error_occurrence", {
+      error_type: "stub_detected",
+      file: basename,
+    });
+  }
+
+  // Hardcoded model name detected → error_occurrence (hardcoded_model)
+  if (messages.some((m) => /Hardcoded model/.test(m))) {
+    logLearningObservation(cwd, "error_occurrence", {
+      error_type: "hardcoded_model",
+      file: basename,
+    });
   }
 }
 
