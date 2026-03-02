@@ -54,3 +54,6 @@ secrets/
 # Per-project learning data (generated at runtime)
 .claude/learning/
 .claude/rules/learned-instincts.md
+
+# Internal docs (not for distribution)
+docs/01-kailash-vibe-cc-internals/
