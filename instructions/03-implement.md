@@ -1,23 +1,3 @@
-# Pre-implementation (if using parallel worktrees)
-1. Write the detailed instructions for each worktree. We are using CodeGen (Claude Code) to implement the codebase.
-2. The instructions should be:
-   - Independent to each worktree with the detailed referencing to the detailed todos.
-   - Integration between the worktrees
-3. Note that I will be pasting each instruction to a fresh terminal for each worktree accordingly.
-4. Put these instructions into `workspaces/<project-directory>/04-codegen-instructions`, naming them sequentially as 01-, 02-, for easy referencing.
-
-# Pre-implementation (if using single repo)
-1. Write the detailed instructions for CodeGen to implement the codebase.
-2. Put these instructions into `workspaces/<project-directory>/04-codegen-instructions`
-   - use as many files as required and name them sequentially as 01-, 02-, for easy referencing.
-
-# For context loading (fresh start)
-1. Peruse `workspaces/<project-directory>/04-codegen-instructions` and actively reference any docs so that you can achieve a high level of situational awareness on this project
-   - (if you are the ...-backend worktree) Follow the instructions given in `workspaces/<project-directory>/04-codegen-instructions/01-backend-worktree.md` and implement.
-   - (if you are the ...-web worktree) Follow the instructions given in `workspaces/<project-directory>/04-codegen-instructions/02-web-worktree.md` and implement.
-   - (if you are the ...-app worktree) Follow the instructions given in `workspaces/<project-directory>/04-codegen-instructions/03-mobile-worktree.md` and implement.
-   - For reference (if required), consult `workspaces/<project-directory>/04-codegen-instructions/04-integration-guide.md` to understand how the codebases will come together eventually.
-
 # From todos to implementation
 ## NOTE: Spam this repeatedly until all todos/active have been moved to todos/completed)
 1. You MUST always use the todo-manager to create the detailed todos FOR EVERY SINGLE TODO in `todos/000-master.md`
@@ -25,7 +5,12 @@
    - Ensure that both FE and BE detailed todos exist, if applicable
 2. Continue with the implementation of the next todo/phase using a team of agents, following our procedural directives.
    - Ensure that both FE and BE are implemented, if applicable
-3. At the end of each phase, work with the todo-manager and update the detailed todos in todos/active.
+3. Always involve tdd-implementor, testing-specialists, value auditor, ai ui ux specialists, with any agents relevant to the work at hand.
+   - Test for rigor, completeness, and quality of output from both value and technical user perspectives.
+   - Pre-existing failures often hint that you are missing something obvious and critical.
+     - Always address pre-existing failures, do not pass until all failures, warnings, hints, are resolved.
+   - Always identify the root causes of issues, and implement optimal, elegant fixes.
+4. At the end of each phase, work with the todo-manager and update the detailed todos in todos/active.
    - Ensure that every task is verified with evidence before you close them, then move completed ones to completed/.
    - Ensure that you test comprehensively as you implement, with all tests passing at 100%
      - No tests can be skipped (make sure docker is up and running).
@@ -38,11 +23,11 @@
        - Structured outputs are not coded properly
        - LLM agentic pipelines are not coded properly
        - Only after exhausting all the input/output and pipeline errors, should you try with a larger model
-4. When writing and testing agents, always remember to utilize the LLM's capabilities instead of naive NLP approaches such as keywords, regex etc.
+5. When writing and testing agents, always remember to utilize the LLM's capabilities instead of naive NLP approaches such as keywords, regex etc.
    - Use ollama or openai (if ollama is too slow)
    - always check .env for api keys and model names to use in development.
      - Always assume that the model names in your memory are outdated and perform a web check on our model names in .env before declaring them invalid.
-5. At the end of each phase, create and update 
+6. At the end of each phase, create and update 
    - these docs
       - `docs` (complete detailed docs capturing every single details of the codebase)
         - This is the last resort document that agents try and find elusive and extremely deep documentation if agents and skills files can't resolve
@@ -54,10 +39,3 @@
         - `.claude/skills/project` (Claude Code skills following the `.claude/guides/claude-code/06-the-skill-system.md`)
    - using as many subdirectories and files as required, and naming them sequentially 00-, 01- for easy referencing.
    - focus on capturing the essence and intent, the 'what it is' and 'how to use it', and not status/progress/reports and other irrelevant information that consumes context unnecessarily.
-
-# Sync all worktrees to main (if using parallel worktrees)
-1. Progressively sync all the worktrees (starting from backend, then web, and app) to the main worktree.
-2. There may be files that are worked on by different worktrees.
-   - Do not blindly adopt theirs/ours, please check for unique codebases between the different versions and integrate them accordingly.
-3. Sync across all worktrees and ensure that they are all on the same commit
-   - If there are any conflicts, please stop, and ensure that the unique codebase has been properly integrated into the combined one.

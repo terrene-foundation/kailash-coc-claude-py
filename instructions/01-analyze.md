@@ -3,7 +3,9 @@
 ## Always be explicit about objectives and expectations
 ### Product idea for brainstorming
 1. This is a ....
-2. Document in details, your work in `workspaces/<project-directory>/01-analysis/01-research`.
+
+### Perform Deep Research
+1. Document in details, your work in `workspaces/<project-directory>/01-analysis/01-research`.
    - Use as many subdirectories and files as required
    - Name them sequentially as 01-, 02-, etc, for easy referencing
 

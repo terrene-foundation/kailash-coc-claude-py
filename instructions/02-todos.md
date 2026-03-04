@@ -1,13 +1,3 @@
-# Setup (If using parallel worktrees)
-1. Use 3 parallel processes (worktrees created from main branch)
-   - Backend worktree (sync to backend branch)
-   - Web worktree - React (sync to web branch)
-   - App worktree - Flutter for iOS and Android (sync to the app branch)
-2. Branch setup
-   - Staging branch
-   - Production branch (protected)
-3. Review and update/create detailed implementation and integration plans
-
 # From plans to todos
 1. Referencing your plans in `workspaces/<project-directory>/02-plans`, ensure you work through every single file
    - (backend) Work with the agents in `.claude/agents` 
