@@ -48,6 +48,10 @@ Deploy these agents as a team for each implementation cycle:
 - **ai-ux-designer** — AI interaction patterns (if AI-facing UI)
 - **frontend-developer** — Responsive UI components
 
+**Recovery (invoke when builds break):**
+
+- **build-fix** — Fix build/type errors with minimal changes (NO architectural changes)
+
 **Quality gate (once per todo, before closing):**
 
 - **value-auditor** — Evaluate from user/buyer perspective, not just technical assertions

@@ -22,7 +22,7 @@ Deploy these agents as a team for analysis:
 - **requirements-analyst** — Break down requirements, create ADRs, define scope
 - **coc-expert** — Ground analysis in COC methodology; identify institutional knowledge gaps and guard against the three fault lines (amnesia, convention drift, security blindness)
 - **framework-advisor** — Choose implementation approach (if applicable)
-- **sdk-navigator** — Find existing patterns and documentation before designing from scratch
+- **sdk-navigator** — Find existing patterns and documentation before designing from scratch (if applicable)
 
 For product/market analysis, additionally deploy:
 

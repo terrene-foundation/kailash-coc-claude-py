@@ -100,10 +100,10 @@ For E2E tests, additionally deploy:
 
 ## Related Commands
 
-- `/sdk` - Core SDK patterns
-- `/db` - DataFlow database operations
-- `/api` - Nexus multi-channel deployment
 - `/validate` - Project compliance checks
+- `/sdk` - Core SDK patterns (Kailash projects)
+- `/db` - DataFlow database operations (Kailash projects)
+- `/api` - Nexus multi-channel deployment (Kailash projects)
 
 ## Skill Reference
 

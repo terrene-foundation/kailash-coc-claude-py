@@ -138,11 +138,13 @@ When auditing AI-facing interfaces, also evaluate:
 - `/design` - Load comprehensive design principles
 - `/validate` - Project compliance checks
 
-## Related Agents
+## Agent Teams
 
-- `uiux-designer` - For deep design analysis and recommendations
-- `ai-ux-designer` - For AI-specific interaction pattern evaluation
-- `value-auditor` - For enterprise demo value assessment (via Playwright)
+Deploy these agents for design audits:
+
+- **uiux-designer** — Deep design analysis and recommendations
+- **ai-ux-designer** — AI-specific interaction pattern evaluation
+- **value-auditor** — Enterprise demo value assessment (via Playwright)
 
 ## Skill References
 

@@ -30,7 +30,7 @@ Your Natural Language Request
          |
   3. Guardrails   9 Rules + 9 Hooks  What must the AI never do?
          |
-  4. Instructions CLAUDE.md + 19 Cmds What should the AI prioritize?
+  4. Instructions CLAUDE.md + 20 Cmds What should the AI prioritize?
          |
   5. Learning     Observe -> Evolve  How does the system improve?
          |

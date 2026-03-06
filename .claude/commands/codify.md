@@ -37,5 +37,6 @@ Deploy these agents as a team for codification:
 
 - **gold-standards-validator** — Ensure agents follow the subagent guide and skills follow the skill system guide
 - **testing-specialist** — Verify any code examples in skills are testable
+- **security-reviewer** — Audit generated agents/skills for prompt injection vectors, insecure patterns, or secrets exposure (codified artifacts persist across all future sessions)
 
 Reference `.claude/agents/_subagent-guide.md` for agent format and `.claude/guides/claude-code/06-the-skill-system.md` for skill format.

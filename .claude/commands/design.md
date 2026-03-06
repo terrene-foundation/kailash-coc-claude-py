@@ -92,12 +92,14 @@ LEVEL 4: VISUAL DETAILS (Lowest Priority)
 - `/i-harden` - Production resilience for frontend
 - `/validate` - Project compliance checks
 
-## Related Agents
+## Agent Teams
 
-- `uiux-designer` - Design analysis and recommendations
-- `frontend-developer` - React implementation
-- `flutter-specialist` - Flutter/Material implementation
-- `react-specialist` - React 19 / Next.js patterns
+Deploy these agents when doing design work:
+
+- **uiux-designer** — Design analysis, layout critique, visual hierarchy recommendations
+- **frontend-developer** — React implementation of design patterns
+- **flutter-specialist** — Flutter/Material implementation
+- **react-specialist** — React 19 / Next.js patterns
 
 ## Skill Reference
 
