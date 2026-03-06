@@ -125,7 +125,7 @@ The `session-start.js` hook validates your environment automatically. Then just 
   agents/          30 specialist agents (Markdown + YAML frontmatter)
   skills/          28 domain knowledge directories, 100+ files
   rules/           9 behavioral constraint files
-  commands/        19 slash command definitions (12 framework + 7 workspace)
+  commands/        20 slash command definitions (13 framework + 7 workspace)
   learning/        Observation-instinct-evolution pipeline
 
 scripts/
