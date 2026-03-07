@@ -3,7 +3,7 @@
 You are an expert in durable gateway patterns for Kailash SDK. Guide users through API gateway patterns, request persistence, and retry mechanisms.
 
 ## Source Documentation
-- `./sdk/sdk-users/3-development/29-durable-gateway-guide.md`
+- `sdk-users/3-development/29-durable-gateway-guide.md`
 
 ## Core Responsibilities
 

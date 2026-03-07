@@ -41,6 +41,7 @@ Zero-config database framework specialist for Kailash DataFlow implementation (v
 - "Schema cache?" -> [`dataflow-schema-cache`](../../skills/02-dataflow/dataflow-schema-cache.md)
 - "Enterprise migrations?" -> [`dataflow-enterprise-migrations`](../../skills/02-dataflow/dataflow-enterprise-migrations.md)
 - "Troubleshooting?" -> [`dataflow-troubleshooting`](../../skills/02-dataflow/dataflow-troubleshooting.md)
+- "SQLite concurrency? Pool? WAL?" -> [`dataflow-sqlite-concurrency`](../../skills/02-dataflow/dataflow-sqlite-concurrency.md)
 
 ### Integration
 
@@ -180,9 +181,9 @@ workflow.add_node("UserUpdateNode", "update", {
 - **Inspector** (v0.8.0+): Workflow introspection and debugging
 - **PostgreSQL Native Arrays** (v0.8.0+): 2-10x faster with TEXT[], INTEGER[], REAL[]
 - **Centralized Logging** (v0.12.1): Sensitive data masking in logs
-- **TypeAwareFieldProcessor** (v0.12.1): Improved model type handling
-- **DataFlowWorkflowBinder** (v0.12.1): Workflow integration utility
-- **TenantContextSwitch** (v0.12.1): Multi-tenant context management
+- **Improved Type Handling** (v0.12.1): Better model field type processing
+- **Workflow Integration** (v0.12.1): Workflow binding utility
+- **Multi-Tenant Context** (v0.12.1): `TenantContextSwitch` for tenant-scoped operations
 - **Trust-Aware Features** (v0.12.1): Signed audit records, trust-aware queries and multi-tenancy
 - **Async Transaction Nodes** (v0.12.1): Transaction nodes are AsyncNode subclasses; use `async_run()` instead of `run()`
 - **Auto-Wired Multi-Tenancy** (v0.12.1): QueryInterceptor hooks into 8 SQL execution points for automatic tenant filtering
@@ -248,7 +249,7 @@ DataFlow includes an 8-component enterprise migration system. See [`dataflow-ent
 - Manually set `created_at` or `updated_at` fields
 - Instantiate models directly (`User()`)
 - Use `{{}}` template syntax (use `${}`)
-- Use mocking in Tier 2-3 tests
+- Prefer mocking over real infrastructure in Tier 2-3 tests
 - Skip risk assessment for HIGH/CRITICAL migrations
 - Execute schema changes without dependency analysis
 
@@ -294,6 +295,7 @@ See: [`dataflow-nexus-integration`](../../skills/02-dataflow/dataflow-nexus-inte
 | Strict Mode              | [`dataflow-strict-mode`](../../skills/02-dataflow/dataflow-strict-mode.md)                     |
 | Express API              | [`dataflow-express`](../../skills/02-dataflow/dataflow-express.md)                             |
 | TDD Mode                 | [`dataflow-tdd-mode`](../../skills/02-dataflow/dataflow-tdd-mode.md)                           |
+| SQLite Concurrency       | [`dataflow-sqlite-concurrency`](../../skills/02-dataflow/dataflow-sqlite-concurrency.md)       |
 
 ## Related Agents
 

@@ -36,9 +36,9 @@ TODO-017-core-intelligence-infrastructure.md
   - TODO-034 = Story 34 (NOT Story 21, exactly 34)
   - **Sub-issues have TODO numbers and uses "Story N (sub-issue):" titles**
   - Sub-issues use descriptive titles like "P0: Feature Name" with parent:story-X labels
-  - **This rule is MANDATORY and STRICTLY ENFORCED. Violations must be corrected immediately.**
-- Title MUST include story points in parentheses
-- Title MUST be descriptive of the feature
+  - **This rule is important for consistent tracking. Correct any violations promptly.**
+- Title should include story points in parentheses
+- Title should be descriptive of the feature
 - NO "TODO-" prefix in GitHub issue titles (use "Story X" instead for user stories)
 
 #### Sub-Issues (Implementation Tasks)
@@ -478,9 +478,9 @@ gh issue list --limit 100 | grep "Story" | sort | uniq -d
 
 ## 📚 References
 
-- **Local Todos**: `your-projects/your-project-backend/todos/`
+- **Local Todos**: `todos/`
 - **GitHub Repository**: `your-org/your-project`
-- **GitHub Project**: https://github.com/orgs/your-org/projects/64
+- **GitHub Project**: `https://github.com/orgs/your-org/projects/N`
 - **This Guide**: `.claude/guides/todo-github-sync-guide.md`
 
 ---

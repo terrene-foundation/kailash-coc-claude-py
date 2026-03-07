@@ -69,6 +69,6 @@ def test_isolation_2(isolated_db):
 
 ## Documentation
 
-- **Testing Guide**: [`sdk-users/apps/dataflow/09-testing.md`](../../../../sdk-users/apps/dataflow/09-testing.md)
+- **Testing Guide**: [`sdk-users/apps/dataflow/09-testing.md`](../../../sdk-users/apps/dataflow/09-testing.md)
 
 <!-- Trigger Keywords: test dataflow, dataflow fixtures, dataflow testing api, dataflow unit tests -->

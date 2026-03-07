@@ -53,17 +53,17 @@ def test_full_application():
 - **Tier 2 (Integration)**: 25% - Real dependencies
 - **Tier 3 (E2E)**: 5% - Critical paths
 
-## NO MOCKING Policy
+## Real Infrastructure Policy
 
 ✅ **Use real infrastructure** in Tiers 2-3:
 - Real OpenAI API calls
 - Real databases (SQLite/PostgreSQL)
 - Real file systems
 
-❌ **No mocks** for:
-- LLM providers
-- Databases
-- External APIs (in integration tests)
+❌ **Avoid mocking** where practical:
+- LLM providers (prefer real calls)
+- Databases (prefer real instances)
+- External APIs in integration tests
 
 ## Runtime Parity Testing
 
@@ -92,6 +92,6 @@ def test_workflow_execution(runtime_class):
 
 ## Documentation
 
-- **Testing Guide**: [`sdk-contributors/5-testing/01-testing-strategy.md`](../../../../sdk-contributors/5-testing/01-testing-strategy.md)
+- **Testing Guide**: See Kailash SDK testing strategy documentation
 
 <!-- Trigger Keywords: 3-tier testing, testing strategy, test tiers, testing pyramid, unit tests, integration tests -->

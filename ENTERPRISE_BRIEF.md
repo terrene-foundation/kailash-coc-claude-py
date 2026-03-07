@@ -47,7 +47,7 @@ CARE stands for **Context, Action, Reasoning, Evidence** -- a structured approac
 
 The trust context propagates through every workflow execution with immutable semantics. Constraints can only be tightened, never loosened.
 
-Source: `src/kailash/runtime/trust/context.py`
+Source: `kailash/runtime/trust/context.py`
 
 ```python
 import os
@@ -105,7 +105,7 @@ The `TrustVerificationMode` enum controls enforcement behavior:
 
 The verifier bridges Core SDK runtime to Kaizen's TrustOperations for access control decisions. It supports caching, high-risk node awareness, and fail-closed semantics in ENFORCING mode.
 
-Source: `src/kailash/runtime/trust/verifier.py`
+Source: `kailash/runtime/trust/verifier.py`
 
 ```python
 from kailash.runtime.trust import (
@@ -187,7 +187,7 @@ In `PERMISSIVE` mode, denied operations are logged but allowed through -- useful
 
 The audit generator records every significant event during workflow execution with 10 event types, thread-safe storage, and optional persistence to Kaizen's AuditStore.
 
-Source: `src/kailash/runtime/trust/audit.py`
+Source: `kailash/runtime/trust/audit.py`
 
 ```python
 from kailash.runtime.trust import (
@@ -975,10 +975,10 @@ All CARE trust implementation code referenced in this document:
 
 | File                                    | Description                                                                       |
 | --------------------------------------- | --------------------------------------------------------------------------------- |
-| `src/kailash/runtime/trust/__init__.py` | Trust module public API and exports                                               |
-| `src/kailash/runtime/trust/context.py`  | `RuntimeTrustContext`, `TrustVerificationMode`, context propagation               |
-| `src/kailash/runtime/trust/verifier.py` | `TrustVerifier`, `TrustVerifierConfig`, `VerificationResult`, `MockTrustVerifier` |
-| `src/kailash/runtime/trust/audit.py`    | `RuntimeAuditGenerator`, `AuditEvent`, `AuditEventType`                           |
-| `src/kailash/nodes/handler.py`          | `HandlerNode` for Nexus handler pattern                                           |
-| `src/kailash/runtime/local.py`          | `LocalRuntime` with BaseRuntime + 3 mixins                                        |
-| `src/kailash/runtime/async_local.py`    | `AsyncLocalRuntime` with level-based parallelism                                  |
+| `kailash/runtime/trust/__init__.py` | Trust module public API and exports                                               |
+| `kailash/runtime/trust/context.py`  | `RuntimeTrustContext`, `TrustVerificationMode`, context propagation               |
+| `kailash/runtime/trust/verifier.py` | `TrustVerifier`, `TrustVerifierConfig`, `VerificationResult`, `MockTrustVerifier` |
+| `kailash/runtime/trust/audit.py`    | `RuntimeAuditGenerator`, `AuditEvent`, `AuditEventType`                           |
+| `kailash/nodes/handler.py`          | `HandlerNode` for Nexus handler pattern                                           |
+| `kailash/runtime/local.py`          | `LocalRuntime` with BaseRuntime + 3 mixins                                        |
+| `kailash/runtime/async_local.py`    | `AsyncLocalRuntime` with level-based parallelism                                  |

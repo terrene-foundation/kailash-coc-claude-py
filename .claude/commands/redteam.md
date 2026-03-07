@@ -70,7 +70,7 @@ Deploy these agents as a red team for validation:
 
 **Core red team (always):**
 
-- **testing-specialist** — Verify 3-tier test coverage, NO MOCKING compliance
+- **testing-specialist** — Verify 3-tier test coverage, real infrastructure preferred compliance
 - **e2e-runner** — Generate and run Playwright E2E tests (web) or Marionette tests (Flutter)
 - **value-auditor** — Evaluate every page/flow from skeptical enterprise buyer perspective
 - **security-reviewer** — Full security audit across the codebase

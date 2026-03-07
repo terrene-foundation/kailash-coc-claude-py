@@ -91,6 +91,6 @@ workflow.add_node("PerformanceAnomalyNode", "anomaly_check", {
 
 ## Documentation
 
-- **Monitoring Nodes**: [`sdk-users/2-core-concepts/nodes/monitoring-nodes.md`](../../../../sdk-users/2-core-concepts/nodes/monitoring-nodes.md)
+- **Monitoring Nodes**: [`sdk-users/2-core-concepts/nodes/monitoring-nodes.md`](../../../sdk-users/2-core-concepts/nodes/monitoring-nodes.md)
 
 <!-- Trigger Keywords: monitoring node, metrics, alerts, deadlock detection, performance monitoring, TransactionMetricsNode -->

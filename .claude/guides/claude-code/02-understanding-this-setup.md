@@ -34,7 +34,7 @@ Claude might:
 
 - The exact patterns for workflows, DataFlow, Nexus, and Kaizen
 - When to use which framework
-- How to test properly (NO MOCKING in integration tests)
+- How to test properly (real infrastructure preferred in integration tests)
 - Security best practices specific to your stack
 - How to deploy correctly
 
@@ -164,7 +164,7 @@ Claude: [Uses DataFlow patterns from skills]
 │  no-stubs.md         → No stubs/TODOs/placeholders           │
 │  patterns.md         → Kailash pattern enforcement            │
 │  security.md         → Security requirements                  │
-│  testing.md          → Testing policies (NO MOCKING)          │
+│  testing.md          → Testing policies (real infrastructure preferred)          │
 │                                                              │
 │  Purpose: Define what Claude MUST and MUST NOT do            │
 │  Effect: Consistent behavior regardless of request phrasing  │
@@ -196,7 +196,7 @@ Request: "Create a user API with DataFlow"
 
 5. TESTING PHASE
    └── Claude writes tests
-   └── RULE APPLIED: testing.md says NO MOCKING in Tier 2-3
+   └── RULE APPLIED: testing.md says Real infrastructure recommended for Tier 2-3
    └── Claude uses real SQLite database
 
 6. COMMIT PHASE
@@ -283,7 +283,7 @@ You don't have to remember all the rules. The setup enforces them:
 | No dangerous bash commands      | `validate-bash-command.js` hook |
 | Correct SDK patterns            | `validate-workflow.js` hook     |
 | Security review before commit   | `agents.md` rule + hook         |
-| No mocking in integration tests | `testing.md` rule + hook        |
+| Real infrastructure in integration tests | `testing.md` rule + hook        |
 | Absolute imports                | `validate-workflow.js` hook     |
 
 ### Specialized Expertise on Demand

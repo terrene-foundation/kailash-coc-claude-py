@@ -220,7 +220,7 @@ function checkRustPatterns(content, filePath, messages) {
       for (const [pat, name] of mockPatterns) {
         if (pat.test(content)) {
           messages.push(
-            `WARNING: ${name} detected in integration/e2e test. NO MOCKING in Tier 2-3 tests.`,
+            `WARNING: ${name} detected in integration/e2e test. Real infrastructure preferred in Tier 2-3 tests.`,
           );
         }
       }

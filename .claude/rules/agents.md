@@ -1,30 +1,28 @@
 # Agent Orchestration Rules
 
 ## Scope
-These rules govern when and how specialized agents MUST be used.
+These rules govern when and how specialized agents are used.
 
-## MANDATORY Delegations
+## RECOMMENDED Delegations
 
-### Rule 1: Code Review After ANY Change
-After completing ANY file modification (Edit, Write), you MUST:
+### Rule 1: Code Review After Changes
+After completing file modifications (Edit, Write), you SHOULD:
 1. Delegate to **intermediate-reviewer** for code review
 2. Wait for review completion before proceeding
 3. Address any findings before moving to next task
 
-**Enforced by**: PostToolUse hook reminder
 **Exception**: User explicitly says "skip review"
 
-### Rule 2: Security Review Before ANY Commit
-Before executing ANY git commit command, you MUST:
+### Rule 2: Security Review Before Commits
+Before executing git commit commands, you SHOULD:
 1. Delegate to **security-reviewer** for security audit
 2. Address all CRITICAL findings
 3. Document any HIGH findings for tracking
 
-**Enforced by**: PreToolUse hook on git commit
-**Exception**: NONE - security review is always required
+**Exception**: User may skip security review for trivial changes
 
 ### Rule 3: Framework Specialist for Framework Work
-When working with Kailash frameworks, you MUST consult:
+When working with Kailash frameworks, you SHOULD consult:
 - **dataflow-specialist**: For any database or DataFlow work
 - **nexus-specialist**: For any API or deployment work
 - **kaizen-specialist**: For any AI agent work
@@ -35,8 +33,6 @@ When working with Kailash frameworks, you MUST consult:
 - Modifying database models
 - Setting up API endpoints
 - Building AI agents
-
-**Enforced by**: Framework detection in session-start hook
 
 ### Rule 4: Analysis Chain for Complex Features
 For features requiring design decisions, follow this chain:
@@ -51,7 +47,7 @@ For features requiring design decisions, follow this chain:
 - Multiple valid approaches exist
 
 ### Rule 5: Parallel Execution for Independent Operations
-When multiple independent operations are needed, you MUST:
+When multiple independent operations are needed, you SHOULD:
 1. Launch agents in parallel using Task tool
 2. Wait for all to complete
 3. Aggregate results
@@ -65,35 +61,33 @@ When multiple independent operations are needed, you MUST:
 
 ### Correct: Sequential with Review
 ```
-✅ User asks for code change
+User asks for code change
    → Agent implements change
    → Agent delegates to intermediate-reviewer
    → Agent addresses review findings
    → Only then moves to next task
 ```
 
-### Incorrect: Skipping Review
+### Suboptimal: Skipping Review
 ```
-❌ User asks for code change
+User asks for code change
    → Agent implements change
-   → Agent moves to next task (skipped review!)
+   → Agent moves to next task (skipped review)
 ```
 
-## PROHIBITED Actions
+## RECOMMENDED Practices
 
-### MUST NOT: Skip Code Review
-Code review is mandatory after changes. Skipping requires explicit user approval.
+### Code Review
+Code review after changes is strongly recommended for catching issues early.
 
-### MUST NOT: Commit Without Security Review
-Security review before commits is non-negotiable.
+### Security Review Before Commit
+Security review before commits is strongly recommended, especially for security-sensitive code.
 
-### MUST NOT: Framework Work Without Specialist
-Never use raw SQL when DataFlow patterns exist.
-Never build custom API when Nexus patterns exist.
-Never build custom agents when Kaizen patterns exist.
+### Framework Specialist Consultation
+When Kailash framework patterns exist, prefer using them over building from scratch.
 
-### MUST NOT: Sequential When Parallel Possible
-If operations are independent, run them in parallel.
+### Parallel When Possible
+If operations are independent, run them in parallel for efficiency.
 
 ## Quality Gates
 

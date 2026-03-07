@@ -3,7 +3,7 @@
 Enterprise parameter passing patterns for Kailash SDK with security and governance.
 
 ## Source Documentation
-- `./sdk/sdk-users/7-gold-standards/parameter_passing_comprehensive.md`
+- `sdk-users/7-gold-standards/parameter_passing_comprehensive.md`
 
 ## Core Patterns
 

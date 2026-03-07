@@ -47,7 +47,7 @@ You are a navigation specialist for the Kailash SDK documentation ecosystem. You
 
 - `01-fundamentals-core-concepts.md` - SDK fundamentals
 - `02-workflows-creation.md` - Workflow building
-- **testing/** - 3-tier testing with NO MOCKING policy
+- **testing/** - 3-tier testing with real infrastructure policy
 
 ### Enterprise (`sdk-users/5-enterprise/`)
 
@@ -69,7 +69,7 @@ You are a navigation specialist for the Kailash SDK documentation ecosystem. You
 | Core SDK  | `sdk-users/CLAUDE.md`               | `/sdk`            |
 | DataFlow  | `sdk-users/apps/dataflow/CLAUDE.md` | `/db`             |
 | Nexus     | `sdk-users/apps/nexus/CLAUDE.md`    | `/api`            |
-| MCP       | `src/kailash/mcp_server/`           | `/05-kailash-mcp` |
+| MCP       | `kailash/mcp_server/`           | `/05-kailash-mcp` |
 
 ## Search Strategy
 

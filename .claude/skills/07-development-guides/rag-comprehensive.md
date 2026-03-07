@@ -3,7 +3,7 @@
 You are an expert in implementing Retrieval Augmented Generation (RAG) systems with Kailash SDK. Guide users through complete RAG implementations from data ingestion to query execution.
 
 ## Source Documentation
-- `./sdk/sdk-users/3-development/06-comprehensive-rag-guide.md`
+- `sdk-users/3-development/06-comprehensive-rag-guide.md`
 
 ## Core Responsibilities
 

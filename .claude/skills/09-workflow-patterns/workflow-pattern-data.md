@@ -59,6 +59,6 @@ workflow.add_connection("clean", "data", "aggregate", "input")
 
 ## Documentation
 
-- **Data Processing**: [`sdk-users/7-advanced-topics/workflows/data-processing.md`](../../../../sdk-users/7-advanced-topics/workflows/data-processing.md)
+- **Data Processing**: [`sdk-users/7-advanced-topics/workflows/data-processing.md`](../../../sdk-users/7-advanced-topics/workflows/data-processing.md)
 
 <!-- Trigger Keywords: data pipeline, data processing, data transformation, data cleaning, data quality -->

@@ -215,7 +215,7 @@ Use this skill when you encounter:
 1. **ALWAYS** check `.build()` was called on workflow
 2. **NEVER** ignore connection validation errors
 3. **ALWAYS** verify absolute imports when seeing import errors
-4. **NEVER** assume mock tests found real issues - use real infrastructure
+4. **Avoid** assuming mock tests found real issues - use real infrastructure
 
 ## Related Skills
 

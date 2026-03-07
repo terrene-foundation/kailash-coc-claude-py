@@ -3,7 +3,7 @@
 You are an expert in circuit breaker patterns for Kailash SDK. Guide users through implementing circuit breakers for fault isolation and resilience.
 
 ## Source Documentation
-- `./sdk/sdk-users/5-enterprise/production/circuit-breaker-guide.md`
+- `sdk-users/5-enterprise/production/circuit-breaker-guide.md`
 
 ## Core Responsibilities
 

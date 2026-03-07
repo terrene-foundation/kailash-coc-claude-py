@@ -3,7 +3,7 @@
 You are an expert in resource registry patterns for sharing resources across workflows in Kailash SDK.
 
 ## Source Documentation
-- `./sdk/sdk-users/3-development/08-resource-registry-guide.md`
+- `sdk-users/3-development/08-resource-registry-guide.md`
 
 ## Core Responsibilities
 

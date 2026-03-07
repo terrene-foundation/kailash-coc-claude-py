@@ -12,7 +12,7 @@ description: "Git release patterns including pre-commit validation, branch workf
 
 ## Pre-Commit Validation
 
-### Quality Pipeline (MANDATORY)
+### Quality Pipeline (Recommended)
 
 ```bash
 # Run before EVERY commit
@@ -59,12 +59,12 @@ git checkout -b feature/[descriptive-name]
 
 # 2. Development Loop
 # Make changes
-black . && isort . && ruff check .  # MANDATORY formatting
-pytest                              # MANDATORY testing
+black . && isort . && ruff check .  # Recommended formatting
+pytest                              # Recommended testing
 git add .                          # Stage all changes
 git commit -m "feat: implement [feature description]"
 
-# 3. Pre-Push Validation (MANDATORY)
+# 3. Pre-Push Validation (Recommended)
 black . && isort . && ruff check . && pytest
 cd docs && python build_docs.py
 ```
@@ -112,20 +112,20 @@ git push -u origin feature/[name]
 # Main SDK
 vim setup.py                    # version="x.y.z"
 vim pyproject.toml              # [project] version = "x.y.z"
-vim src/kailash/__init__.py     # __version__ = "x.y.z"
+vim kailash/__init__.py     # __version__ = "x.y.z"
 
 # Bundled packages
-vim apps/kailash-dataflow/setup.py
-vim apps/kailash-dataflow/pyproject.toml
-vim apps/kailash-dataflow/src/dataflow/__init__.py
+vim kailash-dataflow/setup.py
+vim kailash-dataflow/pyproject.toml
+vim dataflow/__init__.py
 
-vim apps/kailash-nexus/setup.py
-vim apps/kailash-nexus/pyproject.toml
-vim apps/kailash-nexus/src/nexus/__init__.py
+vim kailash-nexus/setup.py
+vim kailash-nexus/pyproject.toml
+vim nexus/__init__.py
 
-vim apps/kailash-kaizen/setup.py
-vim apps/kailash-kaizen/pyproject.toml
-vim apps/kailash-kaizen/src/kaizen/__init__.py
+vim kailash-kaizen/setup.py
+vim kailash-kaizen/pyproject.toml
+vim kaizen/__init__.py
 ```
 
 ## Release Branch Workflow
@@ -166,16 +166,16 @@ git tag v[version]
 git push origin v[version]
 
 # 2. Create GitHub Release
-# Go to: https://github.com/[org]/kailash_python_sdk/releases
+# Go to: https://github.com/[org]/[repo]/releases
 # - Tag: v[version]
 # - Target: main
 # - Title: v[version] - [Brief Description]
 # - Attach: dist/* files
 
 # 3. PyPI Upload (order matters)
-cd apps/kailash-dataflow && twine upload dist/*  # DataFlow first
-cd apps/kailash-nexus && twine upload dist/*     # Nexus second
-cd apps/kailash-kaizen && twine upload dist/*    # Kaizen third
+cd kailash-dataflow && twine upload dist/*  # DataFlow first
+cd kailash-nexus && twine upload dist/*     # Nexus second
+cd kailash-kaizen && twine upload dist/*    # Kaizen third
 cd ../.. && twine upload dist/*                  # Main SDK last
 ```
 

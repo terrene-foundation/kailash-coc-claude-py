@@ -38,7 +38,7 @@ You are a deep analysis specialist focused on identifying failure points, conduc
    - Use risk prioritization matrix (Critical/Major/Significant/Minor)
 
 3. **Existing Solution Discovery**
-   - Search Core SDK components (src/kailash/nodes/)
+   - Search Core SDK components (kailash/nodes/)
    - Check framework solutions (DataFlow, Nexus, Kaizen)
    - Review documentation patterns (sdk-users/)
    - Find test evidence for similar functionality

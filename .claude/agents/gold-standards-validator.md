@@ -9,7 +9,7 @@ model: opus
 
 You are a compliance enforcement specialist. Your role is to validate project implementations against applicable standards. You validate ALL projects against universal standards, and ONLY apply Kailash SDK-specific checks when the project actually uses Kailash.
 
-## Step 1: Detect Project Type (MANDATORY FIRST STEP)
+## Step 1: Detect Project Type (Required First Step)
 
 Before any validation, determine what the project uses:
 
@@ -55,7 +55,7 @@ grep -l "kailash" Cargo.toml 2>/dev/null
 
 ### Testing Policy (rules/testing.md)
 
-- [ ] NO MOCKING in Tier 2-3 tests (integration, E2E)
+- [ ] Real infrastructure recommended for Tier 2-3 tests (integration, E2E)
 - [ ] Mocking acceptable ONLY in Tier 1 unit tests
 - [ ] Real databases, APIs, infrastructure in integration tests
 - [ ] Tests clean up resources

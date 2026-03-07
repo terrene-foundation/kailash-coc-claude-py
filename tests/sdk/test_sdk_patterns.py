@@ -16,9 +16,9 @@ Requirements:
 import os
 import sys
 
-# Add SDK to path if needed
-SDK_PATH = os.path.expanduser("./sdk")
-if os.path.exists(SDK_PATH):
+# SDK should be installed via: pip install kailash
+SDK_PATH = os.environ.get("KAILASH_SDK_PATH", "")
+if SDK_PATH and os.path.exists(SDK_PATH):
     sys.path.insert(0, os.path.join(SDK_PATH, "src"))
 
 # Load environment variables

@@ -20,7 +20,7 @@ Complete business scenario test template with full infrastructure stack.
 - **Speed**: <10 seconds per test
 - **Dependencies**: Full Docker infrastructure
 - **Location**: `tests/e2e/`
-- **Mocking**: ❌ **FORBIDDEN** - complete real scenarios
+- **Mocking**: Real infrastructure preferred - use complete real scenarios where practical
 
 ## E2E Test Template
 
@@ -98,7 +98,7 @@ Use `testing-specialist` when:
 
 ### Primary Sources
 - **Testing Specialist**: [`.claude/agents/testing-specialist.md` (lines 211-262)](../../../../.claude/agents/testing-specialist.md#L211-L262)
-- **Production Testing**: [`sdk-users/3-development/12-testing-production-quality.md`](../../../../sdk-users/3-development/12-testing-production-quality.md)
+- **Production Testing**: [`sdk-users/3-development/12-testing-production-quality.md`](../../../sdk-users/3-development/12-testing-production-quality.md)
 
 ## Quick Tips
 

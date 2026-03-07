@@ -1,6 +1,6 @@
 ---
 name: testing-patterns
-description: "Test implementation patterns for the 3-tier testing strategy including unit, integration, and E2E tests with NO MOCKING policy. Use for 'test patterns', 'unit test example', 'integration test example', or 'E2E test example'."
+description: "Test implementation patterns for the 3-tier testing strategy including unit, integration, and E2E tests with real infrastructure policy. Use for 'test patterns', 'unit test example', 'integration test example', or 'E2E test example'."
 ---
 
 # Testing Implementation Patterns
@@ -8,7 +8,7 @@ description: "Test implementation patterns for the 3-tier testing strategy inclu
 > **Skill Metadata**
 > Category: `testing`
 > Priority: `HIGH`
-> Policy: NO MOCKING in Tiers 2-3
+> Policy: Real infrastructure recommended for Tiers 2-3
 
 ## Tier 1: Unit Test Pattern
 
@@ -174,7 +174,7 @@ def test_unit_with_mock(mock_request):
     assert result["processed"] is True
 ```
 
-### Forbidden in Tiers 2-3
+### Discouraged in Tiers 2-3
 
 ```python
 # ❌ Don't mock databases
@@ -200,7 +200,7 @@ def test_file_processing(mock_open):  # WRONG
 pytest tests/unit/ --timeout=1 --tb=short
 
 # Integration tests (requires Docker)
-./tests/utils/test-env up && ./tests/utils/test-env status
+docker compose up -d
 pytest tests/integration/ --timeout=5 -v
 
 # E2E tests
@@ -217,7 +217,7 @@ pytest tests/unit/ --cov=src/kailash --cov-report=term-missing
 
 ```bash
 # Start test services
-cd tests/utils && ./test-env up && ./test-env status
+docker compose up -d
 
 # Expected services:
 # ✅ PostgreSQL: localhost:5433
@@ -233,4 +233,4 @@ TEST_REDIS_URL = "redis://localhost:6380/0"
 TEST_MINIO_URL = "http://localhost:9001"
 ```
 
-<!-- Trigger Keywords: test patterns, unit test example, integration test example, E2E test example, pytest patterns, testing fixtures, test timeout, NO MOCKING -->
+<!-- Trigger Keywords: test patterns, unit test example, integration test example, E2E test example, pytest patterns, testing fixtures, test timeout, Real infrastructure preferred -->

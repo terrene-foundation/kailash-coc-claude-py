@@ -18,7 +18,7 @@ These rules apply to ALL end-to-end testing, validation, and browser-based test 
 When running E2E tests and a required record is missing (404, 403, empty response):
 
 **MUST**: Create the missing record immediately using the appropriate API or direct database access.
-**MUST NOT**: Skip the test, document it as a "gap", or report it as "expected behavior".
+**Avoid**: Skipping the test, documenting it as a "gap", or reporting it as "expected behavior".
 
 **Pattern:**
 
@@ -27,7 +27,7 @@ When running E2E tests and a required record is missing (404, 403, empty respons
 2. If 404/403/missing -> identify what's missing
 3. Create the missing record via API (use admin credentials)
 4. Retry the original operation
-5. NEVER skip or move on
+5. Avoid skipping or moving on
 ```
 
 ### 2. Adapt to Data Changes
@@ -35,7 +35,7 @@ When running E2E tests and a required record is missing (404, 403, empty respons
 Test data WILL change between runs. User emails, IDs, names may all differ.
 
 **MUST**: Query the API to discover actual records before testing.
-**MUST NOT**: Hardcode user emails, IDs, or other test data.
+**Avoid**: Hardcoding user emails, IDs, or other test data.
 
 **Pattern:**
 
@@ -51,14 +51,14 @@ Test data WILL change between runs. User emails, IDs, names may all differ.
 If an API endpoint doesn't exist and testing needs it:
 
 **MUST**: Implement the endpoint immediately.
-**MUST NOT**: Document it as a "limitation" and move on.
+**Avoid**: Documenting it as a "limitation" and moving on.
 
 ### 4. Follow Up on Failures
 
 When an operation fails gracefully (error message displayed, no crash):
 
 **MUST**: Investigate the root cause and implement a fix.
-**MUST NOT**: Report "graceful failure" and move to next test.
+**Avoid**: Reporting "graceful failure" and moving to next test.
 
 **Pattern:**
 
@@ -97,5 +97,5 @@ Before starting ANY E2E test run:
 
 ## Exceptions
 
-NO EXCEPTIONS for rules 1-4. If you cannot create a record, escalate to the user immediately.
+These rules apply to all E2E test runs. If you cannot create a record, escalate to the user.
 Rule 5 exception: User explicitly says "only test as X role".

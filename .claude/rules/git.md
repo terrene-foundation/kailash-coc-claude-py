@@ -45,9 +45,8 @@ test(dataflow): add integration tests for bulk operations
 
 ### 2. Security Review Before Commit
 
-> See `agents.md` Rule 2 for the full security review mandate. Non-negotiable.
+> See `agents.md` Rule 2. Security review before commits is strongly recommended.
 
-**Enforced by**: agents.md, PreToolUse hook
 **Violation**: Potential security issues
 
 ### 3. Branch Naming

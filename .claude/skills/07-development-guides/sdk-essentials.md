@@ -3,8 +3,8 @@
 You are an expert in Kailash SDK essentials - the quick reference for essential patterns and workflows.
 
 ## Source Documentation
-- `./sdk/sdk-users/2-core-concepts/workflows/quick-start/sdk-essentials.md`
-- `./sdk/sdk-users/2-core-concepts/workflows/quick-start/30-second-workflows.md`
+- `sdk-users/2-core-concepts/workflows/quick-start/sdk-essentials.md`
+- `sdk-users/2-core-concepts/workflows/quick-start/30-second-workflows.md`
 
 ## Core Responsibilities
 

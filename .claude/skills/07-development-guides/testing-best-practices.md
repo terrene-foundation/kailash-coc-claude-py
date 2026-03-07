@@ -32,7 +32,7 @@ def test_workflow_creation():
     assert results["process"]["result"]["value"] == 20
 ```
 
-### Tier 2: Integration Tests (NO MOCKING)
+### Tier 2: Integration Tests (real infrastructure preferred)
 - Test multi-node workflows with real infrastructure
 - Use real Docker services (PostgreSQL, Redis, Ollama)
 - Test both LocalRuntime and AsyncLocalRuntime
@@ -44,7 +44,7 @@ from kailash.runtime import LocalRuntime
 from tests.utils.docker_config import get_postgres_connection_string
 
 def test_database_workflow():
-    """Test with real PostgreSQL - NO MOCKS."""
+    """Test with real PostgreSQL - real infrastructure preferred."""
     conn_string = get_postgres_connection_string()
 
     workflow = WorkflowBuilder()
@@ -221,9 +221,9 @@ pytest tests/e2e/
 
 ## Critical Testing Policies
 
-### 1. NO MOCKING in Tiers 2-3
+### 1. Real infrastructure recommended for Tiers 2-3
 ```python
-# ❌ NEVER in integration/e2e tests
+# ❌ Avoid in integration/e2e tests
 from unittest.mock import patch
 
 @patch('requests.get')
@@ -237,9 +237,9 @@ def test_api_integration():
     assert response.status_code == 200
 ```
 
-### 2. Zero Skip Tolerance
+### 2. Avoid Skipped Tests
 ```python
-# ❌ NEVER skip tests
+# ❌ Avoid skipping tests
 @pytest.mark.skip("Redis not available")
 def test_redis_operations():
     pass

@@ -3,7 +3,7 @@
 You are an expert in metrics collection and telemetry for Kailash SDK. Guide users through implementing comprehensive metrics, instrumentation, and monitoring.
 
 ## Source Documentation
-- `./sdk/sdk-users/5-enterprise/production/metrics-collection-guide.md`
+- `sdk-users/5-enterprise/production/metrics-collection-guide.md`
 
 ## Core Responsibilities
 

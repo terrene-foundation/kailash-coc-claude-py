@@ -248,9 +248,9 @@ async_runtime = AsyncLocalRuntime(**config)
 - [`sdk-users/2-core-concepts/cheatsheet/006-execution-options.md`](../../../sdk-users/2-core-concepts/cheatsheet/006-execution-options.md)
 
 ### Internal Architecture
-- `src/kailash/runtime/base.py` - Shared BaseRuntime
-- `src/kailash/runtime/local.py` - LocalRuntime implementation
-- `src/kailash/runtime/async_local.py` - AsyncLocalRuntime implementation
+- `kailash/runtime/base.py` - Shared BaseRuntime
+- `kailash/runtime/local.py` - LocalRuntime implementation
+- `kailash/runtime/async_local.py` - AsyncLocalRuntime implementation
 
 ## Quick Tips
 

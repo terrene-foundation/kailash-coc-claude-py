@@ -271,6 +271,6 @@ todo-manager marks complete → gh-manager closes issue
 ## Full Documentation
 
 When this guidance is insufficient, consult:
-- `sdk-contributors/project/todos/` - Hierarchical todo structure
+- Kailash SDK todo structure documentation
 - `.claude/skills/` - Technical patterns for implementation
 - GitHub CLI docs: https://cli.github.com/manual/

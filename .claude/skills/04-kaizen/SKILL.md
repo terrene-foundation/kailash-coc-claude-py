@@ -96,31 +96,31 @@ blackboard = Pipeline.blackboard(
 
 ### Comprehensive Guides
 
-For in-depth documentation, see `apps/kailash-kaizen/docs/`:
+For in-depth documentation, see `kaizen/docs/`:
 
 **Core Guides:**
 
-- **[BaseAgent Architecture](../../../apps/kailash-kaizen/docs/guides/baseagent-architecture.md)** - Complete unified agent system guide
-- **[Multi-Agent Coordination](../../../apps/kailash-kaizen/docs/guides/multi-agent-coordination.md)** - Google A2A protocol, 5 coordination patterns
-- **[Signature Programming](../../../apps/kailash-kaizen/docs/guides/signature-programming.md)** - Complete signature system guide
-- **[Hooks System Guide](../../../apps/kailash-kaizen/docs/guides/hooks-system-guide.md)** - Event-driven observability framework
-- **[Integration Patterns](../../../apps/kailash-kaizen/docs/guides/integration-patterns.md)** - DataFlow, Nexus, MCP integration
-- **[Meta-Controller Guide](../../../apps/kailash-kaizen/docs/guides/meta-controller-guide.md)** - Intelligent task delegation
-- **[Planning System Guide](../../../apps/kailash-kaizen/docs/guides/planning-system-guide.md)** - Structured workflow orchestration
+- **BaseAgent Architecture** - Complete unified agent system guide
+- **Multi-Agent Coordination** - Google A2A protocol, 5 coordination patterns
+- **Signature Programming** - Complete signature system guide
+- **Hooks System Guide** - Event-driven observability framework
+- **Integration Patterns** - DataFlow, Nexus, MCP integration
+- **Meta-Controller Guide** - Intelligent task delegation
+- **Planning System Guide** - Structured workflow orchestration
 
 **Reference Documentation:**
 
-- **[Example Gallery](../../../apps/kailash-kaizen/examples/autonomy/EXAMPLE_GALLERY.md)** - 15 production-ready autonomy examples with learning paths
-- **[API Reference](../../../apps/kailash-kaizen/docs/reference/api-reference.md)** - Complete API documentation
-- **[Checkpoint API](../../../apps/kailash-kaizen/docs/reference/checkpoint-api.md)** - State persistence API
-- **[Coordination API](../../../apps/kailash-kaizen/docs/reference/coordination-api.md)** - Multi-agent coordination API
-- **[Interrupts API](../../../apps/kailash-kaizen/docs/reference/interrupts-api.md)** - Graceful shutdown API
-- **[Memory API](../../../apps/kailash-kaizen/docs/reference/memory-api.md)** - 3-tier memory system API
-- **[Observability API](../../../apps/kailash-kaizen/docs/reference/observability-api.md)** - Hooks and monitoring API
-- **[Planning Agents API](../../../apps/kailash-kaizen/docs/reference/planning-agents-api.md)** - Planning/PEV/ToT agents API
-- **[Tools API](../../../apps/kailash-kaizen/docs/reference/tools-api.md)** - Tool calling and approval API
-- **[Configuration Guide](../../../apps/kailash-kaizen/docs/reference/configuration.md)** - All configuration options
-- **[Troubleshooting](../../../apps/kailash-kaizen/docs/reference/troubleshooting.md)** - Common issues and solutions
+- **Example Gallery** - 15 production-ready autonomy examples with learning paths
+- **API Reference** - Complete API documentation
+- **Checkpoint API** - State persistence API
+- **Coordination API** - Multi-agent coordination API
+- **Interrupts API** - Graceful shutdown API
+- **Memory API** - 3-tier memory system API
+- **Observability API** - Hooks and monitoring API
+- **Planning Agents API** - Planning/PEV/ToT agents API
+- **Tools API** - Tool calling and approval API
+- **Configuration Guide** - All configuration options
+- **Troubleshooting** - Common issues and solutions
 
 ### Quick Start (Skills)
 
@@ -198,7 +198,7 @@ For in-depth documentation, see `apps/kailash-kaizen/docs/`:
 
 ### v1.0 Developer Guides (NEW)
 
-Located in `apps/kailash-kaizen/src/kaizen/docs/developers/`:
+Located in `kaizen/docs/developers/`:
 
 - **Performance Optimization** (`09-performance-optimization-guide.md`) - Caching (10-100x speedup), parallel execution
 - **Specialist System** (`06-specialist-system-guide.md`) - Claude Code-style specialists and skills
@@ -214,7 +214,7 @@ Located in `apps/kailash-kaizen/src/kaizen/docs/developers/`:
 ### Testing & Quality
 
 - **[kaizen-testing-patterns](kaizen-testing-patterns.md)** - Testing AI agents
-- **[Performance Benchmarks](../../../apps/kailash-kaizen/docs/benchmarks/BENCHMARK_GUIDE.md)** - Measure Kaizen performance
+- **Performance Benchmarks** - Measure Kaizen performance
 
 ## Key Concepts
 
@@ -366,12 +366,12 @@ workflow.add_node("KaizenAgent", "agent1", {
 - ✅ Extend BaseAgent for production agents
 - ✅ Use type hints in signatures for validation
 - ✅ Track costs in production environments
-- ✅ Test agents with real infrastructure (NO MOCKING)
+- ✅ Test agents with real infrastructure where practical
 - ✅ Enable hooks for observability
 - ✅ Use AgentRegistry for distributed coordination
 - ❌ NEVER skip signature definitions
 - ❌ NEVER ignore cost tracking in production
-- ❌ NEVER mock LLM calls in integration tests
+- ❌ Avoid mocking LLM calls in integration tests where possible
 
 ## Related Skills
 

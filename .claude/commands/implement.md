@@ -84,8 +84,6 @@ At the end of each implementation cycle, create and update documentation at the 
 - Use as many subdirectories and files as required, naming them sequentially 00-, 01- for easy referencing
 - Focus on capturing the essence and intent — the 'what it is' and 'how to use it' — not status/progress/reports
 
-**Note:** Project agents and skills (`.claude/agents/project/`, `.claude/skills/project/`) are created in phase 05 (`/codify`), not here.
-
 ## Agent Teams
 
 Deploy these agents as a team for each implementation cycle:
@@ -93,8 +91,8 @@ Deploy these agents as a team for each implementation cycle:
 **Core team (always):**
 
 - **tdd-implementer** — Test-first development, red-green-refactor
-- **testing-specialist** — 3-tier test strategy, NO MOCKING in Tier 2-3
-- **intermediate-reviewer** — Code review after every file change (MANDATORY)
+- **testing-specialist** — 3-tier test strategy, Real infrastructure recommended for Tier 2-3
+- **intermediate-reviewer** — Code review after every file change (recommended)
 - **todo-manager** — Track progress, update todo status, verify completion with evidence
 
 **Specialist (invoke ONE matching the current todo):**
@@ -119,4 +117,4 @@ Deploy these agents as a team for each implementation cycle:
 **Quality gate (once per todo, before closing):**
 
 - **value-auditor** — Evaluate from user/buyer perspective, not just technical assertions
-- **security-reviewer** — Security audit before any commit (MANDATORY)
+- **security-reviewer** — Security audit before any commit (recommended)

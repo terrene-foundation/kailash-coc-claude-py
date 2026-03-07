@@ -65,6 +65,6 @@ python app.py --mode mcp
 
 ## Documentation
 
-- **Installation**: [`sdk-users/apps/nexus/01-installation.md`](../../../../sdk-users/apps/nexus/01-installation.md)
+- **Installation**: [`sdk-users/apps/nexus/01-installation.md`](../../../sdk-users/apps/nexus/01-installation.md)
 
 <!-- Trigger Keywords: install nexus, nexus setup, nexus requirements, nexus installation -->

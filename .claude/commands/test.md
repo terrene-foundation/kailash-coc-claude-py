@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Load the testing strategies skill for 3-tier testing with NO MOCKING policy enforcement in Tier 2-3.
+Load the testing strategies skill for 3-tier testing with real infrastructure policy enforcement in Tier 2-3.
 
 ## Step 0: Detect Project Testing Stack
 
@@ -13,7 +13,7 @@ Before loading test patterns, check what the project uses:
 - Look at `pubspec.yaml` for `flutter_test`, `integration_test`
 - Look for existing test directories (`tests/`, `test/`, `__tests__/`, `spec/`)
 
-Adapt examples to the project's testing framework. The 3-tier strategy and NO MOCKING policy apply universally regardless of framework.
+Adapt examples to the project's testing framework. The 3-tier strategy and real infrastructure policy apply universally regardless of framework.
 
 ## Quick Reference
 
@@ -21,13 +21,13 @@ Adapt examples to the project's testing framework. The 3-tier strategy and NO MO
 | ------------- | ------------------------------------------- |
 | `/test`       | Load testing patterns and tier strategy     |
 | `/test tier1` | Show unit test patterns (mocking allowed)   |
-| `/test tier2` | Show integration test patterns (NO MOCKING) |
-| `/test tier3` | Show E2E test patterns (NO MOCKING)         |
+| `/test tier2` | Show integration test patterns (real infrastructure preferred) |
+| `/test tier3` | Show E2E test patterns (real infrastructure preferred)         |
 
 ## What You Get
 
 - 3-tier testing strategy
-- NO MOCKING enforcement (Tier 2-3)
+- Real infrastructure policy (Tier 2-3)
 - Real infrastructure patterns
 - Coverage requirements
 
@@ -36,8 +36,8 @@ Adapt examples to the project's testing framework. The 3-tier strategy and NO MO
 | Tier   | Type        | Mocking        | Focus                  |
 | ------ | ----------- | -------------- | ---------------------- |
 | Tier 1 | Unit Tests  | ALLOWED        | Isolated functions     |
-| Tier 2 | Integration | **PROHIBITED** | Component interactions |
-| Tier 3 | E2E         | **PROHIBITED** | Full user journeys     |
+| Tier 2 | Integration | **Discouraged** | Component interactions |
+| Tier 3 | E2E         | **Discouraged** | Full user journeys     |
 
 ## Quick Pattern
 
@@ -51,7 +51,7 @@ def db():
     conn.close()
 
 def test_user_creation(db):
-    # NO MOCKING - real database operations
+    # Real infrastructure preferred - real database operations
     db.execute("INSERT INTO users (name) VALUES (?)", ("test",))
     result = db.execute("SELECT * FROM users WHERE name = ?", ("test",)).fetchone()
     assert result is not None
@@ -71,10 +71,10 @@ def test_user_creation(db):
     assert result.id is not None
 ```
 
-## Critical Rule - NO MOCKING in Tier 2-3
+## Critical Rule - Real infrastructure recommended for Tier 2-3
 
 ```python
-# PROHIBITED in integration/e2e tests (any framework)
+# Discouraged in integration/e2e tests (any framework)
 @patch('module.function')
 MagicMock()
 unittest.mock

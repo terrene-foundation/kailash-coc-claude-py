@@ -994,7 +994,7 @@ Create `lib/core/design/README.md` documenting:
 
 Create `.claude/guides/flutter-design-system.md` with:
 
-- **MANDATORY** design system usage rules
+- **Expected** design system usage rules
 - Single import pattern
 - Design token usage
 - Component patterns

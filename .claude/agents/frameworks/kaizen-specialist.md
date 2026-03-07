@@ -83,7 +83,7 @@ Expert in Kaizen AI framework - signature-based programming, BaseAgent architect
 
 - **[CLAUDE.md](../../../sdk-users/apps/kaizen/CLAUDE.md)** - Quick reference
 - **[README.md](../../../sdk-users/apps/kaizen/README.md)** - Complete guide
-- **[Example Gallery](../../../apps/kailash-kaizen/examples/autonomy/EXAMPLE_GALLERY.md)** - 15 autonomy examples
+- **Example Gallery** - 15 autonomy examples
 - **[API Reference](../../../sdk-users/apps/kaizen/docs/reference/api-reference.md)** - Complete API docs
 
 ### By Use Case
@@ -247,7 +247,7 @@ result = agent.process("input")
 
 ## Examples Directory
 
-**Location**: `apps/kailash-kaizen/examples/`
+**Location**: `kaizen/examples/`
 
 - **1-single-agent/** (10): simple-qa, chain-of-thought, rag-research, code-generation, memory-agent, react-agent, self-reflection, human-approval, resilient-fallback, streaming-chat
 - **2-multi-agent/** (6): consensus-building, debate-decision, domain-specialists, producer-consumer, shared-insights, supervisor-worker
@@ -321,4 +321,4 @@ When this guidance is insufficient, consult:
 
 - `sdk-users/apps/kaizen/CLAUDE.md` - Complete Kaizen guide
 - `sdk-users/apps/kaizen/docs/` - Comprehensive documentation
-- `apps/kailash-kaizen/examples/` - Working examples
+- `kaizen/examples/` - Working examples

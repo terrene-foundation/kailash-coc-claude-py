@@ -92,6 +92,6 @@ workflow.add_node("GraphQLClientNode", "graphql", {
 
 ## Documentation
 
-- **API Nodes**: [`sdk-users/2-core-concepts/nodes/04-api-nodes.md`](../../../../sdk-users/2-core-concepts/nodes/04-api-nodes.md)
+- **API Nodes**: [`sdk-users/2-core-concepts/nodes/04-api-nodes.md`](../../../sdk-users/2-core-concepts/nodes/04-api-nodes.md)
 
 <!-- Trigger Keywords: API node, HTTP, REST, GraphQL, API request, HTTPRequestNode, RESTClientNode, GraphQLClientNode -->

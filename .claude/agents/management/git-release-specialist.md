@@ -72,10 +72,10 @@ git commit         # Commit safely
 
 - `setup.py`
 - `pyproject.toml`
-- `src/kailash/__init__.py`
-- `apps/kailash-dataflow/` (setup.py, pyproject.toml, __init__.py)
-- `apps/kailash-nexus/` (setup.py, pyproject.toml, __init__.py)
-- `apps/kailash-kaizen/` (setup.py, pyproject.toml, __init__.py)
+- `kailash/__init__.py`
+- `kailash-dataflow/` (setup.py, pyproject.toml, __init__.py)
+- `kailash-nexus/` (setup.py, pyproject.toml, __init__.py)
+- `kailash-kaizen/` (setup.py, pyproject.toml, __init__.py)
 
 ## Common Issues & Solutions
 
@@ -115,7 +115,7 @@ git push -u origin hotfix/[issue]
 ## Full Documentation
 
 When this guidance is insufficient, consult:
-- `sdk-contributors/development/workflows/release-checklist.md`
+- Kailash SDK release checklist documentation
 - `.claude/skills/10-deployment-git/` - Git workflow skills
 - GitHub Actions docs: https://docs.github.com/en/actions
 

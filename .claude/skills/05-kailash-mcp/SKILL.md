@@ -153,7 +153,7 @@ def analyze_tool(text: str) -> str:
 - ✅ Use authentication for production servers
 - ❌ NEVER expose sensitive data without authentication
 - ❌ NEVER skip input validation
-- ❌ NEVER mock MCP protocol in tests (use real transports)
+- ❌ Avoid mocking MCP protocol in tests (prefer real transports)
 
 ## Transport Selection
 

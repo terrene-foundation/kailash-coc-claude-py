@@ -214,7 +214,7 @@ Since subagents cannot invoke other subagents, coordination happens at the main 
 - **sdk-users/apps/dataflow/**: Zero-config database patterns and guides
 - **sdk-users/apps/nexus/**: Multi-channel platform patterns and guides
 - **sdk-users/apps/kaizen/**: Signature-based AI framework patterns and guides
-- **src/kailash/mcp_server/**: Production MCP server implementation
+- **kailash/mcp_server/**: Production MCP server implementation
 
 ### Frontend & Mobile Documentation
 

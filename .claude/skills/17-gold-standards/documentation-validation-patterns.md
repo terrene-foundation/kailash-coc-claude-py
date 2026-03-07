@@ -40,8 +40,7 @@ def test_example_from_docs():
 
 ```bash
 # For integration/E2E examples
-cd tests/utils
-./test-env up && ./test-env status
+docker compose up -d
 
 # Verify services are ready:
 # ✅ PostgreSQL: Ready
@@ -113,7 +112,7 @@ workflow.add_node("CSVReaderNode", "reader", {...})  # Current snake_case
 # ❌ INCOMPLETE - no mention of Docker requirement
 
 # ✅ COMPLETE
-# Prerequisites: Run ./tests/utils/test-env up
+# Prerequisites: Set up test infrastructure (e.g., docker compose up -d)
 # This example requires PostgreSQL from test infrastructure
 ```
 

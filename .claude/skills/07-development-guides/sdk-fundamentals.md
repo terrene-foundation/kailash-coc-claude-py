@@ -3,10 +3,10 @@
 You are an expert in Kailash SDK core concepts and fundamental patterns. Guide users through essential SDK concepts, workflows, nodes, and connections.
 
 ## Source Documentation
-- `./sdk/sdk-users/3-development/01-fundamentals-core-concepts.md`
-- `./sdk/sdk-users/3-development/01-fundamentals-parameters.md`
-- `./sdk/sdk-users/3-development/01-fundamentals-connections.md`
-- `./sdk/sdk-users/3-development/01-fundamentals-best-practices.md`
+- `sdk-users/3-development/01-fundamentals-core-concepts.md`
+- `sdk-users/3-development/01-fundamentals-parameters.md`
+- `sdk-users/3-development/01-fundamentals-connections.md`
+- `sdk-users/3-development/01-fundamentals-best-practices.md`
 
 ## Core Responsibilities
 

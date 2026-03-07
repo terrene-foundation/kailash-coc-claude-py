@@ -12,11 +12,11 @@ paths:
 
 These rules apply to all test files and test-related code.
 
-## MUST Rules
+## RECOMMENDED Rules
 
 ### 1. Test-First Development
 
-Tests MUST be written before implementation for new features.
+Tests SHOULD be written before implementation for new features.
 
 **Process**:
 
@@ -25,79 +25,61 @@ Tests MUST be written before implementation for new features.
 3. Refactor while keeping tests green
 
 **Applies to**: New features, bug fixes
-**Enforced by**: tdd-implementer agent
-**Violation**: Code review flag
 
 ### 2. Coverage Requirements
 
-Code changes MUST maintain or improve test coverage.
+Code changes SHOULD maintain or improve test coverage.
 
-| Code Type         | Minimum Coverage |
-| ----------------- | ---------------- |
-| General           | 80%              |
-| Financial         | 100%             |
-| Authentication    | 100%             |
-| Security-critical | 100%             |
-
-**Enforced by**: CI coverage check
-**Violation**: BLOCK merge
+| Code Type         | Recommended Coverage |
+| ----------------- | -------------------- |
+| General           | 80%                  |
+| Financial         | 100%                 |
+| Authentication    | 100%                 |
+| Security-critical | 100%                 |
 
 ### 3. Real Infrastructure in Tiers 2-3
 
-Integration and E2E tests MUST use real infrastructure.
+Integration and E2E tests SHOULD use real infrastructure where practical.
 
 **Tier 1 (Unit Tests)**:
 
-- Mocking ALLOWED
+- Mocking allowed
 - Test isolated functions
 - Fast execution (<1s per test)
 
 **Tier 2 (Integration Tests)**:
 
-- NO MOCKING - use real database
+- Real infrastructure recommended (real database, real API calls)
+- Mocking is permitted when real infrastructure is impractical
 - Test component interactions
-- Real API calls (use test server)
 
 **Tier 3 (E2E Tests)**:
 
-- NO MOCKING - real everything
+- Real infrastructure recommended
 - Test full user journeys
-- Real browser, real database
+- Real browser, real database preferred
 
-**Enforced by**: validate-workflow hook
-**Violation**: Test invalid
+## Best Practices
 
-## MUST NOT Rules (CRITICAL)
+### 1. Prefer Real Infrastructure
 
-### 1. NO MOCKING in Tier 2-3
+Mocking is permitted at all tiers, but real infrastructure catches more bugs:
 
-MUST NOT use mocking in integration or E2E tests.
+- Real databases catch schema issues
+- Real API calls catch contract changes
+- Real infrastructure gives higher confidence
 
-**Detection Patterns**:
+**When mocking makes sense**:
 
-```python
-❌ @patch('module.function')
-❌ MagicMock()
-❌ unittest.mock
-❌ from mock import Mock
-❌ mocker.patch()
-```
-
-**Why This Matters**:
-
-- Mocks hide real integration issues
-- Mocks don't catch API contract changes
-- Mocks give false confidence
-- Bugs slip through to production
-
-**Enforced by**: validate-workflow hook
-**Consequence**: Test invalid, must rewrite
+- External third-party APIs with rate limits
+- Paid services in CI
+- Flaky network dependencies
 
 ### 2. No Test Pollution
 
-Tests MUST NOT affect other tests.
+Tests SHOULD NOT affect other tests.
 
-**Required**:
+**Recommended**:
 
 - Clean setup/teardown
 - Isolated test databases
@@ -105,9 +87,9 @@ Tests MUST NOT affect other tests.
 
 ### 3. No Flaky Tests
 
-Tests MUST be deterministic.
+Tests SHOULD be deterministic.
 
-**Prohibited**:
+**Avoid**:
 
 - Random data without seeds
 - Time-dependent assertions
@@ -120,8 +102,8 @@ Tests MUST be deterministic.
 ```
 tests/
 ├── unit/           # Tier 1: Mocking allowed
-├── integration/    # Tier 2: NO MOCKING
-└── e2e/           # Tier 3: NO MOCKING
+├── integration/    # Tier 2: Real infrastructure recommended
+└── e2e/           # Tier 3: Real infrastructure recommended
 ```
 
 ### Naming Convention
@@ -145,7 +127,7 @@ def db():
     db.close()
 
 def test_user_creation(db):
-    # NO MOCKING - real database operations
+    # Real database operations
     result = db.execute(CreateUser(name="test"))
     assert result.id is not None
 ```
@@ -163,9 +145,8 @@ def test_workflow_execution():
 
 ## Exceptions
 
-Testing exceptions require:
+Testing exceptions are acceptable when:
 
-1. Written justification explaining why real infrastructure impossible
-2. Approval from testing-specialist
-3. Documentation in test file
-4. Plan for removing exception
+1. Real infrastructure is genuinely impractical (paid APIs, rate limits)
+2. Tests document why mocking was chosen
+3. Integration coverage exists elsewhere for the same functionality

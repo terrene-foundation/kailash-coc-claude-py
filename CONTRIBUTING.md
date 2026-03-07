@@ -25,9 +25,9 @@ We use standard Python tools for code quality:
 Before submitting, run:
 
 ```bash
-black src/
-isort src/
-mypy src/
+black .
+isort .
+mypy .
 ```
 
 ### Testing

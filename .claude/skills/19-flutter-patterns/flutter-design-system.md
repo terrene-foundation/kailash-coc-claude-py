@@ -10,7 +10,7 @@
 
 ## 🎯 Core Directive
 
-**MANDATORY**: All Flutter UI development MUST use the Design System components located in `lib/core/design/`.
+**Recommended**: All Flutter UI development should use the Design System components located in `lib/core/design/`.
 
 **DO NOT** create UI components from scratch unless explicitly required for novel functionality not covered by the design system.
 

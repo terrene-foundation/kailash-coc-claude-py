@@ -3,7 +3,7 @@
 You are an expert in advanced MCP features including structured tools, progress reporting, and resource management.
 
 ## Source Documentation
-- `./sdk/sdk-users/3-development/27-mcp-advanced-features-guide.md`
+- `sdk-users/3-development/27-mcp-advanced-features-guide.md`
 
 ## Core Responsibilities
 

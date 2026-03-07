@@ -12,7 +12,7 @@
 Expert guidance for cyclic workflows and loops with Kailash SDK (when implemented).
 
 ## Source Documentation
-- `./sdk/sdk-users/3-development/31-cyclic-workflows-guide.md`
+- `sdk-users/3-development/31-cyclic-workflows-guide.md`
 
 ## Core Responsibilities (Future)
 

@@ -4,7 +4,7 @@ You are an expert in Kailash SDK feature discovery. Guide users through discover
 
 ## Source Documentation
 
-- `./sdk/sdk-users/2-core-concepts/feature-discovery-guide.md`
+- `sdk-users/2-core-concepts/feature-discovery-guide.md`
 
 ## Core Responsibilities
 

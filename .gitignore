@@ -39,6 +39,7 @@ venv.bak/
 *.swo
 .DS_Store
 .jbeval/
+output.txt
 
 # Testing
 .coverage

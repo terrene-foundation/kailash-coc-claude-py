@@ -634,7 +634,7 @@ await audit_logger.log(SecurityEvent(
 
 ```bash
 # Run full adversarial security suite
-python -m pytest apps/kailash-kaizen/tests/security/ -v --timeout=120
+python -m pytest kailash-kaizen/tests/security/ -v --timeout=120
 ```
 
 **Categories**: Key extraction resistance (26), delegation manipulation (23), constraint gaming (42), revocation races (10), cross-org boundaries (13), audit integrity (13).
@@ -657,5 +657,5 @@ python -m pytest tests/unit/runtime/trust/test_node_trust_verification.py -v
 
 - **Source**: `src/kaizen/trust/`
 - **Tests**: `tests/unit/trust/`, `tests/integration/trust/`, `tests/e2e/trust/`
-- **Security Tests**: `apps/kailash-kaizen/tests/security/`
+- **Security Tests**: `kailash-kaizen/tests/security/`
 - **Examples**: `examples/trust/` (see EATP examples)

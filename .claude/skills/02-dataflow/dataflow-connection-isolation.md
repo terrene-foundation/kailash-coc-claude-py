@@ -349,9 +349,9 @@ results, run_id = await runtime.execute_workflow_async(workflow.build())
 ## Documentation References
 
 ### Primary Sources
-- **Transaction Context Guide**: [`sdk-users/apps/dataflow/docs/workflows/transaction-context.md`](../../../../sdk-users/apps/dataflow/docs/workflows/transaction-context.md)
-- **Transaction Management**: [`sdk-users/apps/dataflow/docs/workflows/transactions.md`](../../../../sdk-users/apps/dataflow/docs/workflows/transactions.md)
-- **AsyncLocalRuntime**: [`src/kailash/runtime/async_local.py`](../../../../src/kailash/runtime/async_local.py)
+- **Transaction Context Guide**: [`sdk-users/apps/dataflow/docs/workflows/transaction-context.md`](../../../sdk-users/apps/dataflow/docs/workflows/transaction-context.md)
+- **Transaction Management**: [`sdk-users/apps/dataflow/docs/workflows/transactions.md`](../../../sdk-users/apps/dataflow/docs/workflows/transactions.md)
+- **AsyncLocalRuntime**: See the Kailash SDK `kailash.runtime` module documentation
 
 ### Related Documentation
 - **DataFlow CRUD**: [`dataflow-crud-operations`](dataflow-crud-operations.md)

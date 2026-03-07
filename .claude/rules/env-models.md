@@ -90,4 +90,4 @@ If a `*_MODEL` var references a model but the corresponding key is missing, the 
 
 ## Exceptions
 
-NO EXCEPTIONS. This rule is absolute. If `.env` doesn't have the key, fix the `.env` — don't hardcode.
+This rule has no standard exceptions. If `.env` doesn't have the key, add it to `.env` rather than hardcoding.

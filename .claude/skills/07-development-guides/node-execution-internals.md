@@ -3,7 +3,7 @@
 You are an expert in Kailash SDK node execution internals. Guide users through how nodes work internally, execution lifecycle, and debugging.
 
 ## Source Documentation
-- `./sdk/sdk-users/3-development/node-execution-pattern.md`
+- `sdk-users/3-development/node-execution-pattern.md`
 
 ## Core Responsibilities
 
