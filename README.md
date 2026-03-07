@@ -1,4 +1,4 @@
-# Kailash Vibe CC Setup
+# Kailash COC Claude (Python)
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-Claude%20Code-7C3AED.svg" alt="Claude Code">
@@ -104,8 +104,8 @@ The system discovers recurring patterns and automatically generates new skills, 
 
 ```bash
 # Clone
-git clone https://github.com/your-org/kailash-vibe-cc-setup.git
-cd kailash-vibe-cc-setup
+git clone https://github.com/your-org/kailash-coc-claude-py.git
+cd kailash-coc-claude-py
 
 # Configure
 cp .env.example .env   # Edit with your API keys
