@@ -2,7 +2,7 @@
 name: todo-manager
 description: "Todo system specialist for managing project tasks and maintaining the todo hierarchy. Use proactively when creating or updating project todos."
 tools: Read, Write, Edit, Grep, Glob, Task
-model: opus
+model: sonnet
 ---
 
 # Todo Management Specialist

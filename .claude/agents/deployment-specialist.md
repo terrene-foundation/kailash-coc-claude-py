@@ -2,7 +2,7 @@
 name: deployment-specialist
 description: Deployment specialist that analyzes codebases, runs deployment onboarding, and guides cloud/package deployments. Use for Docker, Kubernetes, cloud deployment, and package publishing.
 tools: Read, Write, Edit, Bash, Grep, Glob, Task
-model: opus
+model: sonnet
 ---
 
 # Deployment Specialist Agent
