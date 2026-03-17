@@ -46,8 +46,50 @@ Always involve tdd-implementer, testing-specialists, value auditor, ai ui ux spe
 
 ### 4. Testing requirements
 
-Ensure you test comprehensively as you implement, with all tests passing at 100%.
+**Test-once protocol**: Tests run ONCE per code change, not once per phase.
 
+**Before implementing (baseline):**
+
+1. Run the full test suite ONCE to establish baseline
+2. Record the result: pass count, fail count, commit hash
+3. If there are pre-existing failures, note them — they are NOT your regressions
+
+**During implementation (TDD cycle):**
+
+- tdd-implementer runs tests as part of red-green-refactor — this is the ONE authoritative test run
+- Run only affected tests during development for speed
+- Run the full suite ONCE when the todo is complete (not after every small change)
+
+**After implementing (regression check):**
+
+1. Run full suite one final time
+2. Compare against baseline: if any test that passed before now fails, you introduced a regression — STOP and fix
+3. Write `.test-results` artifact in workspace: `workspaces/<project>/.test-results`
+
+**`.test-results` format:**
+
+```
+commit: <git hash>
+timestamp: <ISO 8601>
+baseline_pass: <N>
+baseline_fail: <N>
+final_pass: <N>
+final_fail: <N>
+new_tests: <N>
+regressions: <N> (must be 0)
+```
+
+**Bug fixes MUST include regression tests:**
+
+- Every bug fix adds a regression test that reproduces the bug
+- The test MUST fail before the fix and pass after
+- Regression tests are NEVER deleted — they are permanent guards
+
+**What NOT to do:**
+
+- Do NOT run the full suite multiple times per todo
+- Do NOT let testing-specialist re-run tests that tdd-implementer already ran
+- Do NOT re-run tests just to "verify" — read the results from the last run
 - No tests can be skipped (make sure docker is up and running)
 - Do not rewrite tests just to get them passing — ensure it's not infrastructure issues causing errors
 - Always test according to the intent of what we are trying to achieve and against users' expectations
