@@ -45,8 +45,9 @@ test(dataflow): add integration tests for bulk operations
 
 ### 2. Security Review Before Commit
 
-> See `agents.md` Rule 2. Security review before commits is strongly recommended.
+> See `agents.md` Rule 2 for the full security review mandate. Non-negotiable.
 
+**Enforced by**: agents.md, PreToolUse hook
 **Violation**: Potential security issues
 
 ### 3. Branch Naming
@@ -112,10 +113,12 @@ Each commit MUST be self-contained.
 
 ### 1. No Direct Push to Main
 
-MUST NOT push directly to main/master branch.
+MUST NOT push directly to main/master branch. All changes go through PRs.
 
-**Enforced by**: Branch protection
-**Consequence**: Push rejected
+**Enforced by**: GitHub branch protection (active on all 4 repos)
+**Consequence**: Push rejected by GitHub
+**Workflow**: See `rules/branch-protection.md` for the PR workflow
+**Admin bypass**: Owner can merge with `gh pr merge <N> --admin --merge --delete-branch`
 
 ### 2. No Force Push to Main
 
