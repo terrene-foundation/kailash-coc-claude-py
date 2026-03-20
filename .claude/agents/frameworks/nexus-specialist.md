@@ -200,18 +200,17 @@ app = Nexus(preset="saas", cors_origins=["https://app.example.com"])
 
 ### Key Files
 
-- the package source - handler() decorator, register_handler()
 - `tests/unit/nodes/test_handler_node.py` - 22 SDK unit tests
-- the package source - 16 Nexus unit tests
-- the package source - 7 integration tests
-- the package source - 3 E2E tests
+- `tests/nexus/unit/test_handler_registration.py` - 16 Nexus unit tests
+- `tests/nexus/integration/test_handler_execution.py` - 7 integration tests
+- `tests/nexus/e2e/test_handler_e2e.py` - 3 E2E tests
 
 ### Migration Documentation
 
-- the package source - 5 migration patterns, 6-phase checklist
-- the package source - 8 real-world patterns from 3 projects
-- the package source - 26 doc validation tests
-- the package source - 38 doc validation tests (incl. auth integration)
+- `docs/nexus/migration/handler-migration-guide.md` - 5 migration patterns, 6-phase checklist
+- `docs/nexus/migration/real-project-patterns.md` - 8 real-world patterns from 3 projects
+- `tests/nexus/docs/migration/` - 26 doc validation tests
+- `tests/nexus/docs/real_projects/` - 38 doc validation tests (incl. auth integration)
 
 **Type Mapping Limitation**: `_derive_params_from_signature()` maps complex generics (e.g., `List[dict]`) to `str`. Use plain `list` instead.
 
@@ -219,8 +218,8 @@ app = Nexus(preset="saas", cors_origins=["https://app.example.com"])
 
 - `.claude/skills/03-nexus/golden-patterns-catalog.md` - Top 10 patterns ranked by production usage
 - `.claude/skills/03-nexus/codegen-decision-tree.md` - Decision tree, anti-patterns, scaffolding templates
-- the package source - 53 golden pattern validation tests
-- the package source - 19 scaffolding template validation tests
+- `tests/nexus/docs/golden_patterns/` - 53 golden pattern validation tests
+- `tests/nexus/docs/templates/` - 19 scaffolding template validation tests
 
 ## Authentication & Authorization (NexusAuthPlugin)
 

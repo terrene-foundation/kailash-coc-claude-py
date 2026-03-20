@@ -2,7 +2,7 @@
 
 ## Scope
 
-These rules apply when editing infrastructure database code (dialect, connection, stores, task queue, worker registry).
+These rules apply when editing files in:
 
 ## MUST Rules
 
@@ -22,6 +22,8 @@ await conn.execute(f"SELECT * FROM {user_input} WHERE id = ?", record_id)
 
 **Why**: Unvalidated identifiers enable SQL injection. The regex `^[a-zA-Z_][a-zA-Z0-9_]*$` prevents all injection vectors.
 
+**Enforced by**: Red team finding C6 — all public methods in dialect.py, task_queue.py, and worker_registry.py validate identifiers.
+
 ### 2. Use Transactions for Multi-Statement Operations
 
 Any operation involving more than one SQL statement that must be atomic MUST use `conn.transaction()`.
@@ -37,7 +39,7 @@ row = await conn.fetchone("SELECT MAX(seq) FROM events WHERE stream = ?", stream
 await conn.execute("INSERT INTO events (stream, seq, data) VALUES (?, ?, ?)", ...)
 ```
 
-**Why**: Without a transaction, auto-commit releases locks between statements. This causes race conditions: event store sequence races, idempotency TOCTOU, task queue lock release.
+**Why**: Without a transaction, auto-commit releases locks between statements. This causes race conditions (C2, C3, C4 in red team report): event store sequence races, idempotency TOCTOU, task queue lock release.
 
 ### 3. Use `?` Canonical Placeholders
 
@@ -67,7 +69,7 @@ await conn.execute(f"CREATE TABLE checkpoints (id TEXT PRIMARY KEY, data {blob_t
 await conn.execute("CREATE TABLE checkpoints (id TEXT PRIMARY KEY, data BLOB)")
 ```
 
-**Why**: PostgreSQL uses `BYTEA`, not `BLOB`. Hardcoded `BLOB` fails on PostgreSQL.
+**Why**: PostgreSQL uses `BYTEA`, not `BLOB`. Hardcoded `BLOB` fails on PostgreSQL (H2 in red team report).
 
 ### 5. Use `dialect.upsert()` Not Check-Then-Act
 
@@ -88,7 +90,7 @@ else:
     await conn.execute("INSERT INTO checkpoints VALUES (?, ?)", run_id, data)
 ```
 
-**Why**: Check-then-act is a TOCTOU race. Between the SELECT and INSERT, another process can insert the same row.
+**Why**: Check-then-act is a TOCTOU race. Between the SELECT and INSERT, another process can insert the same row (M1 in red team report).
 
 ### 6. Validate Table Names in Constructors
 
@@ -108,7 +110,7 @@ def __init__(self, conn, table_name="kailash_task_queue"):
     self._table = table_name  # No validation!
 ```
 
-**Why**: Constructor-time validation prevents injection before any SQL is ever generated.
+**Why**: Constructor-time validation prevents injection before any SQL is ever generated (C6+ fix in convergence report).
 
 ### 7. Bound In-Memory Stores
 
@@ -136,7 +138,7 @@ class InMemoryExecutionStore:
         self._store: dict = {}  # Grows without bound -> OOM
 ```
 
-**Why**: Unbounded collections in long-running processes lead to memory exhaustion. Default bound: 10,000 entries.
+**Why**: Unbounded collections in long-running processes lead to memory exhaustion (H1 in red team report). Default bound: 10,000 entries.
 
 ### 8. Lazy Driver Imports
 
@@ -176,7 +178,7 @@ MUST NOT use `AUTOINCREMENT` in table definitions that must work across database
 # AUTOINCREMENT is SQLite-specific and fails on PostgreSQL/MySQL
 ```
 
-**Why**: `AUTOINCREMENT` is a SQLite keyword. PostgreSQL uses `SERIAL` or `GENERATED`, MySQL uses `AUTO_INCREMENT`. `INTEGER PRIMARY KEY` auto-increments natively on all three databases.
+**Why**: `AUTOINCREMENT` is a SQLite keyword. PostgreSQL uses `SERIAL` or `GENERATED`, MySQL uses `AUTO_INCREMENT`. `INTEGER PRIMARY KEY` auto-increments natively on all three databases (C5 in red team report).
 
 ### 2. No Separate ConnectionManagers Per Store
 
@@ -220,9 +222,8 @@ row = await conn.fetchone(
 await conn.execute("UPDATE tasks SET status = 'processing' WHERE task_id = ?", ...)
 ```
 
-**Why**: `FOR UPDATE SKIP LOCKED` acquires a row-level lock. In auto-commit mode, the lock is released as soon as the SELECT completes. The subsequent UPDATE then races with other workers.
+**Why**: `FOR UPDATE SKIP LOCKED` acquires a row-level lock. In auto-commit mode, the lock is released as soon as the SELECT completes. The subsequent UPDATE then races with other workers (C4 in red team report).
 
 ## Cross-References
 
-- `.claude/skills/15-enterprise-infrastructure/` -- Complete infrastructure skills
-- `.claude/rules/security.md` -- Global security rules (parameterized queries, no secrets)
+- `.claude/rules/security.md` — Global security rules (parameterized queries, no secrets)

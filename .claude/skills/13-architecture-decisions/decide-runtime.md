@@ -62,7 +62,6 @@ runtime = get_runtime("sync")  # Force synchronous
 runtime = get_runtime("async")  # Force asynchronous
 ```
 
-
 ## Comparison Table
 
 | Feature | LocalRuntime | AsyncLocalRuntime |

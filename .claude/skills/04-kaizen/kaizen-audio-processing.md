@@ -23,4 +23,4 @@ print(result['language'])
 - Languages: 90+ supported
 
 ## References
-- **Examples**: the package source
+- **Examples**: `examples/kaizen/8-multi-modal/audio-transcription/`

@@ -2,7 +2,7 @@
 
 **Cryptographically verifiable trust chains for AI agents**, enabling enterprise-grade accountability, authorization, and secure multi-agent communication.
 
-> **Architecture Note**: As of v0.1.0, EATP is a standalone SDK (`pip install eatp`). Kaizen's `kaizen.trust` module is a **shim layer** that re-exports from the standalone package. Canonical code lives in `packages/eatp/src/eatp/`. For standalone SDK documentation, see `skills/26-eatp-reference/`.
+> **Architecture Note**: As of v0.1.0, EATP is a standalone SDK (`pip install eatp`). Kaizen's `kaizen.trust` module is a **shim layer** that re-exports from the standalone package. Canonical code lives in `eatp/`. For standalone SDK documentation, see `skills/26-eatp-reference/`.
 
 ## Overview
 
@@ -18,7 +18,7 @@ EATP provides complete trust infrastructure for AI agents:
 - **RFC 3161 Timestamping** (v1.1.0): Cryptographic timestamping for audit records with TSA integration
 
 **Location**: `kaizen.trust` module (shims to `eatp` package)
-**Canonical Source**: `packages/eatp/src/eatp/`
+**Canonical Source**: `eatp/`
 
 ## Quick Start
 
@@ -638,7 +638,7 @@ await audit_logger.log(SecurityEvent(
 
 ```bash
 # Run full adversarial security suite
-python -m pytest packages/kailash-kaizen/tests/security/ -v --timeout=120
+python -m pytest tests/kaizen/security/ -v --timeout=120
 ```
 
 **Categories**: Key extraction resistance (26), delegation manipulation (23), constraint gaming (42), revocation races (10), cross-org boundaries (13), audit integrity (13).
@@ -662,7 +662,7 @@ python -m pytest tests/unit/runtime/trust/test_node_trust_verification.py -v
 After EATP SDK extraction, `kaizen.trust` files are thin shims:
 
 ```python
-# packages/kailash-kaizen/src/kaizen/trust/chain.py
+# kaizen/trust/chain.py
 from eatp.chain import *  # noqa: F401,F403
 ```
 
@@ -679,9 +679,9 @@ Kaizen adds `PostgresTrustStore` (DataFlow-backed) which is NOT in the standalon
 
 ## Support
 
-- **Canonical Source**: `packages/eatp/src/eatp/` (standalone SDK)
-- **Kaizen Shims**: the package source
-- **EATP Tests**: `packages/eatp/tests/` (1324 tests)
-- **Kaizen Trust Tests**: the package source (1623 tests, exercises same code via shims)
-- **Security Tests**: the package source
-- **Examples**: `packages/eatp/examples/` (standalone), `examples/trust/` (Kaizen integration)
+- **Canonical Source**: `eatp/` (standalone SDK)
+- **Kaizen Shims**: `kaizen/trust/`
+- **EATP Tests**: `tests/eatp/` (1324 tests)
+- **Kaizen Trust Tests**: `tests/kaizen/unit/trust/` (1623 tests, exercises same code via shims)
+- **Security Tests**: `tests/kaizen/security/`
+- **Examples**: `examples/eatp/` (standalone), `examples/trust/` (Kaizen integration)

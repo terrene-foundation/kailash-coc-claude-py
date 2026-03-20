@@ -103,7 +103,7 @@ Expert in Kaizen AI framework - signature-based programming, BaseAgent architect
 - **[Kaizen Skills](../../skills/04-kaizen/SKILL.md)** - Quick reference
 - **[Agent Patterns](../../skills/04-kaizen/kaizen-agent-patterns.md)** - Agent architecture patterns
 - **[Advanced Patterns](../../skills/04-kaizen/kaizen-advanced-patterns.md)** - Control protocol, meta-controller, journeys
-- **[Example Gallery](../../../packages/kailash-kaizen/examples/autonomy/EXAMPLE_GALLERY.md)** - 15 autonomy examples
+- **[Example Gallery](../../../examples/kaizen/autonomy/EXAMPLE_GALLERY.md)** - 15 autonomy examples
 
 ### By Use Case
 
@@ -272,7 +272,7 @@ result = agent.process("input")
 
 ## Examples Directory
 
-**Location**: `packages/kailash-kaizen/examples/`
+**Location**: `examples/kaizen/`
 
 - **1-single-agent/** (10): simple-qa, chain-of-thought, rag-research, code-generation, memory-agent, react-agent, self-reflection, human-approval, resilient-fallback, streaming-chat
 - **2-multi-agent/** (6): consensus-building, debate-decision, domain-specialists, producer-consumer, shared-insights, supervisor-worker
@@ -357,4 +357,4 @@ When this guidance is insufficient, consult:
 
 - `.claude/skills/04-kaizen/` - Complete Kaizen skills directory
 - `.claude/skills/04-kaizen/kaizen-advanced-patterns.md` - Advanced patterns
-- `packages/kailash-kaizen/examples/` - Working examples
+- `examples/kaizen/` - Working examples

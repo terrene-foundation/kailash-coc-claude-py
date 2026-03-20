@@ -12,8 +12,7 @@ Two components work together for budget-aware governance:
 
 **Source modules**:
 
-- `packages/eatp/src/eatp/constraints/budget_tracker.py` -- `BudgetTracker`, `BudgetSnapshot`, `BudgetCheckResult`, `BudgetEvent`
-- `packages/kailash-kaizen/src/kaizen/governance/posture_budget.py` -- `PostureBudgetIntegration`
+- `eatp/constraints/budget_tracker.py` -- `BudgetTracker`, `BudgetSnapshot`, `BudgetCheckResult`, `BudgetEvent`
 
 ---
 
@@ -313,7 +312,7 @@ for i in range(10):
 
 ## References
 
-- **Source**: `packages/eatp/src/eatp/constraints/budget_tracker.py`
-- **Source**: `packages/kailash-kaizen/src/kaizen/governance/posture_budget.py`
+- **Source**: `eatp/constraints/budget_tracker.py`
+- **Source**: `kaizen/governance/posture_budget.py`
 - **Related**: [`kaizen-cost-tracking`](kaizen-cost-tracking.md) -- Basic per-invocation cost tracking via BaseAgent
 - **Related**: [`kaizen-trust-eatp`](kaizen-trust-eatp.md) -- Full EATP trust infrastructure

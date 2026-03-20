@@ -2,7 +2,7 @@
 
 ## Scope
 
-These rules apply when editing `packages/eatp/**` files.
+These rules apply when editing `eatp` package files files.
 
 ## SDK Conventions
 

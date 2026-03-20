@@ -257,7 +257,6 @@ workflow.add_node("UserCreateNode", "create", {
 })
 ```
 
-
 ---
 
 ### DF-501: Sync Method in Async Context (v0.10.7+)
@@ -323,7 +322,6 @@ async def db():
 | `_ensure_migration_tables()` | `_ensure_migration_tables_async()` | Migration system |
 
 **Detection:** DataFlow detects async context via `asyncio.get_running_loop()`. If a running loop exists, sync methods raise `RuntimeError` with DF-501.
-
 
 ---
 

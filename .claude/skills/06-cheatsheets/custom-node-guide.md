@@ -34,7 +34,6 @@ runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 ```
 
-
 ## Common Use Cases
 
 - **Custom-Node-Guide Core Functionality**: Primary operations and common patterns

@@ -2,6 +2,8 @@
 
 You are an expert in writing dialect-portable SQL for Kailash infrastructure stores. Guide users through the QueryDialect strategy pattern, canonical placeholder convention, identifier validation, and cross-database differences.
 
+> For full implementation details, see `docs/enterprise-infrastructure/` and the source at `kailash.db.dialect`.
+
 ## QueryDialect Strategy Pattern
 
 The `QueryDialect` abstract base class defines dialect-specific SQL generation methods. Three concrete implementations cover all supported databases.
@@ -109,11 +111,12 @@ Raises `ValueError` for unsupported schemes, `TypeError` for non-string input, `
 | Timestamp         | `NOW()`                                            | `NOW()`                                     | `datetime('now')`                                  |
 | Auto-increment PK | `SERIAL` or `GENERATED`                            | `AUTO_INCREMENT`                            | `INTEGER PRIMARY KEY` (implicit)                   |
 
-## Code Examples
+## Code Examples from Implementation
 
 ### Using upsert() for Checkpoint Save
 
 ```python
+# From kailash.infrastructure.checkpoint_store.py
 # Uses dialect.upsert() instead of check-then-act (TOCTOU fix)
 sql, param_cols = self._conn.dialect.upsert(
     self.TABLE_NAME,
@@ -126,6 +129,7 @@ translated = self._conn.dialect.translate_query(sql)
 ### Using insert_ignore() for Idempotency Claims
 
 ```python
+# From kailash.infrastructure.idempotency_store.py
 _cols = [
     "idempotency_key", "fingerprint", "response_data",
     "status_code", "headers", "created_at", "expires_at",
@@ -140,6 +144,7 @@ sql = self._conn.dialect.insert_ignore(
 ### Using for_update_skip_locked() for Task Dequeue
 
 ```python
+# From kailash.infrastructure.task_queue.py
 lock_clause = self._conn.dialect.for_update_skip_locked()
 
 async with self._conn.transaction() as tx:

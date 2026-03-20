@@ -22,7 +22,6 @@ Skills provide backend patterns and SDK usage. This subagent provides:
 
 **When to use Skills instead**: For Kailash backend patterns (workflow execution, DataFlow queries, Nexus APIs), use appropriate Skills. For React UI implementation, component design, and frontend architecture, use this subagent.
 
-
 ## Primary Responsibilities
 
 - Create responsive React components for mobile and desktop

@@ -1,8 +1,8 @@
 # Skill: TrustPlane Security Patterns
 
-13 hardened security patterns validated through 16 rounds of red teaming. MANDATORY for `packages/trust-plane/` and `packages/eatp/`. Recommended for any security-sensitive Python project.
+13 hardened security patterns validated through 16 rounds of red teaming. MANDATORY for the `trust-plane` package and the `eatp` package. Recommended for any security-sensitive Python project.
 
-For full code examples with DO/DON'T pairs, see `packages/trust-plane/CLAUDE.md`.
+For full code examples with DO/DON'T pairs, see Trust-Plane documentation.
 
 ## Quick Checklist
 
@@ -112,6 +112,6 @@ All exceptions accept `details: dict[str, Any]` per EATP convention.
 
 ## See Also
 
-- `packages/trust-plane/CLAUDE.md` — Full patterns with code examples
+- Trust-Plane documentation — Full patterns with code examples
 - `.claude/skills/project/store-backend-implementation.md` — Store backend guide
 - `.claude/skills/project/trust-plane-enterprise-features.md` — Enterprise feature reference

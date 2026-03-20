@@ -129,7 +129,6 @@ Use `nexus-specialist` subagent when:
 
 ### Related Documentation
 
-
 ## Quick Tips
 
 - 💡 **Critical setting**: `auto_discovery=False` when using DataFlow with Nexus

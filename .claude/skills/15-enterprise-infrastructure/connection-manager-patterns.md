@@ -2,6 +2,8 @@
 
 You are an expert in the Kailash ConnectionManager for async database access. Guide users through connection lifecycle, transaction context managers, driver-specific behavior differences, and pool configuration.
 
+> For full implementation details, see `docs/enterprise-infrastructure/02-store-backends.md` and the source at `kailash.db.connection`.
+
 ## ConnectionManager Lifecycle
 
 The `ConnectionManager` wraps database-specific async drivers behind a uniform interface with dialect-aware placeholder translation.
@@ -94,12 +96,12 @@ All methods perform dialect placeholder translation.
 
 ### Why Transactions Are Required
 
-Red team validation found that all multi-statement operations were non-atomic without explicit transactions:
+The red team validation (C1-C4) found that all multi-statement operations were non-atomic without explicit transactions:
 
-- **Event store append**: `MAX(seq)` + `INSERT` race condition
-- **Idempotency claim**: Check-then-act TOCTOU across 3 queries
-- **Task queue dequeue**: `FOR UPDATE SKIP LOCKED` lock released between SELECT and UPDATE in auto-commit mode
-- **Checkpoint save**: SELECT + INSERT/UPDATE not atomic
+- **Event store append**: `MAX(seq)` + `INSERT` race condition (C2)
+- **Idempotency claim**: Check-then-act TOCTOU across 3 queries (C3)
+- **Task queue dequeue**: `FOR UPDATE SKIP LOCKED` lock released between SELECT and UPDATE in auto-commit mode (C4)
+- **Checkpoint save**: SELECT + INSERT/UPDATE not atomic (M1)
 
 All of these were fixed by wrapping in `conn.transaction()`.
 

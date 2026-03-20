@@ -6,17 +6,17 @@ description: "Load phase 03 (implement) for the current workspace. Repeat until 
 ## Workspace Resolution
 
 1. If `$ARGUMENTS` specifies a project name or todo, parse accordingly
-2. Otherwise, use the most recently modified directory under  (excluding `instructions/`)
+2. Otherwise, use the most recently modified directory under `workspaces/` (excluding `instructions/`)
 3. If no workspace exists, ask the user to create one first
-4. Read all files in  for user context (this is the user's input surface)
+4. Read all files in `workspaces/<project>/briefs/` for user context (this is the user's input surface)
 
 ## Phase Check
 
-- Read files in  to see what needs doing
-- Read files in  to see what's done
+- Read files in `workspaces/<project>/todos/active/` to see what needs doing
+- Read files in `workspaces/<project>/todos/completed/` to see what's done
 - If `$ARGUMENTS` specifies a specific todo, focus on that one
 - Otherwise, pick the next active todo
-- Reference plans in  for context
+- Reference plans in `workspaces/<project>/02-plans/` for context
 
 ## Workflow
 
@@ -64,7 +64,7 @@ Always involve tdd-implementer, testing-specialists, value auditor, ai ui ux spe
 
 1. Run full suite: `pytest tests/ -x --tb=short -q`
 2. Compare against baseline: if any test that passed before now fails, you introduced a regression — STOP and fix
-3. Write `.test-results` artifact in workspace: 
+3. Write `.test-results` artifact in workspace: `workspaces/<project>/.test-results`
 
 **`.test-results` format:**
 
@@ -124,7 +124,7 @@ Deploy these agents as a team for each implementation cycle:
 **Core team (always):**
 
 - **tdd-implementer** — Test-first development, red-green-refactor
-- **testing-specialist** — 3-tier test strategy, real infrastructure recommended in Tier 2-3
+- **testing-specialist** — 3-tier test strategy, NO MOCKING in Tier 2-3
 - **intermediate-reviewer** — Code review after every file change (MANDATORY)
 - **todo-manager** — Track progress, update todo status, verify completion with evidence
 

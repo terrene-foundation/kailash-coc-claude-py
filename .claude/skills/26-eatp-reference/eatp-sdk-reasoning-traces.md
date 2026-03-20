@@ -2,9 +2,9 @@
 
 Structured reasoning traces capture WHY a decision was made during trust delegation and audit operations. This extension is fully optional and backward compatible.
 
-**Source**: `packages/eatp/src/eatp/reasoning.py`
-**Crypto**: `packages/eatp/src/eatp/crypto.py` (hash/sign/verify reasoning functions)
-**Operations**: `packages/eatp/src/eatp/operations/__init__.py` (delegate/audit accept reasoning_trace)
+**Source**: `eatp/reasoning.py`
+**Crypto**: `eatp/crypto.py` (hash/sign/verify reasoning functions)
+**Operations**: `eatp/operations/__init__.py` (delegate/audit accept reasoning_trace)
 
 ## Design Rationale
 

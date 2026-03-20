@@ -34,7 +34,6 @@ runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 ```
 
-
 ## Common Use Cases
 
 - **Ollama-Integration Processing**: Extract, transform, load data from various sources with validation

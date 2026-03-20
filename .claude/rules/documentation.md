@@ -28,7 +28,7 @@ All GitHub URLs MUST point to `terrene-foundation/kailash-py` (the monorepo).
 
 ```
 https://github.com/terrene-foundation/kailash-py
-https://github.com/terrene-foundation/kailash-py/tree/main/packages/kailash-kaizen
+https://github.com/terrene-foundation/kailash-py/tree/main/docs/kaizen
 https://github.com/terrene-foundation/kailash-py/issues
 ```
 

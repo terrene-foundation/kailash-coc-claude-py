@@ -30,7 +30,6 @@ data = self.extract_list(result, "actual_key_name", default=[])
 
 ## Multi-Modal API Errors
 
-
 ## Provider Compatibility for Structured Outputs (v0.8.2)
 
 **Multi-Provider Support**: OpenAI, Google/Gemini, and Azure AI Foundry all support structured outputs with automatic format translation. Ollama/Anthropic do NOT support structured outputs API.

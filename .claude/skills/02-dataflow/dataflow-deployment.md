@@ -48,7 +48,6 @@ async def list_users(limit: int = 100):
 
 ### How It Works
 
-- `SyncDDLExecutor` uses psycopg2 (PostgreSQL) or sqlite3 (SQLite) - no asyncio
 - Tables are created synchronously at model registration time
 - CRUD operations use async drivers (asyncpg, aiosqlite) as before
 - No event loop conflicts because DDL and CRUD use separate connection types
@@ -159,6 +158,5 @@ db = DataFlow(
 | `pool_size` | Default | Configure via database URL |
 
 ## Documentation
-
 
 <!-- Trigger Keywords: deploy dataflow, dataflow production, dataflow docker, dataflow kubernetes, dataflow fastapi -->

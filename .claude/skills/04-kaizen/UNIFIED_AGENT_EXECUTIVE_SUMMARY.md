@@ -219,7 +219,6 @@ class ReActConfig:
     max_cycles: int = 10
     temperature: float = 0.7
 
-
 # 12 builtin tools enabled via MCP
 
 config = ReActConfig()

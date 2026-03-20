@@ -2,7 +2,7 @@
 
 SQLite-backed persistence for agent posture state, the PostureStore protocol, PostureEvidence, PostureEvaluationResult, and the PostureStateMachine with store integration.
 
-**Source**: `packages/eatp/src/eatp/posture_store.py`, `packages/eatp/src/eatp/postures.py`
+**Source**: `eatp/posture_store.py`, `eatp/postures.py`
 
 ## PostureStore Protocol
 
@@ -366,4 +366,4 @@ with SQLitePostureStore("/tmp/eatp/postures.db") as store:
 - **Agent**: `eatp-expert` — Full EATP framework knowledge
 - **Budget tracking**: `eatp-budget-tracking.md` — Related persistence pattern for budgets
 - **Security patterns**: `eatp-security-patterns.md` — Lock ordering, integer arithmetic, symlink rejection
-- **Source**: `packages/eatp/src/eatp/posture_store.py`, `packages/eatp/src/eatp/postures.py`
+- **Source**: `eatp/posture_store.py`, `eatp/postures.py`

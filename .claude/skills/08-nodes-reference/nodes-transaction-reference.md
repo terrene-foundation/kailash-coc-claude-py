@@ -98,5 +98,4 @@ workflow.add_node("TwoPhaseCommitCoordinatorNode", "2pc", {
 
 ## Documentation
 
-
 <!-- Trigger Keywords: transaction node, Saga, 2PC, distributed transaction, transaction coordinator, SagaCoordinatorNode, TwoPhaseCommitCoordinatorNode -->

@@ -67,6 +67,11 @@ The user's workflow code is identical at all levels.
 | `DATABASE_URL`         | Fallback for `KAILASH_DATABASE_URL` | None            |
 | `KAILASH_QUEUE_URL`    | Task queue broker                   | None (no queue) |
 
+### Source Code Layout
+
+| Package                                           | Purpose                                                    |
+| ------------------------------------------------- | ---------------------------------------------------------- |
+
 ## Critical Rules
 
 - Use `?` canonical placeholders in all SQL -- ConnectionManager translates automatically

@@ -4,8 +4,8 @@
 
 These rules apply when editing:
 
-- `packages/trust-plane/**`
-- `packages/eatp/src/eatp/store/**`
+- `trust-plane` package files
+- `eatp/store/**`
 
 These rules supplement `.claude/rules/security.md`. Both apply to trust-plane files.
 Violations during code review by intermediate-reviewer are BLOCK-level findings.
@@ -232,7 +232,7 @@ norm = Path(user_path).as_posix()   # Doesn't collapse double slashes
 
 ## Cross-References
 
-- `packages/trust-plane/CLAUDE.md` — Full security pattern inventory (13 patterns) and Store Security Contract
-- `packages/trust-plane/src/trustplane/store/__init__.py` — Store Security Contract as protocol docstring (created in TODO-09)
+- Trust-Plane documentation — Full security pattern inventory (13 patterns) and Store Security Contract
+- `trustplane/store/__init__.py` — Store Security Contract as protocol docstring (created in TODO-09)
 - `.claude/rules/security.md` — Global security rules (secrets, injection, input validation)
 - `.claude/rules/eatp.md` — EATP SDK conventions (dataclasses, error hierarchy, cryptography)

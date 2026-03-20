@@ -34,7 +34,6 @@ runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 ```
 
-
 ## Common Use Cases
 
 - **Query-Builder Operations**: Execute, optimize, and manage database queries with advanced patterns

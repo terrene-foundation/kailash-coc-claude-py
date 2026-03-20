@@ -29,7 +29,7 @@ def test_workflow_creation():
     assert results["process"]["result"]["value"] == 20
 ```
 
-### Tier 2: Integration Tests (real infrastructure recommended)
+### Tier 2: Integration Tests (NO MOCKING)
 - Test multi-node workflows with real infrastructure
 - Use real Docker services (PostgreSQL, Redis, Ollama)
 - Test both LocalRuntime and AsyncLocalRuntime
@@ -218,7 +218,7 @@ pytest tests/e2e/
 
 ## Critical Testing Policies
 
-### 1. real infrastructure recommended in Tiers 2-3
+### 1. NO MOCKING in Tiers 2-3
 ```python
 # ❌ NEVER in integration/e2e tests
 from unittest.mock import patch

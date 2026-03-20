@@ -34,7 +34,6 @@ runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 ```
 
-
 ## Common Use Cases
 
 - **Real-time Resource Notifications**: WebSocket-based pub/sub for file changes, config updates, API events with wildcard pattern matching

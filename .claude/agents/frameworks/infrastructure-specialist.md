@@ -59,7 +59,7 @@ Enterprise infrastructure specialist for the Kailash progressive infrastructure 
 
 ### QueryDialect Strategy Pattern
 
-The `QueryDialect` abstract base class provides dialect-specific SQL generation. Three concrete implementations: `PostgresDialect`, `MySQLDialect`, `SQLiteDialect`.
+The `QueryDialect` abstract base class in `kailash.db.dialect` provides dialect-specific SQL generation. Three concrete implementations: `PostgresDialect`, `MySQLDialect`, `SQLiteDialect`.
 
 ```python
 from kailash.db.dialect import detect_dialect
@@ -190,7 +190,7 @@ These are hard rules enforced by `.claude/rules/infrastructure-sql.md`.
 - **dataflow-specialist**: For user-facing data models and CRUD operations. DataFlow handles user data; infrastructure-specialist handles runtime infrastructure stores.
 - **nexus-specialist**: For API deployment and multi-channel platform. Nexus deploys the API; infrastructure stores provide the persistence layer underneath.
 - **pattern-expert**: Core SDK workflow patterns. Infrastructure stores back the execution metadata that workflows produce.
-- **testing-specialist**: 3-tier testing with real infrastructure. All infrastructure tests run against real databases.
+- **testing-specialist**: 3-tier testing with real infrastructure. All infrastructure tests run against real databases (no mocking in Tier 2/3).
 - **security-reviewer**: SQL injection prevention, identifier validation, transaction safety.
 
 ## Full Documentation
@@ -198,3 +198,4 @@ These are hard rules enforced by `.claude/rules/infrastructure-sql.md`.
 When this guidance is insufficient, consult:
 
 - `.claude/skills/15-enterprise-infrastructure/` - Complete infrastructure skills directory
+- `docs/enterprise-infrastructure/` - Full documentation with architecture diagrams

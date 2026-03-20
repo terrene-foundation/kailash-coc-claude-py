@@ -34,7 +34,6 @@ runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 ```
 
-
 ## Common Use Cases
 
 - **Requirements to Workflow Mapping**: Systematic process to translate business requirements into workflow nodes and connections

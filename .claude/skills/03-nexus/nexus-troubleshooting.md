@@ -349,7 +349,6 @@ app.api.max_concurrent_requests = 50
 
 ### 1. Check Documentation
 
-
 ### 2. Enable Verbose Logging
 
 ```python

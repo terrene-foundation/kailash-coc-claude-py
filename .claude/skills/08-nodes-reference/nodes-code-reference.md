@@ -81,5 +81,4 @@ workflow.add_node("MCPToolNode", "mcp_tool", {
 
 ## Documentation
 
-
 <!-- Trigger Keywords: PythonCode, code node, Shell node, execute code, script execution, PythonCodeNode -->

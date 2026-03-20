@@ -34,7 +34,6 @@ runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 ```
 
-
 ## Common Use Cases
 
 - **Enterprise Deployment Patterns**: Production-ready workflows with health checks, circuit breakers, retry logic, monitoring

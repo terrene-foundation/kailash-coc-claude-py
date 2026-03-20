@@ -2,6 +2,8 @@
 
 You are an expert in the Kailash progressive infrastructure model. Guide users through scaling from Level 0 (SQLite, single process) to Level 2 (multi-worker with shared database and task queue) using environment variables alone -- no code changes required.
 
+> For full implementation details, see `docs/enterprise-infrastructure/` and the source at `kailash.infrastructure.factory`.
+
 ## Progressive Infrastructure Model
 
 ```
@@ -28,7 +30,7 @@ Each level is additive. Level 0 code runs unchanged at Level 2. The user's workf
 | `DATABASE_URL`         | Fallback for `KAILASH_DATABASE_URL`                                    | 2           | None            |
 | `KAILASH_QUEUE_URL`    | Task queue broker (Redis or SQL)                                       | N/A         | None (no queue) |
 
-URL resolution:
+Resolution logic lives in `kailash.db.registry`:
 
 ```python
 from kailash.db.registry import resolve_database_url, resolve_queue_url
@@ -124,7 +126,7 @@ CREATE TABLE IF NOT EXISTS kailash_meta (
 
 - On `StoreFactory.initialize()`, the factory stamps the schema version
 - If the database version is **newer** than the running code version, initialization fails fast with a clear error
-- If the database version is **older**, migration runners will handle upgrades
+- If the database version is **older**, future migration runners in `kailash.db.migration` will handle upgrades
 
 ```python
 from kailash.db.migration import check_schema_version, stamp_schema_version, SCHEMA_VERSION
@@ -168,16 +170,16 @@ async def create_event_store(self) -> Any:
 
 All tables are created idempotently via `CREATE TABLE IF NOT EXISTS`:
 
-| Table                     | Purpose                     |
-| ------------------------- | --------------------------- |
-| `kailash_meta`            | Schema version tracking     |
-| `kailash_events`          | Append-only event log       |
-| `kailash_checkpoints`     | Workflow checkpoint data    |
-| `kailash_dlq`             | Dead letter queue entries   |
-| `kailash_executions`      | Workflow execution metadata |
-| `kailash_idempotency`     | Idempotency keys with TTL   |
-| `kailash_task_queue`      | SQL-backed task queue       |
-| `kailash_worker_registry` | Worker heartbeat tracking   |
+| Table                     | Module                 | Purpose                     |
+| ------------------------- | ---------------------- | --------------------------- |
+| `kailash_meta`            | `factory.py`           | Schema version tracking     |
+| `kailash_events`          | `event_store.py`       | Append-only event log       |
+| `kailash_checkpoints`     | `checkpoint_store.py`  | Workflow checkpoint data    |
+| `kailash_dlq`             | `dlq.py`               | Dead letter queue entries   |
+| `kailash_executions`      | `execution_store.py`   | Workflow execution metadata |
+| `kailash_idempotency`     | `idempotency_store.py` | Idempotency keys with TTL   |
+| `kailash_task_queue`      | `task_queue.py`        | SQL-backed task queue       |
+| `kailash_worker_registry` | `worker_registry.py`   | Worker heartbeat tracking   |
 
 ## Level Migration Guide
 

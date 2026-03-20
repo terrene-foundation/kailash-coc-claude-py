@@ -34,7 +34,6 @@ runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 ```
 
-
 ## Common Use Cases
 
 - **File Discovery & Processing**: Recursively scan directories with glob patterns, filter by extension/size/date, process matching files

@@ -569,7 +569,6 @@ async def chat_stream(
         "type": "done"
     }) + "\n"
 
-
 async def _generate_text_response(
     message: str,
     user_context: Dict[str, Any]
@@ -584,7 +583,6 @@ async def _generate_text_response(
     for word in text.split():
         yield word + " "
         await asyncio.sleep(0.05)  # Simulate streaming
-
 
 async def _fetch_data(
     query: str,
@@ -634,7 +632,6 @@ async def _fetch_data(
         'data_key': 'sales_quarterly_2024',
         'metric_name': 'Revenue'
     }
-
 
 async def _generate_citations(
     message: str,
@@ -730,7 +727,6 @@ async def handle_widget_action(
     else:
         raise NotImplementedError(f"Action type {action_type} not supported")
 
-
 async def _handle_api_call(
     action: Dict[str, Any],
     params: Dict[str, Any],
@@ -756,7 +752,6 @@ async def _handle_api_call(
 
     else:
         raise NotImplementedError(f"Endpoint {endpoint} not supported")
-
 
 async def _handle_download(
     action: Dict[str, Any],
@@ -791,7 +786,6 @@ async def _handle_download(
         "content_type": content_type
     }
 
-
 async def _handle_navigation(action, params, user_context):
     """Handle navigation actions"""
     route = action['params']['route']
@@ -799,7 +793,6 @@ async def _handle_navigation(action, params, user_context):
         "type": "navigate",
         "route": route
     }
-
 
 async def _handle_form_submit(action, params, user_context):
     """Handle form submissions"""
@@ -812,7 +805,6 @@ async def _handle_form_submit(action, params, user_context):
         "type": "success",
         "message": "Form submitted successfully"
     }
-
 
 # Helper functions
 async def get_widget_by_id(widget_id: str) -> Dict[str, Any]:

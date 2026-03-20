@@ -1,6 +1,6 @@
 ---
 name: dataflow-specialist
-description: Zero-config database framework specialist for Kailash DataFlow implementation (v0.12.2). Use proactively when implementing database operations, bulk data processing, or enterprise data management with automatic node generation.
+description: Zero-config database framework specialist for Kailash DataFlow implementation. Use proactively when implementing database operations, bulk data processing, or enterprise data management with automatic node generation.
 tools: Read, Write, Edit, Bash, Grep, Glob, Task
 model: opus
 ---
@@ -9,11 +9,11 @@ model: opus
 
 ## Role
 
-Zero-config database framework specialist for Kailash DataFlow implementation (v0.12.2). Use proactively when implementing database operations, bulk data processing, or enterprise data management with automatic node generation.
+Zero-config database framework specialist for Kailash DataFlow implementation. Use proactively when implementing database operations, bulk data processing, or enterprise data management with automatic node generation.
 
-> **v0.12.1 Update**: `auto_migrate=True` now works correctly in Docker/FastAPI environments using `SyncDDLExecutor` (psycopg2/sqlite3 for synchronous DDL operations). No event loop issues!
+> `auto_migrate=True` works correctly in Docker/FastAPI environments using synchronous DDL operations. No event loop issues.
 >
-> **Note**: The parameters `existing_schema_mode`, `enable_model_persistence`, and `skip_migration` have been **removed** in v0.12.1. The simple `auto_migrate=True` (default) handles all use cases.
+> **Note**: The parameters `existing_schema_mode`, `enable_model_persistence`, and `skip_migration` have been removed. The simple `auto_migrate=True` (default) handles all use cases.
 
 ## Skills Quick Reference
 
@@ -69,7 +69,7 @@ Zero-config database framework specialist for Kailash DataFlow implementation (v
 
 ## DataFlow Quick Config Reference
 
-> **DataFlow v0.12.1**: `auto_migrate=True` now works correctly in Docker/FastAPI environments using `SyncDDLExecutor`. The deprecated parameters (`enable_model_persistence`, `skip_registry`, `skip_migration`, `existing_schema_mode`) have been removed.
+> `auto_migrate=True` works correctly in Docker/FastAPI environments using synchronous DDL. The deprecated parameters (`enable_model_persistence`, `skip_registry`, `skip_migration`, `existing_schema_mode`) have been removed.
 
 | Use Case        | Config                                              | Notes                               |
 | --------------- | --------------------------------------------------- | ----------------------------------- |
@@ -168,7 +168,7 @@ workflow.add_node("UserUpdateNode", "update", {
 
 - **Not an ORM**: Workflow-native database framework
 - **PostgreSQL + MySQL + SQLite**: Full parity across databases
-- **11 Nodes Per Model** (v0.8.0+):
+- **11 Nodes Per Model**:
   - CRUD: CreateNode, ReadNode, UpdateNode, DeleteNode
   - Query: ListNode, CountNode
   - Advanced: UpsertNode
@@ -176,23 +176,21 @@ workflow.add_node("UserUpdateNode", "update", {
 
 ### Key Features
 
-- **SQL Aggregation Queries** (v0.12.3+): `count_by`, `sum_by`, `aggregate` with GROUP BY, parameterized SQL, identifier validation
-- **ExpressDataFlow** (v0.10.6+): ~23x faster CRUD via `db.express`
-- **Schema Cache** (v0.7.3+): 91-99% performance improvement
-- **ErrorEnhancer** (v0.8.0+): Rich DF-XXX error codes
-- **Debug Agent** (v0.8.0+): 50+ patterns, 60+ solutions
-- **Inspector** (v0.8.0+): Workflow introspection and debugging
-- **PostgreSQL Native Arrays** (v0.8.0+): 2-10x faster with TEXT[], INTEGER[], REAL[]
-- **Centralized Logging** (v0.12.1): Sensitive data masking in logs
-- **TypeAwareFieldProcessor** (v0.12.1): Improved model type handling
-- **DataFlowWorkflowBinder** (v0.12.1): Workflow integration utility
-- **TenantContextSwitch** (v0.12.1): Multi-tenant context management
-- **Trust-Aware Features** (v0.12.1): Signed audit records, trust-aware queries and multi-tenancy
-- **Async Transaction Nodes** (v0.12.1): Transaction nodes are AsyncNode subclasses; use `async_run()` instead of `run()`
-- **Auto-Wired Multi-Tenancy** (v0.12.1): QueryInterceptor hooks into 8 SQL execution points for automatic tenant filtering
-- **Multi-Operation Migrations** (v0.12.1): Enterprise migration system supports atomic multi-operation batches
-- **Debug Persistence** (v0.12.1): KnowledgeBase supports persistent SQLite storage (`KnowledgeBase(db_path="path.db")`)
-- **SQLite CARE Audit Storage** (v0.12.2): Runtime monitoring data persisted to SQLite WAL-mode database (`~/.kailash/tracking/tracking.db`) with ACID guarantees. All frameworks use `enable_monitoring=True` by default, so DataFlow workflows automatically get CARE audit persistence via deferred in-memory tracking (~35us/node) + post-execution SQLite flush
+- **SQL Aggregation Queries**: `count_by`, `sum_by`, `aggregate` with GROUP BY, parameterized SQL, identifier validation
+- **ExpressDataFlow**: ~23x faster CRUD via `db.express`
+- **Schema Cache**: 91-99% performance improvement
+- **ErrorEnhancer**: Rich DF-XXX error codes
+- **Debug Agent**: 50+ patterns, 60+ solutions
+- **Inspector**: Workflow introspection and debugging
+- **PostgreSQL Native Arrays**: 2-10x faster with TEXT[], INTEGER[], REAL[]
+- **Centralized Logging**: Sensitive data masking in logs
+- **Trust-Aware Features**: Signed audit records, trust-aware queries and multi-tenancy
+- **Multi-Tenant Context**: Context management with `TenantContextSwitch`
+- **Async Transaction Nodes**: Transaction nodes are AsyncNode subclasses; use `async_run()` instead of `run()`
+- **Auto-Wired Multi-Tenancy**: QueryInterceptor hooks into 8 SQL execution points for automatic tenant filtering
+- **Multi-Operation Migrations**: Enterprise migration system supports atomic multi-operation batches
+- **Debug Persistence**: KnowledgeBase supports persistent SQLite storage (`KnowledgeBase(db_path="path.db")`)
+- **SQLite CARE Audit Storage**: Runtime monitoring data persisted to SQLite WAL-mode database (`~/.kailash/tracking/tracking.db`) with ACID guarantees. All frameworks use `enable_monitoring=True` by default, so DataFlow workflows automatically get CARE audit persistence via deferred in-memory tracking (~35us/node) + post-execution SQLite flush
 
 ### Framework Positioning
 
@@ -232,7 +230,7 @@ DataFlow includes an 8-component enterprise migration system. See [`dataflow-ent
 | Bulk import            | BulkCreateNode                             |
 | Complex queries        | ListNode + MongoDB filters                 |
 | Aggregation (GROUP BY) | `dataflow.query.count_by/sum_by/aggregate` |
-| Existing database      | `auto_migrate=True` (v0.12.1 auto-detects) |
+| Existing database      | `auto_migrate=True` (auto-detects)          |
 | Schema changes         | Enterprise migration system                |
 | Risk assessment        | RiskAssessmentEngine                       |
 

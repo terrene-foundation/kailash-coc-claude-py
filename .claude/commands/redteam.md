@@ -5,16 +5,16 @@ description: "Load phase 04 (validate) for the current workspace. Red team testi
 
 ## Workspace Resolution
 
-1. If `$ARGUMENTS` specifies a project name, use 
-2. Otherwise, use the most recently modified directory under  (excluding `instructions/`)
+1. If `$ARGUMENTS` specifies a project name, use `workspaces/$ARGUMENTS/`
+2. Otherwise, use the most recently modified directory under `workspaces/` (excluding `instructions/`)
 3. If no workspace exists, ask the user to create one first
-4. Read all files in  for user context (this is the user's input surface)
+4. Read all files in `workspaces/<project>/briefs/` for user context (this is the user's input surface)
 
 ## Phase Check
 
 - Verify `todos/active/` is empty (all implemented) or note remaining items
-- Read  for validation criteria
-- Validation results go into 
+- Read `workspaces/<project>/03-user-flows/` for validation criteria
+- Validation results go into `workspaces/<project>/04-validate/`
 - If gaps are found, document them and feed back to implementation (use `/implement` to fix)
 
 ## Workflow
@@ -30,7 +30,7 @@ Review implementation with red team agents using playwright mcp (web) and marion
 
 ### 2. User flow validation
 
-Ensure red team agents peruse  and fully understand the detailed storyboard for each user.
+Ensure red team agents peruse `workspaces/<project>/03-user-flows/` and fully understand the detailed storyboard for each user.
 
 - Include tests written from user workflow perspectives
   - Workflows must be extremely detailed
@@ -43,7 +43,7 @@ Ensure red team agents peruse  and fully understand the detailed storyboard for 
 
 The `/implement` phase already ran the full test suite and wrote `.test-results`. Red team agents MUST:
 
-1. **READ**  to verify all tests passed with 0 regressions
+1. **READ** `workspaces/<project>/.test-results` to verify all tests passed with 0 regressions
 2. **READ** test source files to verify coverage and quality — do NOT re-execute them
 3. **RUN** only NEW tests that red team writes (E2E user flow tests, Playwright/Marionette tests)
 4. If `.test-results` is missing or stale (commit hash doesn't match HEAD), flag it — don't silently re-run
@@ -83,7 +83,7 @@ Deploy these agents as a red team for validation:
 
 **Core red team (always):**
 
-- **testing-specialist** — Verify 3-tier test coverage, real infrastructure recommended compliance
+- **testing-specialist** — Verify 3-tier test coverage, NO MOCKING compliance
 - **e2e-runner** — Generate and run Playwright E2E tests (web) or Marionette tests (Flutter)
 - **value-auditor** — Evaluate every page/flow from skeptical enterprise buyer perspective
 - **security-reviewer** — Full security audit across the codebase

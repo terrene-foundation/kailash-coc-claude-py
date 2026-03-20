@@ -727,7 +727,6 @@ workflow.add_node("CustomerListNode", "all_customers", {
 - ReadNode can use ID or conditions
 - UpdateNode returns updated record if `return_updated=True`
 
-
 ## Keywords for Auto-Trigger
 
 <!-- Trigger Keywords: DataFlow CRUD, generated nodes, UserCreateNode, UserReadNode, UserUpdateNode, UserDeleteNode, UserListNode, create read update delete, basic operations, single record, DataFlow operations, database operations, CRUD patterns, node operations -->

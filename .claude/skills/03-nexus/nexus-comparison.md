@@ -86,5 +86,4 @@ app.run()  # API + CLI + MCP!
 
 ## Documentation
 
-
 <!-- Trigger Keywords: nexus vs fastapi, why nexus, nexus benefits, nexus vs flask, nexus alternatives -->

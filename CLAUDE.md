@@ -1,6 +1,6 @@
 # Kailash COC Claude (Python)
 
-This repository is the **COC (Cognitive Orchestration for Codegen) setup** for building with the Kailash SDK — providing agents, skills, rules, and hooks that make Claude Code a specialized development partner for your project.
+This repository is the **COC (Cognitive Orchestration for Codegen) setup** for building with the Kailash SDK — providing agents, skills, rules, and hooks for Kailash SDK development. All projects using this setup inherit these capabilities through the `.claude/` directory.
 
 ## Absolute Directives
 
@@ -29,29 +29,32 @@ See `rules/env-models.md` for full details.
 
 When you discover a missing feature, endpoint, or record — **implement or create it**. Do not note it as a gap and move on. The only acceptable skip is explicit user instruction.
 
-See `rules/no-stubs.md` for details.
+See `rules/e2e-god-mode.md` and `rules/no-stubs.md` for enforcement details.
 
-### 4. Recommended Reviews
+### 4. Zero Tolerance
 
-- **Code review** (intermediate-reviewer) after file changes — see `rules/agents.md` Rule 1
-- **Security review** (security-reviewer) before commits — strongly encouraged — see `rules/agents.md` Rule 2
-- **Real infrastructure** in integration/E2E tests is recommended — see `rules/testing.md`
+Pre-existing failures MUST be fixed, not reported. Stubs are BLOCKED. Naive fallbacks are BLOCKED. SDK bugs get GitHub issues, not workarounds. See `rules/zero-tolerance.md`.
+
+### 5. Recommended Reviews
+
+- **Code review** (intermediate-reviewer) after file changes — RECOMMENDED — see `rules/agents.md` Rule 1
+- **Security review** (security-reviewer) before commits — strongly recommended — see `rules/agents.md` Rule 2
+- **Real infrastructure recommended** in Tier 2/3 tests — see `rules/testing.md`
 
 ## Workspace Commands
 
 Phase commands replace the manual copy-paste workflow. Each loads the corresponding instruction template and checks workspace state.
 
-| Command      | Phase | Purpose                                            |
-| ------------ | ----- | -------------------------------------------------- |
-| `/start`     | —     | New user orientation; explains the workflow         |
-| `/analyze`   | 01    | Research and validate the project idea              |
-| `/todos`     | 02    | Create project roadmap; stops for your approval     |
-| `/implement` | 03    | Build the project one task at a time; repeat        |
-| `/redteam`   | 04    | Test everything from a real user's perspective      |
-| `/codify`    | 05    | Capture knowledge for future sessions              |
-| `/deploy`    | —     | Get the project live (standalone)                  |
-| `/ws`        | —     | Check project status anytime                       |
-| `/wrapup`    | —     | Save progress before ending a session              |
+| Command      | Phase | Purpose                                                    |
+| ------------ | ----- | ---------------------------------------------------------- |
+| `/analyze`   | 01    | Load analysis phase for current workspace                  |
+| `/todos`     | 02    | Load todos phase; stops for human approval                 |
+| `/implement` | 03    | Load implementation phase; repeat until todos done         |
+| `/redteam`   | 04    | Load validation phase; red team with MCP tools             |
+| `/codify`    | 05    | Load codification phase; create agents & skills            |
+| `/release`   | —     | SDK release: PyPI publishing, docs deploy, CI (standalone) |
+| `/ws`        | —     | Read-only workspace status dashboard                       |
+| `/wrapup`    | —     | Write session notes before ending                          |
 
 **Workspace detection**: Hooks automatically detect the active workspace and inject context. `session-start.js` shows workspace status on session start (human-facing). `user-prompt-rules-reminder.js` injects a 1-line `[WORKSPACE]` summary into Claude's context every turn (survives context compression).
 
@@ -59,25 +62,20 @@ Phase commands replace the manual copy-paste workflow. Each loads the correspond
 
 ## Rules Index
 
-| Concern                               | Rule File                    | Scope                                               |
-| ------------------------------------- | ---------------------------- | --------------------------------------------------- |
-| **Foundation independence**           | `rules/independence.md`      | **Global — overrides all**                          |
-| **Terrene naming conventions**        | `rules/terrene-naming.md`    | Global                                              |
-| Plain-language communication          | `rules/communication.md`     | Global                                              |
-| Agent orchestration & reviews         | `rules/agents.md`            | Global                                              |
-| EATP SDK conventions                  | `rules/eatp.md`              | `packages/eatp/**`                                  |
-| Trust-plane security                  | `rules/trust-plane-security.md` | `packages/trust-plane/**`, `packages/eatp/src/eatp/store/**` |
-| E2E god-mode testing                  | `rules/e2e-god-mode.md`      | `tests/e2e/**`, `**/*e2e*`, `**/*playwright*`       |
-| API keys & model names                | `rules/env-models.md`        | `**/*.py`, `**/*.ts`, `**/*.js`, `.env*`            |
-| Deployment operations                 | `rules/deployment.md`        | Global                                              |
-| Git commits, branches, PRs            | `rules/git.md`               | Global                                              |
-| No stubs or placeholders              | `rules/no-stubs.md`          | Global                                              |
-| Kailash SDK execution patterns        | `rules/patterns.md`          | `**/*.py`, `**/*.ts`, `**/*.js`                     |
-| Security (secrets, injection)         | `rules/security.md`          | Global                                              |
-| 3-tier testing strategy               | `rules/testing.md`           | `tests/**`, `**/*test*`, `**/*spec*`, `conftest.py` |
-| Infrastructure SQL safety             | `rules/infrastructure-sql.md`| Infrastructure database code                        |
-| README & Sphinx docs maintenance      | `rules/documentation.md`     | `README.md`, `docs/**`, `CHANGELOG.md`              |
-| Auto-generated workflow instincts     | `rules/learned-instincts.md` | Global                                              |
+| Concern                               | Rule File                     | Scope                                                                 |
+| ------------------------------------- | ----------------------------- | --------------------------------------------------------------------- |
+| **Foundation independence**           | `rules/independence.md`       | **Global — overrides all**                                            |
+| Agent orchestration & review recommendations | `rules/agents.md`             | Global                                                                |
+| SDK release & PyPI publishing         | `rules/deployment.md`         | `deploy/**`, `.github/workflows/**`, `pyproject.toml`, `CHANGELOG.md` |
+| E2E god-mode testing                  | `rules/e2e-god-mode.md`       | `tests/e2e/**`, `**/*e2e*`, `**/*playwright*`                         |
+| API keys & model names                | `rules/env-models.md`         | `**/*.py`, `**/*.ts`, `**/*.js`, `.env*`                              |
+| Git commits, branches, PRs            | `rules/git.md`                | Global                                                                |
+| Branch protection & PR workflow       | `rules/branch-protection.md`  | Global                                                                |
+| Avoid stubs, TODOs, or placeholders in production      | `rules/no-stubs.md`           | Global                                                                |
+| Kailash SDK execution patterns        | `rules/patterns.md`           | `**/*.py`, `**/*.ts`, `**/*.js`                                       |
+| Security (secrets, injection)         | `rules/security.md`           | Global                                                                |
+| 3-tier testing, real infrastructure recommended  | `rules/testing.md`            | `tests/**`, `**/*test*`, `**/*spec*`, `conftest.py`                   |
+| Auto-generated workflow instincts     | `rules/learned-instincts.md`  | Global                                                                |
 
 **Note**: Rules with path scoping are loaded only when editing matching files. Global rules load every session.
 
@@ -102,10 +100,10 @@ Phase commands replace the manual copy-paste workflow. Each loads the correspond
 
 - **pattern-expert** — Workflow patterns, nodes, parameters
 - **tdd-implementer** — Test-first development
-- **intermediate-reviewer** — Code review after changes
+- **intermediate-reviewer** — Code review after changes (MANDATORY)
 - **gold-standards-validator** — Compliance checking
 - **build-fix** — Fix build/type errors with minimal changes
-- **security-reviewer** — Security audit before commits
+- **security-reviewer** — Security audit before commits (MANDATORY)
 
 ### Frontend & Design (`agents/frontend/`)
 
@@ -125,7 +123,7 @@ Phase commands replace the manual copy-paste workflow. Each loads the correspond
 ### Release & Operations (`agents/management/`)
 
 - **git-release-specialist** — Git workflows, CI, releases
-- **deployment-specialist** — Deployment onboarding, package/cloud releases, Docker/K8s
+- **deployment-specialist** — SDK release, PyPI publishing, CI/CD management
 - **todo-manager** — Project task tracking
 - **gh-manager** — GitHub issue/project management
 

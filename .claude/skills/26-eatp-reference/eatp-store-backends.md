@@ -6,12 +6,12 @@ When adding a new `TrustPlaneStore` backend (e.g., PostgreSQL, DynamoDB, or any 
 
 ## Prerequisites
 
-- `TrustPlaneStore` protocol: `packages/trust-plane/src/trustplane/store/__init__.py`
-- Conformance test suite: `packages/trust-plane/tests/store/test_store_conformance.py`
+- `TrustPlaneStore` protocol: `trustplane/store/__init__.py`
+- Conformance test suite: `tests/trust-plane/store/test_store_conformance.py`
 - Existing reference implementations:
-  - SQLite: `packages/trust-plane/src/trustplane/store/sqlite.py` (698 LOC, default backend)
-  - Filesystem: `packages/trust-plane/src/trustplane/store/filesystem.py` (305 LOC)
-  - PostgreSQL: `packages/trust-plane/src/trustplane/store/postgres.py` (production backend)
+  - SQLite: `trustplane/store/sqlite.py` (698 LOC, default backend)
+  - Filesystem: `trustplane/store/filesystem.py` (305 LOC)
+  - PostgreSQL: `trustplane/store/postgres.py` (production backend)
 - Python 3.11+
 
 ## Store Security Contract (Mandatory Checklist)
@@ -49,7 +49,7 @@ Every backend MUST satisfy ALL six requirements. A missing requirement is a secu
 ### Step 1: Create the backend module
 
 ```
-packages/trust-plane/src/trustplane/store/<backend_name>.py
+trustplane/store/<backend_name>.py
 ```
 
 Required header:
@@ -167,7 +167,7 @@ def store(request, tmp_path):
         store.close()
 ```
 
-Run: `pytest packages/trust-plane/tests/store/test_store_conformance.py -v`
+Run: `pytest tests/trust-plane/store/test_store_conformance.py -v`
 
 All tests MUST pass. The conformance suite tests all six contract requirements.
 
@@ -322,7 +322,7 @@ def _safe_connection(self):
 
 ## See Also
 
-- `packages/trust-plane/CLAUDE.md` — Store Architecture section, Store Security Contract
-- `workspaces/trust-plane/04-validate/09-R13-store-red-team.md` — R13 findings that informed this skill
-- `workspaces/trust-plane/04-validate/R14-validation-report.md` — R14 findings (PostgreSQL PoolTimeout, exception wrapping)
+- Trust-Plane documentation — Store Architecture section, Store Security Contract
+- Red team findings (R13) that informed this skill
+- Validation findings (R14) covering PostgreSQL PoolTimeout and exception wrapping
 - TODO-24: PostgreSQL backend — first real application of this codified pattern

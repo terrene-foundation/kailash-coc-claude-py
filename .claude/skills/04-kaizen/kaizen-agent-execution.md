@@ -447,6 +447,6 @@ def process_with_validation(self, data: str) -> dict:
 
 ## References
 
-- **Source**: the package source
-- **Strategy**: the package source
+- **Source**: `kaizen/core/base_agent.py`
+- **Strategy**: `kaizen/strategies/async_single_shot.py`
 - **Specialist**: `.claude/agents/frameworks/kaizen-specialist.md` lines 49-93

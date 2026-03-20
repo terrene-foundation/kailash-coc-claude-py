@@ -1,6 +1,6 @@
 # Skill: TrustPlane Enterprise Features
 
-Quick reference for TrustPlane enterprise capabilities. For full documentation, see `packages/trust-plane/CLAUDE.md`.
+Quick reference for TrustPlane enterprise capabilities. For full documentation, see Trust-Plane documentation.
 
 ## Budget Enforcement (`trustplane.project` + `trustplane.models`)
 
@@ -124,12 +124,12 @@ attest shadow-manage stats
 
 ## Cloud Key Managers (`trustplane.key_managers`)
 
-| Provider | Module | Algorithm | Notes |
-|----------|--------|-----------|-------|
-| Local | `key_manager` | Ed25519 | Development default |
-| AWS KMS | `key_managers.aws_kms` | ECDSA P-256 | Ed25519 unavailable |
+| Provider | Module                        | Algorithm   | Notes               |
+| -------- | ----------------------------- | ----------- | ------------------- |
+| Local    | `key_manager`                 | Ed25519     | Development default |
+| AWS KMS  | `key_managers.aws_kms`        | ECDSA P-256 | Ed25519 unavailable |
 | Azure KV | `key_managers.azure_keyvault` | ECDSA P-256 | Ed25519 unavailable |
-| Vault | `key_managers.vault` | ECDSA P-256 | Via Transit engine |
+| Vault    | `key_managers.vault`          | ECDSA P-256 | Via Transit engine  |
 
 All cloud providers wrap native exceptions into `KeyManagerError` subclasses.
 
@@ -145,5 +145,5 @@ All trace to `TrustPlaneError` with `.details: dict[str, Any]`. Key branches:
 
 ## See Also
 
-- `packages/trust-plane/CLAUDE.md` — Full reference with code examples
+- Trust-Plane documentation — Full reference with code examples
 - `.claude/skills/project/trust-plane-security-patterns.md` — 13 security patterns

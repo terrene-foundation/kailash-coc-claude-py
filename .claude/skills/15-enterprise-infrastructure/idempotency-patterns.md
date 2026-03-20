@@ -2,6 +2,8 @@
 
 You are an expert in Kailash idempotency patterns for exactly-once workflow execution. Guide users through the IdempotentExecutor, the claim-execute-store pattern, atomic claims, release-on-failure, and TTL expiry.
 
+> For full implementation details, see `docs/enterprise-infrastructure/04-idempotency.md` and the source at `kailash.infrastructure.idempotency` and `kailash.infrastructure.idempotency_store`.
+
 ## IdempotentExecutor Overview
 
 The `IdempotentExecutor` wraps any runtime's `execute` method to provide exactly-once semantics. Before executing a workflow, it checks if the idempotency key has already been used. If so, it returns the cached result. If not, it claims the key, executes, and stores the result.
@@ -61,10 +63,10 @@ results3, run_id3 = await executor.execute(
 The IdempotentExecutor follows a strict three-phase protocol:
 
 ```
-1. CHECK  -> Get cached result for key. If found, return it.
-2. CLAIM  -> Atomically insert placeholder row (INSERT IGNORE + verify)
-3. EXECUTE -> Run the workflow
-4. STORE  -> Update the placeholder with actual results
+1. CHECK  → Get cached result for key. If found, return it.
+2. CLAIM  → Atomically insert placeholder row (INSERT IGNORE + verify)
+3. EXECUTE → Run the workflow
+4. STORE  → Update the placeholder with actual results
    (on failure: RELEASE the claim so the key can be retried)
 ```
 
@@ -101,7 +103,7 @@ if row is not None and row["fingerprint"] == fingerprint:
 return False      # Another worker already claimed this key
 ```
 
-**Key insight**: The INSERT IGNORE + fingerprint verification in a single transaction eliminates the TOCTOU race. No separate SELECT-before-INSERT check.
+**Key insight**: The INSERT IGNORE + fingerprint verification in a single transaction eliminates the TOCTOU race that was found during red team validation (C3 in the red team report). No separate SELECT-before-INSERT check.
 
 ### Phase 3: Execute and Store
 

@@ -76,7 +76,7 @@ function createManifest() {
     ],
     repository: {
       type: 'git',
-      url: 'https://github.com/your-org/kailash-coc-claude-py'
+      url: 'https://github.com/terrene-foundation/kailash-coc-claude-py'
     },
     components: {
       agents: 25,

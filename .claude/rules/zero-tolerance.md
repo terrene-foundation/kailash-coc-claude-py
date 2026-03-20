@@ -2,28 +2,36 @@
 
 ## Scope
 
-These rules apply to ALL sessions, ALL agents, ALL code changes, ALL phases. They are ABSOLUTE and NON-NEGOTIABLE.
+These rules apply to ALL sessions, ALL agents, ALL code changes, ALL phases. These are strong guidelines for maintaining code quality.
 
 ## ABSOLUTE RULE 1: Pre-Existing Failures MUST Be Resolved
 
-When tests, red team, or code review reveals a pre-existing failure:
+When tests, red team validation, code review, or any analysis reveals a pre-existing failure:
 
 **YOU MUST FIX IT.** Period.
 
-"It was not introduced in this session" is NOT acceptable. If you found it, you own it.
+"It was not introduced in this session" is NOT an acceptable response. If you found it, you own it.
 
-**Required response:**
+**Required response to ANY pre-existing failure:**
+
 1. Diagnose the root cause
 2. Implement the fix
-3. Write a regression test
-4. Verify with `pytest`
-5. Include the fix in current work
+3. Write a regression test that fails without the fix and passes with it
+4. Verify the fix with `pytest`
+5. Include the fix in the current commit or a dedicated fix commit
 
-**The only exception:** User explicitly says "skip this issue."
+**BLOCKED responses:**
+
+- "This is a pre-existing issue, not introduced in this session"
+- "This failure exists in the current codebase and is outside the scope of this change"
+- "Noting this as a known issue for future resolution"
+- ANY response that acknowledges a failure without fixing it
+
+**The only acceptable exception:** The user explicitly says "skip this issue" or "ignore this for now."
 
 ## ABSOLUTE RULE 2: No Stubs, Placeholders, or Deferred Implementation — EVER
 
-Stubs are BLOCKED. No approval process. No exceptions.
+Stubs are BLOCKED. No approval process. No exceptions. The validate-workflow hook exits with code 2 (BLOCK) on detection.
 
 Full detection patterns and enforcement: see `rules/no-stubs.md`.
 
@@ -35,62 +43,31 @@ Full detection patterns and acceptable exceptions: see `rules/no-stubs.md` Secti
 
 ## ABSOLUTE RULE 4: No Workarounds for Core SDK Issues
 
-When you encounter a bug in any Kailash package:
+When you encounter a bug in the SDK:
 
 **DO NOT work around it. DO NOT re-implement it naively.**
 
-**This is a USE repo.** File a GitHub issue and block:
+**This is a BUILD repo.** You have the source. Fix it directly in the affected package. Do NOT file GitHub issues for your own repo — use the internal todo system.
 
-```bash
-gh issue create --repo esperie/kailash-py --title "Bug: [description]" \
-  --body "## Reproduction\n...\n## Expected\n...\n## Actual\n...\n## Version\n..."
-```
+**BLOCKED:** Naive re-implementations, post-processing to "fix" SDK output, downgrading to avoid bugs.
 
-Tell the user: "This is a core SDK issue. I've filed [issue link]. The fix must come from the SDK team."
+## ABSOLUTE RULE 5: Version Consistency on Release
 
-## ABSOLUTE RULE 5: Package Freshness and COC Sync
+When releasing ANY package, ALL version locations MUST be updated atomically:
 
-At session start AND before any deployment:
+1. `pyproject.toml` → `version = "X.Y.Z"`
+2. `src/{package}/__init__.py` → `__version__ = "X.Y.Z"`
 
-1. **Verify installed SDK packages are latest version**
-2. **Verify COC sync is current**
-3. **If outdated, update FIRST**
-
-```bash
-pip install --upgrade kailash kailash-dataflow kailash-nexus kailash-kaizen
-```
-
-**During `/deploy`**: The deployment MUST verify the server/container has the latest SDK packages. If the deployment target has stale packages, update them BEFORE deploying application code. Stale packages on the server is the #1 cause of "my fix isn't working" issues.
-
-**BLOCKED:** Proceeding with development or deployment when the SDK package is outdated.
-
-## ABSOLUTE RULE 6: File Improvement Issues for SDK/COC Gaps
-
-When you encounter unclear, missing, or incorrect information that caused a mistake or wasted time:
-
-**File an improvement issue immediately** to the appropriate repo:
-
-- **SDK issues** (API behavior, error messages, missing features) → `gh issue create --repo terrene-foundation/kailash-py`
-- **COC issues** (agents, skills, rules, scripts, commands) → `gh issue create --repo terrene-foundation/kailash-coc-claude-py`
-
-COC artifacts to examine: **agents** (intent/delegation), **skills** (context/knowledge), **rules** (guardrails), **scripts/hooks** (automation), **commands** (instructions/workflows).
-
-```bash
-gh issue create --repo terrene-foundation/kailash-coc-claude-py \
-  --title "COC: [agent/skill/rule/command] — [what's unclear/missing]" \
-  --label "coc-improvement" \
-  --body "## What happened\n...\n## Which COC artifact\n...\n## Suggested fix\n..."
-```
-
-**Every mistake caused by unclear documentation or COC guidance is a system bug, not a user error.**
+The session-start hook checks this automatically. **A release with mismatched versions is BLOCKED.**
 
 ## Enforcement
 
 1. **validate-workflow.js hook** — BLOCKS stubs and error hiding in production code
 2. **user-prompt-rules-reminder.js hook** — Injects zero-tolerance reminders every message
 3. **session-start.js hook** — Checks package freshness and COC sync status
-4. **validate-deployment.js hook** — Checks credentials in deployment files
+4. **intermediate-reviewer agent** — Validates compliance during code review
+5. **security-reviewer agent** — Validates compliance during security review
 
 ## Language Policy
 
-Every "MUST" means "MUST." Every "BLOCKED" means the operation stops. Every "NO" means "NO."
+Every "MUST" means "MUST." Every "BLOCKED" means the operation WILL NOT proceed. Every "NO" means "NO."

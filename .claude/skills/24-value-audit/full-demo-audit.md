@@ -87,7 +87,7 @@ Follow the 5-phase audit methodology:
 5. Verdict (executive summary + severity table)
 
 Output the full Value Audit Report to:
-workspaces/axis/04-storyboard-audit/[filename].md
+workspaces/<project>/04-storyboard-audit/[filename].md
 ```
 
 ### Phase 3: Combined Report
@@ -157,7 +157,7 @@ Run a full demo audit on app.example.com.
 Phase 1: Technical sweep with e2e-runner (all 26 pages, console errors, navigation).
 Phase 2: Value audit with value-auditor (Five Questions, value flows, narrative coherence).
 Login: ceo@tpc-test.com / [password]
-Output reports to workspaces/axis/04-storyboard-audit/
+Output reports to workspaces/<project>/04-storyboard-audit/
 ```
 
 ### Value-only audit (skip technical):

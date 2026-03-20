@@ -114,5 +114,4 @@ workflow.add_node("WhileNode", "while_loop", {
 
 ## Documentation
 
-
 <!-- Trigger Keywords: Switch node, Merge node, conditional, routing, logic nodes, SwitchNode, MergeNode, ConditionalRouterNode -->

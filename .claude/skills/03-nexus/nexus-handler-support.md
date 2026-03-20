@@ -220,8 +220,8 @@ WARNING: Workflow 'my_workflow': PythonCodeNode node 'code_node' imports
 
 For comprehensive migration from legacy PythonCodeNode workflows to handlers:
 
-- the package source - 5 migration patterns, 6-phase checklist, "When NOT to Migrate" guidance
-- the package source - 8 real-world patterns from 3 production projects (382K LOC)
+- `docs/nexus/migration/handler-migration-guide.md` - 5 migration patterns, 6-phase checklist, "When NOT to Migrate" guidance
+- `docs/nexus/migration/real-project-patterns.md` - 8 real-world patterns from 3 production projects (382K LOC)
 
 ### Key Migration Insight
 
@@ -237,6 +237,6 @@ async def create_order(items: list) -> dict: ...
 
 ## Full Documentation
 
-- the package source - Complete handler guide
-- the package source - Migration guide (5 patterns)
-- the package source - Real project patterns (8 patterns)
+- `docs/nexus/handler-support.md` - Complete handler guide
+- `docs/nexus/migration/handler-migration-guide.md` - Migration guide (5 patterns)
+- `docs/nexus/migration/real-project-patterns.md` - Real project patterns (8 patterns)

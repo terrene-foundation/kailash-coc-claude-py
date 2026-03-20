@@ -193,7 +193,6 @@ async def create_user(data: dict):
 
 #### How the Fix Works
 
-- `SyncDDLExecutor` uses psycopg2 (PostgreSQL) or sqlite3 (SQLite) - no asyncio
 - Tables are created synchronously at model registration time
 - CRUD operations continue using async drivers (asyncpg, aiosqlite)
 - No event loop conflicts because DDL and CRUD use separate connection types
@@ -665,7 +664,6 @@ class DevModel:
 - **DataFlow Specialist**: [`.claude/skills/dataflow-specialist.md`](../../dataflow-specialist.md#L28-L72)
 
 ### Related Documentation
-
 
 ## Related Patterns
 

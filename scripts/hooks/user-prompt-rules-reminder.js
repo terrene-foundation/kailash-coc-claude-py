@@ -76,15 +76,15 @@ function buildReminder(data) {
     );
   }
 
-  // Line 3: Zero-tolerance rules (always present, survives compression)
+  // Line 3: Zero-tolerance behavioral rules (always present, survives compression)
   lines.push(
     "[ZERO-TOLERANCE] " +
       "Pre-existing failures MUST be FIXED, not reported. " +
       "Stubs/TODOs/placeholders are BLOCKED — implement fully or remove. " +
       "No naive fallbacks hiding errors. " +
-      "No workarounds for SDK bugs — deep dive, reproduce, file GitHub issue (gh issue create --repo terrene-foundation/kailash-py). " +
-      "File COC improvement issues for unclear docs (gh issue create --repo terrene-foundation/kailash-coc-claude-py --label coc-improvement). " +
+      "No workarounds for SDK bugs — deep dive, reproduce, file GitHub issue. " +
       "Never hardcode models/keys. " +
+      "Create missing records (god-mode). " +
       "Implement gaps, don't document them.",
   );
 

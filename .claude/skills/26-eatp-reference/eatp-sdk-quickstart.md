@@ -2,8 +2,8 @@
 
 The standalone EATP SDK (`pip install eatp`) provides cryptographic trust chains, delegation, and verification for AI agent systems. Apache 2.0, published by the Terrene Foundation.
 
-**Source**: `packages/eatp/src/eatp/`
-**Examples**: `packages/eatp/examples/quickstart.py`
+**Source**: `eatp/`
+**Examples**: `examples/eatp/quickstart.py`
 
 ## Installation
 
@@ -26,7 +26,6 @@ from eatp.chain import ActionResult, AuthorityType, CapabilityType
 from eatp.crypto import generate_keypair
 from eatp.store.memory import InMemoryTrustStore
 
-
 class SimpleAuthorityRegistry:
     """Minimal registry satisfying AuthorityRegistryProtocol."""
 
@@ -47,7 +46,6 @@ class SimpleAuthorityRegistry:
 
     async def update_authority(self, authority: OrganizationalAuthority):
         self._authorities[authority.id] = authority
-
 
 async def main():
     # 1. Setup infrastructure
@@ -118,7 +116,6 @@ async def main():
         context_data={"rows_processed": 1200},
     )
     print(f"Audited: {anchor.id}")
-
 
 asyncio.run(main())
 ```
@@ -290,5 +287,5 @@ For deep coverage, see `.claude/skills/26-eatp-reference/eatp-sdk-reasoning-trac
 - **API Reference**: `.claude/skills/26-eatp-reference/eatp-sdk-api-reference.md`
 - **Patterns & Gotchas**: `.claude/skills/26-eatp-reference/eatp-sdk-patterns.md`
 - **Reasoning Traces**: `.claude/skills/26-eatp-reference/eatp-sdk-reasoning-traces.md`
-- **Full Working Example**: `packages/eatp/examples/quickstart.py`
-- **Foundation Demo**: `packages/eatp/examples/foundation_deployment.py`
+- **Full Working Example**: `examples/eatp/quickstart.py`
+- **Foundation Demo**: `examples/eatp/foundation_deployment.py`

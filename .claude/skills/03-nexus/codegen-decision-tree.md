@@ -502,7 +502,6 @@ async def create_contact(
     results, _ = await runtime.execute_workflow_async(workflow.build(), inputs={})
     return results["create"]
 
-
 @app.handler("list_contacts", description="List contacts with filters")
 async def list_contacts(
     company: str = None,
@@ -528,7 +527,6 @@ async def list_contacts(
         "contacts": results["list"]["items"],
         "total": results["list"]["total"]
     }
-
 
 @app.handler("delete_contact", description="Delete a contact")
 async def delete_contact(

@@ -232,7 +232,7 @@ manager.shutdown(timeout=30)
 
 ## Testing
 
-### Integration Testing (real infrastructure recommended - Tier 2)
+### Integration Testing (NO MOCKING - Tier 2)
 
 ```python
 import pytest
