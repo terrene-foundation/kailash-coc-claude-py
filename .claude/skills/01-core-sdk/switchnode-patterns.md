@@ -85,6 +85,7 @@ runtime = LocalRuntime(conditional_execution="route_data")
 
 **Why avoid**: Accessing `None.field_name` fails navigation. Node receives empty input and raises NameError.
 
+
 ## Common Use Cases
 
 - **Switchnode-Patterns Workflows**: Pre-built patterns for common use cases with best practices built-in

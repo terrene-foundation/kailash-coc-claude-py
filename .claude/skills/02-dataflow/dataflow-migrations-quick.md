@@ -13,7 +13,7 @@ Automatic schema migrations with safety controls for development and production.
 > Related Skills: [`dataflow-models`](#), [`dataflow-existing-database`](#)
 > Related Subagents: `dataflow-specialist` (complex migrations, production safety)
 
-> **DataFlow v0.11.0 Update**: `auto_migrate=True` now works correctly in Docker/FastAPI environments using `SyncDDLExecutor` (psycopg2/sqlite3 for synchronous DDL). The previous workaround of using `auto_migrate=False` + `create_tables_async()` is **OBSOLETE**.
+> **DataFlow v0.11.0 Update**: `auto_migrate=True` now works correctly in Docker/FastAPI environments using the synchronous DDL executor (psycopg2/sqlite3 for synchronous DDL). The previous workaround of using `auto_migrate=False` + `create_tables_async()` is **OBSOLETE**.
 >
 > The deprecated parameters (`existing_schema_mode`, `enable_model_persistence`, `skip_registry`, `skip_migration`) have been removed. Use `auto_migrate=True` (default) for automatic schema management, or `auto_migrate=False` to skip schema modifications.
 
@@ -179,7 +179,7 @@ db_prod = DataFlow(
     database_url="postgresql://prod/db",
     auto_migrate=True  # Default - safe: preserves data, adds new columns only
 )
-# SyncDDLExecutor handles table creation synchronously (no event loop issues)
+# the synchronous DDL executor handles table creation synchronously (no event loop issues)
 ```
 
 ## Related Patterns
@@ -191,12 +191,14 @@ db_prod = DataFlow(
 
 ### Primary Sources
 
+
 ### Related Documentation
+
 
 ## Quick Tips
 
 - `auto_migrate=True` is safe for ALL environments (v0.10.15+)
-- Works correctly in Docker/FastAPI via `SyncDDLExecutor`
+- Works correctly in Docker/FastAPI via the synchronous DDL executor
 - Always provide defaults for NOT NULL columns
 - Enterprise migration system for complex operations (type changes, renames)
 - Test migrations on staging before production

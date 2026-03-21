@@ -113,7 +113,7 @@ workflow.add_node("CSVReaderNode", "reader", {...})  # Current snake_case
 # ❌ INCOMPLETE - no mention of Docker requirement
 
 # ✅ COMPLETE
-# Prerequisites: Run docker compose up -d
+# Prerequisites: Run ./tests/utils/test-env up
 # This example requires PostgreSQL from test infrastructure
 ```
 

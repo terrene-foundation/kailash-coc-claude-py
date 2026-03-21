@@ -41,6 +41,7 @@ from kaizen.journey import (
 )
 from kaizen.signatures import Signature, InputField, OutputField
 
+
 # 1. Define Signatures with Layer 2 enhancements
 class IntakeSignature(Signature):
     """Collect patient information."""
@@ -55,6 +56,7 @@ class IntakeSignature(Signature):
     symptoms: list = OutputField(desc="Extracted symptoms")
     preferences: dict = OutputField(desc="Patient preferences")
 
+
 class BookingSignature(Signature):
     """Handle doctor booking."""
 
@@ -66,6 +68,7 @@ class BookingSignature(Signature):
 
     message: str = InputField(desc="Booking message")
     selected_doctor: dict = OutputField(desc="Selected doctor")
+
 
 # 2. Define Journey with nested Pathways
 class PatientJourney(Journey):
@@ -100,6 +103,7 @@ class PatientJourney(Journey):
         __signature__ = FAQSignature
         __agents__ = ["faq_agent"]
         __return_behavior__ = ReturnToPrevious()  # Returns to previous pathway
+
 
 # 3. Run the Journey
 async def main():
@@ -275,7 +279,7 @@ async def track_transition(context):
 Complete reference implementation:
 
 ```
-examples/kaizen/journey/healthcare_referral/
+packages/kailash-kaizen/examples/journey/healthcare_referral/
 ├── journey.py          # 5 pathways, 3 transitions
 ├── signatures/         # 5 signatures with __intent__, __guidelines__
 ├── agents/             # 5 agents (intake, booking, faq, persuasion, confirmation)
@@ -285,7 +289,8 @@ examples/kaizen/journey/healthcare_referral/
 
 Run the demo:
 ```bash
-python -m kaizen.examples.journey.healthcare_referral.main --mode demo
+cd packages/kailash-kaizen
+python -m examples.journey.healthcare_referral.main --mode demo
 ```
 
 ## Testing
@@ -293,6 +298,7 @@ python -m kaizen.examples.journey.healthcare_referral.main --mode demo
 ```python
 import pytest
 from kaizen.journey import Journey, Pathway, JourneyConfig
+
 
 class TestMyJourney:
     def test_journey_extracts_pathways(self):

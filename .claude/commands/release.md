@@ -56,10 +56,10 @@ Before any release work, determine WHAT needs releasing by analyzing unreleased 
 1. **Diff analysis** — Compare `main` against the last release tag for each package:
 
    ```
-   git log <last-tag>..HEAD -- kailash/              → Core SDK changes?
-   git log <last-tag>..HEAD -- kailash-dataflow/  → DataFlow changes?
-   git log <last-tag>..HEAD -- kailash-kaizen/    → Kaizen changes?
-   git log <last-tag>..HEAD -- kailash-nexus/     → Nexus changes?
+   git log <last-tag>..HEAD -- kailash/           → Core SDK changes?
+   git log <last-tag>..HEAD -- packages/kailash-dataflow/  → DataFlow changes?
+   git log <last-tag>..HEAD -- packages/kailash-kaizen/    → Kaizen changes?
+   git log <last-tag>..HEAD -- packages/kailash-nexus/     → Nexus changes?
    ```
 
 2. **Present release plan to human** — Show which packages have unreleased changes and propose:
@@ -79,6 +79,7 @@ For each package being released, update version in BOTH locations. Missing eithe
 | File                      | Field                   | Example                 |
 | ------------------------- | ----------------------- | ----------------------- |
 | `pyproject.toml`          | `version = "X.Y.Z"`     | `version = "1.0.0"`     |
+| the SDK source | `__version__ = "X.Y.Z"` | `__version__ = "1.0.0"` |
 
 ##### Framework Packages
 
@@ -88,22 +89,25 @@ Each framework has 2 version locations PLUS the SDK dependency pin:
 
 | File                                                 | Field                          |
 | ---------------------------------------------------- | ------------------------------ |
-| `kailash-dataflow pyproject.toml`           | `version = "X.Y.Z"`            |
-| `kailash-dataflow pyproject.toml`           | `dependencies: kailash>=A.B.C` |
+| `packages/kailash-dataflow/pyproject.toml`           | `version = "X.Y.Z"`            |
+| the package source | `__version__ = "X.Y.Z"`        |
+| `packages/kailash-dataflow/pyproject.toml`           | `dependencies: kailash>=A.B.C` |
 
 **kailash-kaizen:**
 
 | File                                             | Field                          |
 | ------------------------------------------------ | ------------------------------ |
-| `kailash-kaizen pyproject.toml`         | `version = "X.Y.Z"`            |
-| `kailash-kaizen pyproject.toml`         | `dependencies: kailash>=A.B.C` |
+| `packages/kailash-kaizen/pyproject.toml`         | `version = "X.Y.Z"`            |
+| the package source | `__version__ = "X.Y.Z"`        |
+| `packages/kailash-kaizen/pyproject.toml`         | `dependencies: kailash>=A.B.C` |
 
 **kailash-nexus:**
 
 | File                                           | Field                          |
 | ---------------------------------------------- | ------------------------------ |
-| `kailash-nexus pyproject.toml`        | `version = "X.Y.Z"`            |
-| `kailash-nexus pyproject.toml`        | `dependencies: kailash>=A.B.C` |
+| `packages/kailash-nexus/pyproject.toml`        | `version = "X.Y.Z"`            |
+| the package source | `__version__ = "X.Y.Z"`        |
+| `packages/kailash-nexus/pyproject.toml`        | `dependencies: kailash>=A.B.C` |
 
 ##### SDK Dependency Pin Update Rule
 
@@ -121,7 +125,7 @@ grep 'version' pyproject.toml | head -1
 grep '__version__' kailash/__init__.py
 
 # Each framework — version + dependency must be correct
-for fw in kailash-dataflow kailash-kaizen kailash-nexus; do
+for fw in packages/kailash-dataflow packages/kailash-kaizen packages/kailash-nexus; do
   echo "=== $fw ==="
   grep 'version' $fw/pyproject.toml | head -1
   grep '__version__' $fw/src/*/__init__.py
@@ -154,7 +158,7 @@ done
 #### Step 4: Build and Validate
 
 1. Build wheels (and sdist if open-source): `python -m build`
-2. For frameworks: `cd apps/kailash-<name> && python -m build`
+2. For frameworks: `python -m build (for each framework package)`
 3. Upload to TestPyPI: `twine upload --repository testpypi dist/*.whl`
 4. Verify TestPyPI install in clean venv
 5. For major/minor releases: run smoke tests against TestPyPI package
@@ -225,6 +229,10 @@ Quick reference for all version locations in this monorepo:
 
 | Package          | pyproject.toml                             | **init**.py                                          | SDK Dep     |
 | ---------------- | ------------------------------------------ | ---------------------------------------------------- | ----------- |
+| kailash          | `pyproject.toml`                           | the SDK source                            | —           |
+| kailash-dataflow | `packages/kailash-dataflow/pyproject.toml` | the package source | `kailash>=` |
+| kailash-kaizen   | `packages/kailash-kaizen/pyproject.toml`   | the package source     | `kailash>=` |
+| kailash-nexus    | `packages/kailash-nexus/pyproject.toml`    | the package source       | `kailash>=` |
 
 ## Agent Teams
 

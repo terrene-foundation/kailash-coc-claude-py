@@ -7,8 +7,8 @@
 ## File Structure
 
 ```
-kailash-kaizen/
-├── kaizen/
+packages/kailash-kaizen/
+├── src/kaizen/
 │   ├── __init__.py                    # Export Agent class
 │   ├── core/
 │   │   ├── agents.py                  # NEW: Unified Agent class (THIS FILE)
@@ -573,6 +573,7 @@ class Agent:
 
     def _create_default_tool_registry(self) -> ToolRegistry:
         """Create default tool registry with builtin tools."""
+
 
         # Register builtin tools
         if self._tools_config["tools"] == "all":

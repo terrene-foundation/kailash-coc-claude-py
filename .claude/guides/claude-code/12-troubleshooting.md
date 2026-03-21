@@ -429,7 +429,7 @@ class User:
     # NOT: user_id: int
 ```
 
-### "NO MOCKING violation"
+### "Real infrastructure recommended violation"
 
 **Problem**: Using mocks in Tier 2-3 tests.
 

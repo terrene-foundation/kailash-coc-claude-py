@@ -299,7 +299,7 @@ console.log(JSON.stringify(result));
 ### What to include
 
 1. **What this project is** — one paragraph
-2. **Absolute directives** — the 3-5 non-negotiable rules
+2. **Absolute directives** — the 3-5 strongly recommended rules
 3. **Available commands** — table with phase and purpose
 4. **Available agents** — organized by function
 5. **Available skills** — organized by domain

@@ -428,7 +428,7 @@ app = Nexus(
 
 db = DataFlow(
     database_url=DATABASE_URL,
-    auto_migrate=True,  # v0.11.0: Works in Docker/FastAPI via SyncDDLExecutor
+    auto_migrate=True,  # v0.11.0: Works in Docker/FastAPI via the synchronous DDL executor
 )
 
 runtime = AsyncLocalRuntime()  # Initialize once at module level
@@ -502,6 +502,7 @@ async def create_contact(
     results, _ = await runtime.execute_workflow_async(workflow.build(), inputs={})
     return results["create"]
 
+
 @app.handler("list_contacts", description="List contacts with filters")
 async def list_contacts(
     company: str = None,
@@ -527,6 +528,7 @@ async def list_contacts(
         "contacts": results["list"]["items"],
         "total": results["list"]["total"]
     }
+
 
 @app.handler("delete_contact", description="Delete a contact")
 async def delete_contact(
@@ -922,7 +924,7 @@ app = Nexus(
 )
 
 db = DataFlow(
-    auto_migrate=True,  # v0.11.0 default: Works in Docker/FastAPI via SyncDDLExecutor
+    auto_migrate=True,  # v0.11.0 default: Works in Docker/FastAPI via the synchronous DDL executor
 )
 
 runtime = AsyncLocalRuntime()  # CRITICAL for async contexts

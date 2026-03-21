@@ -153,7 +153,7 @@ app = Nexus(
 
 db = DataFlow(
     database_url=os.environ["DATABASE_URL"],
-    auto_migrate=True,  # v0.11.0: Works in Docker/FastAPI via SyncDDLExecutor
+    auto_migrate=True,  # v0.11.0: Works in Docker/FastAPI via the synchronous DDL executor
 )
 
 @db.model
@@ -780,7 +780,7 @@ app = Nexus(
 
 db = DataFlow(
     database_url="...",
-    auto_migrate=True,  # v0.11.0 default: Works in Docker/FastAPI via SyncDDLExecutor
+    auto_migrate=True,  # v0.11.0 default: Works in Docker/FastAPI via the synchronous DDL executor
 )
 
 # ALWAYS use AsyncLocalRuntime in FastAPI/async contexts

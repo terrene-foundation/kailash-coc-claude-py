@@ -118,7 +118,7 @@ workflow.add_connection("process", "output", "loop", "feedback")
 | ❌ NEVER use raw SQL | Use DataFlow instead |
 | ✅ ALWAYS call `.build()` | Before `runtime.execute()` |
 | ❌ NEVER use relative imports | Use absolute imports |
-| ❌ NEVER mock in Tier 2-3 | Use real infrastructure |
+| ❌ Avoid mocking in Tier 2-3 | Use real infrastructure |
 
 ## When to Use This Skill
 

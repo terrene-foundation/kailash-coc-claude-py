@@ -377,6 +377,5 @@ def create_qa_signature(include_reasoning: bool = True):
 
 ## References
 
-- **Source**: `kaizen/signatures/`
-- **Examples**: All agents in `examples/kaizen/`
-- **Tests**: `tests/kaizen/unit/signatures/`
+- **Examples**: All agents in `packages/kailash-kaizen/examples/`
+- **Tests**: `packages/kailash-kaizen/tests/unit/signatures/`

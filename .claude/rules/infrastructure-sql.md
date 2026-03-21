@@ -4,6 +4,7 @@
 
 These rules apply when editing files in:
 
+
 ## MUST Rules
 
 ### 1. Validate SQL Identifiers with `_validate_identifier()`
@@ -226,4 +227,6 @@ await conn.execute("UPDATE tasks SET status = 'processing' WHERE task_id = ?", .
 
 ## Cross-References
 
+- `workspaces/enterprise-infrastructure/04-validate/01-redteam-report.md` — Red team findings (C1-C8, H1-H7)
+- `workspaces/enterprise-infrastructure/04-validate/02-convergence-round1.md` — All fixes verified
 - `.claude/rules/security.md` — Global security rules (parameterized queries, no secrets)

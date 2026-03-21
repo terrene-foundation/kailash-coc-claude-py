@@ -14,6 +14,7 @@ The Agent Manifest system provides:
 
 **Source modules**:
 
+
 ---
 
 ## TOML Manifest Format
@@ -302,8 +303,3 @@ assert result.status == "registered"
 
 ## References
 
-- **Source**: `kaizen/manifest/agent.py`
-- **Source**: `kaizen/manifest/governance.py`
-- **Source**: `kaizen/deploy/client.py`
-- **Source**: `kaizen/deploy/registry.py`
-- **Source**: `kaizen/deploy/introspect.py`

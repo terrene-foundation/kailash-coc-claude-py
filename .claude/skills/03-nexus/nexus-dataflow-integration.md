@@ -9,7 +9,7 @@ tags: [nexus, dataflow, integration, blocking-fix, performance]
 
 CRITICAL: Proper configuration to prevent blocking on startup.
 
-> **DataFlow v0.11.0**: The parameters `enable_model_persistence`, `skip_migration`, and `existing_schema_mode` have been **removed**. The only critical Nexus-side setting is `auto_discovery=False`. DataFlow's `auto_migrate=True` (default) now works correctly in Docker/FastAPI via SyncDDLExecutor.
+> **DataFlow v0.11.0**: The parameters `enable_model_persistence`, `skip_migration`, and `existing_schema_mode` have been **removed**. The only critical Nexus-side setting is `auto_discovery=False`. DataFlow's `auto_migrate=True` (default) now works correctly in Docker/FastAPI via the synchronous DDL executor.
 
 ## The Problem
 
@@ -33,7 +33,7 @@ app = Nexus(
 # Step 2: Create DataFlow (defaults work fine in v0.11.0)
 db = DataFlow(
     database_url="postgresql://user:pass@host:port/db",
-    auto_migrate=True,  # Default - works in Docker/FastAPI via SyncDDLExecutor
+    auto_migrate=True,  # Default - works in Docker/FastAPI via the synchronous DDL executor
 )
 
 # Step 3: Register models
@@ -63,7 +63,7 @@ app.start()
 
 ### `auto_migrate=True` (DataFlow v0.11.0 Default)
 
-- Uses SyncDDLExecutor for synchronous DDL operations
+- Uses the synchronous DDL executor for synchronous DDL operations
 - No event loop issues in Docker/FastAPI
 - Automatic schema creation and updates
 - **This is the default** -- no special configuration needed
@@ -127,7 +127,7 @@ With `auto_discovery=False` + DataFlow defaults:
 - All CRUD operations (11 nodes per model)
 - Connection pooling, caching, metrics
 - All Nexus channels (API, CLI, MCP)
-- Automatic schema migration via SyncDDLExecutor
+- Automatic schema migration via the synchronous DDL executor
 - Fast startup
 
 ## What You Lose

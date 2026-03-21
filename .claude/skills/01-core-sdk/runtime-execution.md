@@ -248,6 +248,7 @@ See `STATE_OWNERSHIP_CONVENTION.md` for mixin development guidelines.
 
 ### Advanced References
 
+
 ## Performance Configuration
 
 Phase 0 optimizations reduce per-node execution overhead. Key configuration:

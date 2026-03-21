@@ -108,6 +108,11 @@ Each `@db.model` class generates:
 - **Inspector API** - Self-service debugging (18 introspection methods)
 - **CLI Tools** - dataflow-validate, dataflow-analyze, dataflow-debug (5 commands)
 
+### Connection Pool & Monitoring
+
+- **[dataflow-connection-config](dataflow-connection-config.md)** - Pool auto-scaling, env vars, override scenarios
+- **[dataflow-monitoring](dataflow-monitoring.md)** - Pool utilization, leak detection, health checks, diagnostics
+
 ### Troubleshooting
 
 - **[dataflow-gotchas](dataflow-gotchas.md)** - Common pitfalls
@@ -178,5 +183,5 @@ Use DataFlow when you need to:
 For DataFlow-specific questions, invoke:
 
 - `dataflow-specialist` - DataFlow implementation and patterns
-- `testing-specialist` - DataFlow testing strategies (NO MOCKING policy)
+- `testing-specialist` - DataFlow testing strategies (Real infrastructure recommended policy)
 - `framework-advisor` - Choose between Core SDK and DataFlow

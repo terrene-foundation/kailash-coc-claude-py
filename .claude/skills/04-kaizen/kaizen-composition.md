@@ -12,6 +12,7 @@ The composition module validates multi-agent pipelines before execution:
 
 **Source modules**:
 
+
 ---
 
 ## DAG Validation
@@ -378,8 +379,3 @@ CostEstimate.from_dict(cost_dict)
 
 ## References
 
-- **Source**: `kaizen/composition/dag_validator.py`
-- **Source**: `kaizen/composition/schema_compat.py`
-- **Source**: `kaizen/composition/cost_estimator.py`
-- **Source**: `kaizen/composition/models.py`
-- **Source**: `kaizen/composition/errors.py`

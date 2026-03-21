@@ -168,7 +168,7 @@ if __name__ == "__main__":
 
 **`auto_migrate=True` NOW WORKS in Docker/FastAPI!**
 
-DataFlow v0.10.15+ uses `SyncDDLExecutor` with synchronous database drivers (psycopg2, sqlite3) for table creation, completely bypassing event loop boundary issues.
+DataFlow v0.10.15+ uses the synchronous DDL executor with synchronous database drivers (psycopg2, sqlite3) for table creation, completely bypassing event loop boundary issues.
 
 #### Zero-Config Docker Pattern (v0.10.15+)
 
@@ -193,6 +193,7 @@ async def create_user(data: dict):
 
 #### How the Fix Works
 
+- the synchronous DDL executor uses psycopg2 (PostgreSQL) or sqlite3 (SQLite) - no asyncio
 - Tables are created synchronously at model registration time
 - CRUD operations continue using async drivers (asyncpg, aiosqlite)
 - No event loop conflicts because DDL and CRUD use separate connection types
@@ -455,7 +456,7 @@ nexus = Nexus(dataflow_config={"integration": db})  # THIS WILL FAIL
 # DataFlow v0.10.15+: auto_migrate=True works in Docker/FastAPI
 db = DataFlow(
     database_url="postgresql://...",
-    auto_migrate=True,  # Works via SyncDDLExecutor
+    auto_migrate=True,  # Works via the synchronous DDL executor
 )
 
 # Nexus v1.1.3: ALWAYS use auto_discovery=False
@@ -664,6 +665,7 @@ class DevModel:
 - **DataFlow Specialist**: [`.claude/skills/dataflow-specialist.md`](../../dataflow-specialist.md#L28-L72)
 
 ### Related Documentation
+
 
 ## Related Patterns
 

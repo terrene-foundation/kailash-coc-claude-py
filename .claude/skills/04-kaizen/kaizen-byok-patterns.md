@@ -14,6 +14,8 @@ BaseAgentConfig(api_key="sk-tenant-123")
         → provider.chat(..., api_key="sk-tenant-123")
 ```
 
+Key module: the SDK source
+
 ## Usage: Per-Request API Key
 
 ```python
@@ -105,3 +107,4 @@ All provider exceptions pass through `sanitize_provider_error()` which strips AP
 
 ## Cross-References
 
+- ADR-001: `workspaces/byok-hardening/02-plans/01-adr-credential-flow.md`

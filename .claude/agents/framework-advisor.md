@@ -63,7 +63,7 @@ For detailed implementation after framework selection, users should manually inv
 
 ## Framework Decision Matrix
 
-### Core SDK (`kailash`)
+### Core SDK (the SDK source)
 
 **Use when:**
 
@@ -110,7 +110,7 @@ For detailed implementation after framework selection, users should manually inv
 
 **For detailed implementation**: Users should run `nexus-specialist` agent
 
-### MCP Integration (`kailash.mcp_server`)
+### MCP Integration (the SDK source)
 
 **Use when:**
 

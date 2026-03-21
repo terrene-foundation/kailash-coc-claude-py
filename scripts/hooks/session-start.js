@@ -89,6 +89,20 @@ function initializeSession(data) {
   // ── Detect framework ──────────────────────────────────────────────────
   const framework = detectFramework(cwd);
 
+  // ── Detect DataFlow pool config ─────────────────────────────────────
+  const poolInfo = detectPoolConfig(cwd);
+  if (poolInfo.isPostgresql) {
+    if (poolInfo.hasPoolOverride) {
+      console.error(
+        "[DataFlow] Pool size override detected (DATAFLOW_POOL_SIZE). Auto-scaling disabled.",
+      );
+    } else {
+      console.error(
+        "[DataFlow] Pool auto-scaling active. Override with DATAFLOW_POOL_SIZE=N if needed.",
+      );
+    }
+  }
+
   // ── Log observation ───────────────────────────────────────────────────
   try {
     const observationsFile = path.join(learningDir, "observations.jsonl");
@@ -295,4 +309,34 @@ function detectFramework(cwd) {
   } catch {
     return "unknown";
   }
+}
+
+function detectPoolConfig(cwd) {
+  const result = { isPostgresql: false, hasPoolOverride: false };
+  try {
+    const envPath = path.join(cwd, ".env");
+    if (!fs.existsSync(envPath)) return result;
+    const content = fs.readFileSync(envPath, "utf8");
+    const lines = content.split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+      const eqIndex = trimmed.indexOf("=");
+      const key = trimmed.slice(0, eqIndex).trim();
+      const value = trimmed
+        .slice(eqIndex + 1)
+        .trim()
+        .replace(/^["']|["']$/g, "");
+      if (
+        (key === "DATABASE_URL" || key === "DATAFLOW_DATABASE_URL") &&
+        (/postgresql/i.test(value) || /postgres/i.test(value))
+      ) {
+        result.isPostgresql = true;
+      }
+      if (key === "DATAFLOW_POOL_SIZE" && value.length > 0) {
+        result.hasPoolOverride = true;
+      }
+    }
+  } catch {}
+  return result;
 }

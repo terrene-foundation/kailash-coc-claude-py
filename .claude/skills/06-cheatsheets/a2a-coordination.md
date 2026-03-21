@@ -34,6 +34,7 @@ runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 ```
 
+
 ## Common Use Cases
 
 - **A2A-Coordination Core Functionality**: Primary operations and common patterns

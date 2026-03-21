@@ -18,6 +18,10 @@ description: "Load phase 03 (implement) for the current workspace. Repeat until 
 - Otherwise, pick the next active todo
 - Reference plans in `workspaces/<project>/02-plans/` for context
 
+## Execution Model
+
+This phase executes under the **autonomous execution model** (see `rules/autonomous-execution.md`). Implementation is fully autonomous — agents execute in parallel, self-validate through TDD, and converge through quality gates. The human observes outcomes but does not sit in the execution loop. Pre-existing failures are fixed, not reported (zero-tolerance). Agent-to-agent delegation (intermediate-reviewer, security-reviewer) is autonomous, not human-gated.
+
 ## Workflow
 
 ### NOTE: Run `/implement` repeatedly until all todos/active have been moved to todos/completed
@@ -124,7 +128,7 @@ Deploy these agents as a team for each implementation cycle:
 **Core team (always):**
 
 - **tdd-implementer** — Test-first development, red-green-refactor
-- **testing-specialist** — 3-tier test strategy, NO MOCKING in Tier 2-3
+- **testing-specialist** — 3-tier test strategy, Real infrastructure recommended in Tier 2-3
 - **intermediate-reviewer** — Code review after every file change (MANDATORY)
 - **todo-manager** — Track progress, update todo status, verify completion with evidence
 

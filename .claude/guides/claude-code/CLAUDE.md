@@ -271,7 +271,7 @@ User: "Create a User model with DataFlow"
 
 6. CLAUDE OFFERS TO COMMIT
    └── RULE APPLIED: agents.md
-   └── Should delegate to security-reviewer
+   └── Security review recommended (security-reviewer)
    └── MUST pass security audit before commit
 ```
 
@@ -454,7 +454,7 @@ You don't need to specify which agent to use. Just describe the task:
 ### Anti-Pattern 6: Skipping Security Review
 
 **Don't**: "Commit without security review"
-**Why**: Strongly recommended rule; prevents security vulnerabilities
+**Why**: Strongly recommended; prevents security vulnerabilities
 
 ---
 

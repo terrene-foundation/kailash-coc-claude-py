@@ -2,7 +2,7 @@
 
 You are an expert in the Kailash progressive infrastructure model. Guide users through scaling from Level 0 (SQLite, single process) to Level 2 (multi-worker with shared database and task queue) using environment variables alone -- no code changes required.
 
-> For full implementation details, see `docs/enterprise-infrastructure/` and the source at `kailash.infrastructure.factory`.
+> For full implementation details, see `docs/enterprise-infrastructure/` and the source at the SDK source.
 
 ## Progressive Infrastructure Model
 
@@ -30,7 +30,7 @@ Each level is additive. Level 0 code runs unchanged at Level 2. The user's workf
 | `DATABASE_URL`         | Fallback for `KAILASH_DATABASE_URL`                                    | 2           | None            |
 | `KAILASH_QUEUE_URL`    | Task queue broker (Redis or SQL)                                       | N/A         | None (no queue) |
 
-Resolution logic lives in `kailash.db.registry`:
+Resolution logic lives in the SDK source:
 
 ```python
 from kailash.db.registry import resolve_database_url, resolve_queue_url
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS kailash_meta (
 
 - On `StoreFactory.initialize()`, the factory stamps the schema version
 - If the database version is **newer** than the running code version, initialization fails fast with a clear error
-- If the database version is **older**, future migration runners in `kailash.db.migration` will handle upgrades
+- If the database version is **older**, future migration runners in the SDK source will handle upgrades
 
 ```python
 from kailash.db.migration import check_schema_version, stamp_schema_version, SCHEMA_VERSION

@@ -1,14 +1,14 @@
 # EATP Standalone SDK — Quick Start
 
-The standalone EATP SDK (`pip install eatp`) provides cryptographic trust chains, delegation, and verification for AI agent systems. Apache 2.0, published by the Terrene Foundation.
+The standalone EATP SDK (`pip install kailash[trust]`) provides cryptographic trust chains, delegation, and verification for AI agent systems. Apache 2.0, published by the Terrene Foundation.
 
-**Source**: `eatp/`
-**Examples**: `examples/eatp/quickstart.py`
+**Source**: the SDK source
+**Examples**: `examples/trust/quickstart.py`
 
 ## Installation
 
 ```bash
-pip install eatp
+pip install kailash[trust]
 # Dependencies: pynacl>=1.5, pydantic>=2.6, jsonschema>=4.21, click>=8.0
 ```
 
@@ -16,15 +16,16 @@ pip install eatp
 
 ```python
 import asyncio
-from eatp import CapabilityRequest, TrustKeyManager, TrustOperations
-from eatp.authority import (
+from kailash.trust import CapabilityRequest, TrustKeyManager, TrustOperations
+from kailash.trust.authority import (
     AuthorityPermission,
     AuthorityRegistryProtocol,
     OrganizationalAuthority,
 )
-from eatp.chain import ActionResult, AuthorityType, CapabilityType
-from eatp.crypto import generate_keypair
-from eatp.store.memory import InMemoryTrustStore
+from kailash.trust.chain import ActionResult, AuthorityType, CapabilityType
+from kailash.trust.signing.crypto import generate_keypair
+from kailash.trust.chain_store.memory import InMemoryTrustStore
+
 
 class SimpleAuthorityRegistry:
     """Minimal registry satisfying AuthorityRegistryProtocol."""
@@ -46,6 +47,7 @@ class SimpleAuthorityRegistry:
 
     async def update_authority(self, authority: OrganizationalAuthority):
         self._authorities[authority.id] = authority
+
 
 async def main():
     # 1. Setup infrastructure
@@ -117,6 +119,7 @@ async def main():
     )
     print(f"Audited: {anchor.id}")
 
+
 asyncio.run(main())
 ```
 
@@ -125,7 +128,7 @@ asyncio.run(main())
 The SDK does NOT provide a built-in registry (beyond examples). You must implement `AuthorityRegistryProtocol`:
 
 ```python
-from eatp.authority import AuthorityRegistryProtocol
+from kailash.trust.authority import AuthorityRegistryProtocol
 
 # Protocol requires these 3 methods:
 class MyRegistry:
@@ -138,19 +141,19 @@ All three methods are required. `update_authority()` is used by `CredentialRotat
 
 ## Store Selection
 
-| Store                | Use Case                        | Persistence                    | Dependencies   |
-| -------------------- | ------------------------------- | ------------------------------ | -------------- |
-| `InMemoryTrustStore` | Tests, development              | None (memory)                  | None           |
-| `FilesystemStore`    | CLI tools, small deployments    | JSON files (`~/.eatp/chains/`) | None           |
-| `PostgresTrustStore` | Production (via Kailash Kaizen) | PostgreSQL                     | kailash-kaizen |
+| Store                | Use Case                        | Persistence                             | Dependencies   |
+| -------------------- | ------------------------------- | --------------------------------------- | -------------- |
+| `InMemoryTrustStore` | Tests, development              | None (memory)                           | None           |
+| `FilesystemStore`    | CLI tools, small deployments    | JSON files (`~/.kailash/trust/chains/`) | None           |
+| `PostgresTrustStore` | Production (via Kailash Kaizen) | PostgreSQL                              | kailash-kaizen |
 
 ```python
 # In-memory (tests)
-from eatp.store.memory import InMemoryTrustStore
+from kailash.trust.chain_store.memory import InMemoryTrustStore
 store = InMemoryTrustStore()
 
 # Filesystem (lightweight persistence)
-from eatp.store.filesystem import FilesystemStore
+from kailash.trust.chain_store.filesystem import FilesystemStore
 store = FilesystemStore(base_dir="/path/to/chains")
 
 # Both require: await store.initialize()
@@ -161,7 +164,7 @@ store = FilesystemStore(base_dir="/path/to/chains")
 The SDK is the Policy Decision Point (PDP). It returns verdicts; your application is the Policy Enforcement Point (PEP).
 
 ```python
-from eatp.enforce.strict import StrictEnforcer, Verdict, EATPBlockedError
+from kailash.trust.enforce.strict import StrictEnforcer, Verdict, EATPBlockedError
 
 enforcer = StrictEnforcer()  # No constructor args
 
@@ -183,7 +186,7 @@ elif verdict == Verdict.FLAGGED:
 ## Trust Postures
 
 ```python
-from eatp.postures import TrustPosture, PostureStateMachine
+from kailash.trust.postures import TrustPosture, PostureStateMachine
 
 # Create state machine
 sm = PostureStateMachine(default_posture=TrustPosture.SUPERVISED)
@@ -195,10 +198,10 @@ print(TrustPosture.SUPERVISED < TrustPosture.FULL_AUTONOMY)  # True
 ## Secure Messaging
 
 ```python
-from eatp.messaging.channel import SecureChannel
-from eatp.messaging.signer import MessageSigner
-from eatp.messaging.verifier import MessageVerifier
-from eatp.messaging.replay_protection import InMemoryReplayProtection
+from kailash.trust.messaging.channel import SecureChannel
+from kailash.trust.messaging.signer import MessageSigner
+from kailash.trust.messaging.verifier import MessageVerifier
+from kailash.trust.messaging.replay_protection import InMemoryReplayProtection
 
 channel = SecureChannel(
     sender_id="agent-a",
@@ -212,7 +215,7 @@ channel = SecureChannel(
 ## Key Rotation
 
 ```python
-from eatp.rotation import CredentialRotationManager
+from kailash.trust.rotation import CredentialRotationManager
 
 rotation_mgr = CredentialRotationManager(
     key_manager=key_mgr,
@@ -238,8 +241,8 @@ eatp --help
 Reasoning traces capture WHY a decision was made. They are fully optional and backward compatible.
 
 ```python
-from eatp.reasoning import ReasoningTrace, ConfidentialityLevel
-from eatp.crypto import hash_reasoning_trace, sign_reasoning_trace, verify_reasoning_signature
+from kailash.trust.reasoning import ReasoningTrace, ConfidentialityLevel
+from kailash.trust.signing.crypto import hash_reasoning_trace, sign_reasoning_trace, verify_reasoning_signature
 from datetime import datetime, timezone
 
 # 1. Create a reasoning trace
@@ -287,5 +290,5 @@ For deep coverage, see `.claude/skills/26-eatp-reference/eatp-sdk-reasoning-trac
 - **API Reference**: `.claude/skills/26-eatp-reference/eatp-sdk-api-reference.md`
 - **Patterns & Gotchas**: `.claude/skills/26-eatp-reference/eatp-sdk-patterns.md`
 - **Reasoning Traces**: `.claude/skills/26-eatp-reference/eatp-sdk-reasoning-traces.md`
-- **Full Working Example**: `examples/eatp/quickstart.py`
-- **Foundation Demo**: `examples/eatp/foundation_deployment.py`
+- **Full Working Example**: the SDK source
+- **Foundation Demo**: the SDK source

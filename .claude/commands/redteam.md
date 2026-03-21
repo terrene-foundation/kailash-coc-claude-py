@@ -17,6 +17,10 @@ description: "Load phase 04 (validate) for the current workspace. Red team testi
 - Validation results go into `workspaces/<project>/04-validate/`
 - If gaps are found, document them and feed back to implementation (use `/implement` to fix)
 
+## Execution Model
+
+This phase executes under the **autonomous execution model** (see `rules/autonomous-execution.md`). Red team validation is fully autonomous — agent teams converge through iterative rounds until no gaps remain. This is an execution gate, not a structural gate: the human observes the outcome but does not block convergence. Findings are fixed autonomously (zero-tolerance), not reported for human triage. Do not estimate convergence in human-days; estimate in autonomous red team rounds.
+
 ## Workflow
 
 ### 1. End-to-end validation
@@ -83,7 +87,7 @@ Deploy these agents as a red team for validation:
 
 **Core red team (always):**
 
-- **testing-specialist** — Verify 3-tier test coverage, NO MOCKING compliance
+- **testing-specialist** — Verify 3-tier test coverage, Real infrastructure recommended compliance
 - **e2e-runner** — Generate and run Playwright E2E tests (web) or Marionette tests (Flutter)
 - **value-auditor** — Evaluate every page/flow from skeptical enterprise buyer perspective
 - **security-reviewer** — Full security audit across the codebase

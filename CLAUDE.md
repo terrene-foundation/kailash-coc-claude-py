@@ -18,6 +18,7 @@ Never write code from scratch before checking whether the Kailash frameworks alr
 - Instead of FastAPI/custom API gateway → check with **nexus-specialist**
 - Instead of custom MCP server/client → check with **mcp-specialist**
 - Instead of custom agentic platform → check with **kaizen-specialist**
+- Instead of custom governance/access control → check with **pact-specialist**
 
 ### 2. .env Is the Single Source of Truth
 
@@ -75,6 +76,8 @@ Phase commands replace the manual copy-paste workflow. Each loads the correspond
 | Kailash SDK execution patterns        | `rules/patterns.md`           | `**/*.py`, `**/*.ts`, `**/*.js`                                       |
 | Security (secrets, injection)         | `rules/security.md`           | Global                                                                |
 | 3-tier testing, real infrastructure recommended  | `rules/testing.md`            | `tests/**`, `**/*test*`, `**/*spec*`, `conftest.py`                   |
+| Autonomous execution model            | `rules/autonomous-execution.md` | Global                                                              |
+| PACT governance security              | `rules/pact-governance.md`      | PACT governance files                                               |
 | Auto-generated workflow instincts     | `rules/learned-instincts.md`  | Global                                                                |
 
 **Note**: Rules with path scoping are loaded only when editing matching files. Global rules load every session.
@@ -95,6 +98,7 @@ Phase commands replace the manual copy-paste workflow. Each loads the correspond
 - **kaizen-specialist** — AI agents, signatures, multi-agent coordination
 - **mcp-specialist** — MCP server implementation
 - **infrastructure-specialist** — Progressive infrastructure (Level 0/1/2), dialect-portable SQL, task queues, idempotency
+- **pact-specialist** — Organizational governance (D/T/R, envelopes, clearance, governed agents)
 
 ### Core Implementation
 
@@ -160,8 +164,10 @@ workflow.add_node("NodeType", "node_id", {"param": "value"})
 | Framework    | Purpose                                | Install                        |
 | ------------ | -------------------------------------- | ------------------------------ |
 | **Core SDK** | Workflow orchestration, 140+ nodes     | `pip install kailash`          |
+| **Trust**    | EATP protocol + trust-plane governance | `pip install kailash[trust]`   |
 | **DataFlow** | Zero-config database operations        | `pip install kailash-dataflow` |
 | **Nexus**    | Multi-channel deployment (API+CLI+MCP) | `pip install kailash-nexus`    |
 | **Kaizen**   | AI agent framework                     | `pip install kailash-kaizen`   |
+| **PACT**     | Organizational governance (D/T/R)      | `pip install kailash-pact`     |
 
 All frameworks are built ON Core SDK — they don't replace it.

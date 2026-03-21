@@ -2,7 +2,7 @@
 
 ## Scope
 
-These rules apply to ALL sessions, ALL agents, ALL code changes, ALL phases. These are strong guidelines for maintaining code quality.
+These rules apply to ALL sessions, ALL agents, ALL code changes, ALL phases. They are ABSOLUTE and NON-NEGOTIABLE. There is NO flexibility on any of these rules.
 
 ## ABSOLUTE RULE 1: Pre-Existing Failures MUST Be Resolved
 

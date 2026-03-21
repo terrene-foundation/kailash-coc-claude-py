@@ -31,12 +31,14 @@ When working with Kailash frameworks, you MUST consult:
 - **nexus-specialist**: For any API or deployment work
 - **kaizen-specialist**: For any AI agent work
 - **mcp-specialist**: For any MCP integration work
+- **pact-specialist**: For any organizational governance work
 
 **Applies when**:
 - Creating new workflows
 - Modifying database models
 - Setting up API endpoints
 - Building AI agents
+- Implementing organizational governance
 
 **Enforced by**: Framework detection in session-start hook
 
@@ -103,6 +105,7 @@ Security review before commits is strongly recommended.
 Never use raw SQL when DataFlow patterns exist.
 Never build custom API when Nexus patterns exist.
 Never build custom agents when Kaizen patterns exist.
+Never build custom governance/access control when PACT patterns exist.
 
 ### MUST NOT: Sequential When Parallel Possible
 If operations are independent, run them in parallel.

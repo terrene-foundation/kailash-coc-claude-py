@@ -34,6 +34,7 @@ runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 ```
 
+
 ## Common Use Cases
 
 - **Cyclic-Patterns-Advanced Workflows**: Pre-built patterns for common use cases with best practices built-in

@@ -1,8 +1,8 @@
 # Skill: TrustPlane Security Patterns
 
-13 hardened security patterns validated through 16 rounds of red teaming. MANDATORY for the `trust-plane` package and the `eatp` package. Recommended for any security-sensitive Python project.
+13 hardened security patterns validated through 16 rounds of red teaming. MANDATORY for the SDK source and the SDK source. Recommended for any security-sensitive Python project.
 
-For full code examples with DO/DON'T pairs, see Trust-Plane documentation.
+For full code examples with DO/DON'T pairs, see the SDK source.
 
 ## Quick Checklist
 
@@ -65,7 +65,7 @@ if action_cost > limit:  # NaN > limit is False — bypass!
 
 ```python
 # DO:
-from trustplane.exceptions import RecordNotFoundError
+from kailash.trust.plane.exceptions import RecordNotFoundError
 try:
     delegate = store.get_delegate(did)
 except RecordNotFoundError:
@@ -112,6 +112,5 @@ All exceptions accept `details: dict[str, Any]` per EATP convention.
 
 ## See Also
 
-- Trust-Plane documentation — Full patterns with code examples
 - `.claude/skills/project/store-backend-implementation.md` — Store backend guide
 - `.claude/skills/project/trust-plane-enterprise-features.md` — Enterprise feature reference

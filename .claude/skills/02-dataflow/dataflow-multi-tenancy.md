@@ -67,9 +67,9 @@ Multi-tenancy is now auto-wired into the engine via `QueryInterceptor`, which ho
 
 ```python
 # Set tenant context once; all queries are automatically filtered
-from dataflow.tenancy import TenantContextSwitch
+from dataflow.tenancy import the tenant context manager
 
-async with TenantContextSwitch(db, tenant_id="tenant_abc"):
+async with the tenant context manager(db, tenant_id="tenant_abc"):
     # All operations inside this block are tenant-scoped
     results = await runtime.execute_workflow_async(workflow.build(), inputs={})
 ```

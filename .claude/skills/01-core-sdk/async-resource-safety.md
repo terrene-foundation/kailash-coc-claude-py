@@ -65,6 +65,10 @@ def __del__(self, _warnings=warnings):
 
 | Location                                                           | Class                         | Pattern                                                                    |
 | ------------------------------------------------------------------ | ----------------------------- | -------------------------------------------------------------------------- |
+| the package source | `SQLiteEnterpriseTransaction` | `_warnings=warnings`, class-level `_committed`                             |
+| the package source        | `PostgreSQLTransaction`       | Same pattern                                                               |
+| the package source             | `MySQLTransaction`            | Same pattern                                                               |
+| the SDK source                              | `AsyncSQLDatabaseNode`        | Same pattern (node, not transaction — `__del__` guards connection cleanup) |
 
 ## 2. Double-Check Locking for asyncio
 
@@ -110,6 +114,8 @@ Key invariants:
 
 | Location                                                    | Class                              |
 | ----------------------------------------------------------- | ---------------------------------- |
+| the package source | `WarmMemoryTier._get_connection()` |
+| the package source | `ColdMemoryTier._get_connection()` |
 
 ## 3. Pool Closed-State Guards
 
@@ -152,6 +158,7 @@ async def acquire_write(self):
 
 | Location                               | Class                                               |
 | -------------------------------------- | --------------------------------------------------- |
+| the SDK source | `AsyncSQLitePool.acquire_read()`, `acquire_write()` |
 
 ## 4. Memory Database URI Detection
 

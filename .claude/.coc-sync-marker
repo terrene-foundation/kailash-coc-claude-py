@@ -1,0 +1,1 @@
+{"synced_at": "2026-03-21T00:00:00Z", "source": "kailash-py", "target": "kailash-coc-claude-py", "artifacts": ["rules/dataflow-pool.md", "skills/02-dataflow/dataflow-connection-config.md", "skills/02-dataflow/dataflow-monitoring.md", "skills/02-dataflow/SKILL.md", "agents/frameworks/dataflow-specialist.md", "scripts/hooks/validate-workflow.js", "scripts/hooks/session-start.js"]}

@@ -71,6 +71,20 @@ The user's workflow code is identical at all levels.
 
 | Package                                           | Purpose                                                    |
 | ------------------------------------------------- | ---------------------------------------------------------- |
+| the SDK source                       | QueryDialect, PostgresDialect, MySQLDialect, SQLiteDialect |
+| the SDK source                    | ConnectionManager, \_TransactionProxy                      |
+| the SDK source                      | resolve_database_url(), resolve_queue_url()                |
+| the SDK source                     | Schema version check/stamp utilities                       |
+| the SDK source           | StoreFactory singleton                                     |
+| the SDK source        | SQLTaskQueue, SQLTaskMessage                               |
+| the SDK source   | SQLWorkerRegistry                                          |
+| the SDK source       | IdempotentExecutor                                         |
+| the SDK source | DBIdempotencyStore                                         |
+| the SDK source   | DBExecutionStore, InMemoryExecutionStore                   |
+| the SDK source       | DBEventStoreBackend                                        |
+| the SDK source  | DBCheckpointStore                                          |
+| the SDK source               | DBDeadLetterQueue                                          |
+| the SDK source     | create_task_queue()                                        |
 
 ## Critical Rules
 

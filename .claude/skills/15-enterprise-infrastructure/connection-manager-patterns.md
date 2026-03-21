@@ -2,7 +2,7 @@
 
 You are an expert in the Kailash ConnectionManager for async database access. Guide users through connection lifecycle, transaction context managers, driver-specific behavior differences, and pool configuration.
 
-> For full implementation details, see `docs/enterprise-infrastructure/02-store-backends.md` and the source at `kailash.db.connection`.
+> For full implementation details, see `docs/enterprise-infrastructure/02-store-backends.md` and the source at the SDK source.
 
 ## ConnectionManager Lifecycle
 

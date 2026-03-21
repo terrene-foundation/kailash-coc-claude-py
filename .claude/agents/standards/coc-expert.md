@@ -136,7 +136,7 @@ The developer's unique contribution is not the code generated in any single sess
 
 ### Bainbridge's Irony
 
-The more automated a system becomes, the more critical it is that human operators maintain deep understanding (Bainbridge, 1983). Every COC layer is an investment in the human's understanding: intent forces articulation of domain structure, context forces documentation of institutional knowledge, guardrails force identification of non-negotiable rules.
+The more automated a system becomes, the more critical it is that human operators maintain deep understanding (Bainbridge, 1983). Every COC layer is an investment in the human's understanding: intent forces articulation of domain structure, context forces documentation of institutional knowledge, guardrails force identification of strongly recommended rules.
 
 ### Honest Limitations COC Acknowledges
 

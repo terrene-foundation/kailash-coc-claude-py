@@ -139,7 +139,7 @@ if not app.session_manager.exists(session_id):
 app = Nexus(auto_discovery=False)
 db = DataFlow(
     "postgresql://...",
-    auto_migrate=True,  # v0.11.0 default: Works in Docker/FastAPI via SyncDDLExecutor
+    auto_migrate=True,  # v0.11.0 default: Works in Docker/FastAPI via the synchronous DDL executor
 )
 
 # Should now start in <2 seconds
@@ -348,6 +348,7 @@ app.api.max_concurrent_requests = 50
 ## Getting Help
 
 ### 1. Check Documentation
+
 
 ### 2. Enable Verbose Logging
 

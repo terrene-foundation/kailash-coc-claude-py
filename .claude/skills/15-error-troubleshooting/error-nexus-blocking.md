@@ -59,7 +59,7 @@ app = Nexus(
 # Step 2: Create DataFlow (v0.11.0 defaults work correctly)
 db = DataFlow(
     "postgresql://user:pass@localhost/db",
-    auto_migrate=True,  # Default - works in Docker/FastAPI via SyncDDLExecutor
+    auto_migrate=True,  # Default - works in Docker/FastAPI via the synchronous DDL executor
 )
 
 # Step 3: Define models (now instant!)
@@ -95,7 +95,7 @@ With `auto_discovery=False` + DataFlow v0.11.0 defaults:
 - All CRUD operations (11 nodes per model)
 - Connection pooling, caching, metrics
 - All Nexus channels (API, CLI, MCP)
-- Automatic schema migration via SyncDDLExecutor
+- Automatic schema migration via the synchronous DDL executor
 - Fast startup
 
 ## What You Lose
@@ -128,6 +128,7 @@ Use `nexus-specialist` subagent when:
 - **Integration Guide**: [`.claude/skills/03-nexus/nexus-dataflow-integration.md`](../../skills/03-nexus/nexus-dataflow-integration.md)
 
 ### Related Documentation
+
 
 ## Quick Tips
 

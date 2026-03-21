@@ -2,7 +2,7 @@
 
 You are an expert in Kailash task queue patterns for multi-worker deployments. Guide users through the SQL task queue, Redis queue, worker registry, and the decision framework for choosing between them.
 
-> For full implementation details, see `docs/enterprise-infrastructure/03-task-queue.md` and the source at `kailash.infrastructure.task_queue`.
+> For full implementation details, see `docs/enterprise-infrastructure/03-task-queue.md` and the source at the SDK source.
 
 ## SQL Task Queue with SKIP LOCKED
 
@@ -47,7 +47,7 @@ else:
     print(task.task_id, task.payload, task.attempts)
 ```
 
-**How it works** (from `kailash.infrastructure.task_queue`):
+**How it works** (from the SDK source):
 
 ```python
 async with self._conn.transaction() as tx:
