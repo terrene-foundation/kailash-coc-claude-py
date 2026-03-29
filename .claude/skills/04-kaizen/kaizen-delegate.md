@@ -34,24 +34,46 @@ async for event in delegate.run("Analyze this dataset"):
     match event:
         case TextDelta(text=chunk):
             print(chunk, end="", flush=True)
-        case ToolCallStart(tool_name=name):
+        case ToolCallStart(name=name):
             print(f"\n[Calling {name}...]")
-        case ToolCallEnd(tool_name=name, result=result):
+        case ToolCallEnd(name=name, result=result):
             print(f"[{name} returned]")
-        case TurnComplete(usage=usage):
+        case TurnComplete(text=text, usage=usage):
             print(f"\n[Done — {usage}]")
 ```
 
 ### Event Types
 
-| Event             | Fields                               | When                     |
-| ----------------- | ------------------------------------ | ------------------------ |
-| `TextDelta`       | `text: str`                          | Each text chunk from LLM |
-| `ToolCallStart`   | `tool_name, tool_call_id, arguments` | Before tool execution    |
-| `ToolCallEnd`     | `tool_name, tool_call_id, result`    | After tool execution     |
-| `TurnComplete`    | `usage, content`                     | End of turn              |
-| `BudgetExhausted` | `spent, limit`                       | Budget exceeded          |
-| `ErrorEvent`      | `error, error_type`                  | Unrecoverable error      |
+| Event             | Fields                         | When                     |
+| ----------------- | ------------------------------ | ------------------------ |
+| `TextDelta`       | `text: str`                    | Each text chunk from LLM |
+| `ToolCallStart`   | `call_id, name`                | Before tool execution    |
+| `ToolCallEnd`     | `call_id, name, result, error` | After tool execution     |
+| `TurnComplete`    | `text, usage`                  | End of turn              |
+| `BudgetExhausted` | `spent, limit`                 | Budget exceeded          |
+| `ErrorEvent`      | `error, error_type`            | Unrecoverable error      |
+
+### Event Ordering
+
+Tool events follow a deterministic pattern per tool batch:
+
+```
+TextDelta("Let me search...")          # Optional pre-tool text
+ToolCallStart(call_id="c1", name="search")   # All starts before execution
+ToolCallStart(call_id="c2", name="read")
+ToolCallEnd(call_id="c1", name="search", result="...")  # All ends after gather
+ToolCallEnd(call_id="c2", name="read", result="...")
+TextDelta("Based on results...")       # Next turn text
+TurnComplete(text="...", usage={...})
+```
+
+For consecutive tool turns (model calls tools, sees results, calls more tools), each batch emits its own start/end events sequentially.
+
+### Error Reporting in ToolCallEnd
+
+- **Normal tool errors** (exception caught inside executor): Error JSON in `result` field, `error` field empty. The error is sent back to the model as a tool result.
+- **Catastrophic failures** (BaseException escaping asyncio.gather): `error` field populated with `"Tool execution was interrupted"`, `result` field empty.
+- **Error messages are sanitized**: Exception messages use `type(exc).__name__` only — raw `str(exc)` is never exposed in events (prevents internal detail leakage).
 
 ## Synchronous Convenience
 
