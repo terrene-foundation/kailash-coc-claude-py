@@ -103,6 +103,29 @@ workflow.add_node(
 
 ## Framework-Specific Rules
 
+### DataFlow Express (Default for CRUD)
+
+Use `db.express.*` for all single-record CRUD. Only use WorkflowBuilder for multi-step operations.
+
+```python
+# DO: Express API for simple CRUD (23x faster)
+result = await db.express.create("User", {"name": "Alice"})
+user = await db.express.read("User", "u1")
+users = await db.express.list("User", {"active": True}, limit=10)
+await db.express.update("User", "u1", {"name": "Bob"})
+await db.express.delete("User", "u1")
+count = await db.express.count("User", {"active": True})
+
+# Sync variant for non-async contexts:
+result = db.express_sync.create("User", {"name": "Alice"})
+
+# DO NOT: Workflow for single-record CRUD
+workflow = WorkflowBuilder()
+workflow.add_node("UserCreateNode", "create", {"name": "Alice"})
+runtime = LocalRuntime()
+results, run_id = runtime.execute(workflow.build())
+```
+
 ### DataFlow
 
 ```python
@@ -146,14 +169,14 @@ session = app.create_session()
 ### Kaizen
 
 ```python
-# Use signature-based patterns
+# Delegate (recommended for autonomous agents)
 import os
-from kaizen.api import Agent
+from kaizen_agents import Delegate
+delegate = Delegate(model=os.environ["OPENAI_PROD_MODEL"])
+# async for event in delegate.run("task"): ...
 
-agent = Agent(
-    model=os.environ["OPENAI_PROD_MODEL"],  # NEVER hardcode model names
-    execution_mode="autonomous"
-)
+# BaseAgent (for custom logic only)
+from kaizen.core import BaseAgent, Signature, InputField, OutputField
 
 # Register agents in AgentRegistry for scale
 from kaizen.core.registry import AgentRegistry
@@ -207,6 +230,7 @@ results, run_id = runtime.execute(workflow.build())
 
 - All async resource classes (transactions, connections, pools) implement `__del__` with `ResourceWarning`
 - Use `def __del__(self, _warnings=warnings)` signature (survives interpreter shutdown)
+- Child classes overriding `__del__` MUST call `super().__del__(_warnings=_warnings)` — CodeQL enforces this
 - Set class-level defaults for `__del__` safety (`_committed = False`, `_rolled_back = False`, `connection = None`)
 - Capture `_source_traceback` at creation in debug mode for leak diagnostics
 
@@ -214,6 +238,7 @@ results, run_id = runtime.execute(workflow.build())
 
 - Use `asyncio` in `__del__` — async cleanup in finalizers is unreliable
 - Swallow resource leaks silently — always warn via `ResourceWarning`
+- Use `import warnings` inside `__del__` — module may be torn down during shutdown
 
 ## Exceptions
 

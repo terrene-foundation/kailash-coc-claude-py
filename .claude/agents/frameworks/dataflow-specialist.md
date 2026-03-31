@@ -55,6 +55,17 @@ Zero-config database framework specialist for Kailash DataFlow implementation. U
 - "With Nexus?" -> [`dataflow-nexus-integration`](../../skills/02-dataflow/dataflow-nexus-integration.md)
 - "Migration guide?" -> [`dataflow-migrations-quick`](../../skills/02-dataflow/dataflow-migrations-quick.md)
 
+### Layer Preference (Engine-First)
+
+| Need | Layer | API |
+|------|-------|-----|
+| Simple CRUD | Engine | `db.express.create()`, `db.express.list()` (23x faster) |
+| Enterprise features | Engine | `DataFlowEngine.builder()` with validation/classification |
+| Complex multi-step workflows | Primitive | `WorkflowBuilder` + generated nodes |
+| Custom transaction control | Primitive | `TransactionScopeNode` + `WorkflowBuilder` |
+
+**Default to `db.express`** for single-record operations. Use `WorkflowBuilder` only for multi-step workflows.
+
 ## Primary Responsibilities
 
 ### Use This Subagent When:
