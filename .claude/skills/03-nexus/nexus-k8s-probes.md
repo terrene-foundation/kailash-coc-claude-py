@@ -3,39 +3,31 @@
 ## K8s Probe Endpoints
 
 ```python
-from nexus import Nexus, ProbeManager, ProbeState
+from nexus import ProbeManager, ProbeState
 
-app = Nexus([workflow])
+probe_mgr = ProbeManager()
+probe_mgr.install(app)  # registers GET /healthz, /readyz, /startup
 
-# Probes auto-registered at:
-# GET /healthz  — liveness (always 200 if process alive)
-# GET /readyz   — readiness (200 when all workflows ready)
-# GET /startup  — startup (200 after init complete)
-
-# Manual state control
-app.probe_manager.set_state(ProbeState.DRAINING)  # graceful shutdown
+# State management (thread-safe, atomic)
+probe_mgr.mark_ready()             # STARTING -> READY
+probe_mgr.mark_draining()          # READY -> DRAINING
+probe_mgr.mark_failed("db down")   # any -> FAILED
 ```
-
-### ProbeState Transitions
-
-`STARTING -> READY -> DRAINING -> FAILED` (thread-safe, atomic)
 
 ### Readiness Callbacks
 
 ```python
-probe_mgr = ProbeManager()
-probe_mgr.register_readiness_check("db", lambda: db.is_connected())
+probe_mgr.add_readiness_check(lambda: db.is_connected())
 ```
 
 ## OpenAPI Generation
 
 ```python
-from nexus import OpenApiGenerator, OpenApiInfo
+from nexus import OpenApiGenerator
 
-gen = OpenApiGenerator(info=OpenApiInfo(title="My API", version="1.0.0"))
+gen = OpenApiGenerator(title="My API", version="1.0.0")
 gen.add_handler("/process", handler_fn)  # auto-derives schema from type hints
 spec = gen.generate()  # OpenAPI 3.0.3 dict
-
 # Auto-endpoint: GET /openapi.json
 ```
 
@@ -68,14 +60,13 @@ csrf = CSRFMiddleware(
 
 ```python
 from nexus import Nexus
-from nexus.presets import Preset
 
-app = Nexus([workflow], preset=Preset.STANDARD)
-# None: no middleware
-# Lightweight: security headers
-# Standard: + CSRF + CORS + rate limiting
-# SaaS: + tenant isolation
-# Enterprise: + audit logging
+app = Nexus([workflow], preset="standard")
+# "none": no middleware
+# "lightweight": security headers
+# "standard": + CSRF + CORS + rate limiting
+# "saas": + tenant isolation
+# "enterprise": + audit logging
 ```
 
 ## Source Files

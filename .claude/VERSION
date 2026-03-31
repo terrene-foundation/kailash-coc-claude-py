@@ -1,16 +1,45 @@
 {
-  "version": "1.0.0",
+  "version": "1.2.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
-  "released": "2026-03-30",
+  "released": "2026-03-31",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
     "version": "1.0.0",
-    "build_version": "1.0.0",
-    "synced_at": "2026-03-30T00:00:00Z"
+    "build_version": "2.2.1",
+    "synced_at": "2026-03-31T10:00:00Z"
   },
   "changelog": [
+    {
+      "version": "1.2.0",
+      "date": "2026-03-31",
+      "summary": "Gate 1 py changes: DataFlow SyncExpress, PACT approve_bridge, __del__ patterns, Nexus K8s probes, Kaizen agent reference",
+      "changes": [
+        "UPDATED: skills/02-dataflow/dataflow-express.md (py variant) — SyncExpress API, SQLite timestamp fix",
+        "UPDATED: skills/29-pact/pact-governance-engine.md — approve_bridge pattern",
+        "UPDATED: rules/patterns.md (py variant) — __del__ cleanup patterns",
+        "UPDATED: skills/03-nexus/nexus-k8s-probes.md — K8s health probe patterns",
+        "UPDATED: skills/04-kaizen/kaizen-tool-hydration.md (variant-only) — tool hydration refinements",
+        "UPDATED: agents/standards/co-expert.md — CO expert updates",
+        "UPDATED: agents/standards/coc-expert.md — COC expert updates",
+        "UPDATED: rules/journal.md — journal rule refinements",
+        "UPDATED: skills/co-reference/SKILL.md — CO reference updates"
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-03-30",
+      "summary": "Engine-first framework rule, layer preference tables, Delegate-vs-BaseAgent skill",
+      "changes": [
+        "NEW: rules/framework-first.md — Engine-over-Primitives 3-layer model",
+        "NEW: skills/04-kaizen/kaizen-delegate-vs-baseagent.md — Delegate vs BaseAgent decision guide",
+        "UPDATED: agents/framework-advisor.md — added Step 2b layer selection table",
+        "UPDATED: agents/frameworks/dataflow-specialist.md — added layer preference section",
+        "UPDATED: agents/frameworks/nexus-specialist.md — added layer preference section",
+        "UPDATED: skills/13-architecture-decisions/decide-framework.md — added within-framework layer selection"
+      ]
+    },
     {
       "version": "1.0.0",
       "date": "2026-03-29",

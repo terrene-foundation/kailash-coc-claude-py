@@ -20,7 +20,8 @@ delegate = Delegate(model="gpt-4o", tools=my_50_tools)
 
 # Manual threshold override
 from kaizen_agents.delegate.tools.hydrator import ToolHydrator
-hydrator = ToolHydrator(tools=my_tools, threshold=20, base_tool_count=10)
+hydrator = ToolHydrator(threshold=20)
+hydrator.load_tools(tool_defs, tool_executors)
 ```
 
 ## BM25 Search
@@ -29,7 +30,7 @@ hydrator = ToolHydrator(tools=my_tools, threshold=20, base_tool_count=10)
 from kaizen_agents.delegate.tools.search import create_search_tools_executor
 
 executor = create_search_tools_executor(hydrator)
-results = executor(query="database operations", top_k=5)
+results = await executor(query="database operations", top_n=5)
 # Returns top-5 matching tool schemas ranked by BM25 score
 ```
 
