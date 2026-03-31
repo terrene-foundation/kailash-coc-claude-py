@@ -17,24 +17,44 @@ DataFlow is a zero-config database framework built on Kailash Core SDK that auto
 
 ## Quick Start
 
-DataFlow nodes follow the **canonical 4-parameter pattern** from `/01-core-sdk`.
+### Express API (Recommended for Simple CRUD)
 
 ```python
 from dataflow import DataFlow
+
+# Zero-config initialization
+db = DataFlow("sqlite:///app.db", auto_migrate=True)
+
+@db.model
+class User:
+    name: str
+    email: str
+    active: bool = True
+
+await db.initialize()
+
+# Async Express (default) — 23x faster than workflow primitives
+result = await db.express.create("User", {"name": "Alice", "email": "alice@example.com"})
+user = await db.express.read("User", str(result["id"]))
+users = await db.express.list("User", {"active": True})
+count = await db.express.count("User")
+await db.express.update("User", str(result["id"]), {"name": "Bob"})
+await db.express.delete("User", str(result["id"]))
+
+# Sync Express (CLI scripts, non-async contexts)
+result = db.express_sync.create("User", {"name": "Alice", "email": "alice@example.com"})
+users = db.express_sync.list("User", {"active": True})
+```
+
+### Workflow API (For Multi-Step Operations)
+
+Use WorkflowBuilder only when you need multiple nodes with data flow between them.
+
+```python
 from kailash.workflow.builder import WorkflowBuilder
 from kailash.runtime.local import LocalRuntime
 
-# Initialize DataFlow
-db = DataFlow(connection_string="postgresql://user:pass@localhost/db")
-
-# Define model (generates 11 nodes automatically)
-@db.model
-class User:
-    id: str  # String IDs preserved
-    name: str
-    email: str
-
-# Use generated nodes in workflows
+# Multi-node workflow with connections
 workflow = WorkflowBuilder()
 workflow.add_node("User_Create", "create_user", {
     "data": {"name": "John", "email": "john@example.com"}

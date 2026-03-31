@@ -5,7 +5,7 @@ How repos know whether their COC artifacts are current, and how updates propagat
 ## The Version Chain
 
 ```
-kailash/.claude/VERSION          ← Source of truth (BUILD COC version)
+loom/.claude/VERSION          ← Source of truth (BUILD COC version)
        │
        ├── kailash-coc-claude-py/.claude/VERSION   (upstream.build_version)
        │          │
@@ -22,7 +22,7 @@ Each repo in the chain tracks the version of its upstream. The session-start hoo
 
 Every repo with COC artifacts MUST have `.claude/VERSION`:
 
-### Source (kailash/)
+### Source (loom/)
 
 ```json
 {
@@ -52,7 +52,7 @@ The source version is bumped by the human after `/sync` distributes changes.
 }
 ```
 
-`upstream.build_version` tracks which kailash/ version this template was last synced from.
+`upstream.build_version` tracks which loom/ version this template was last synced from.
 
 ### BUILD Repo (kailash-py, kailash-rs)
 
@@ -99,12 +99,12 @@ The `session-start.js` hook checks version currency on every session:
 ### For BUILD repos
 
 1. Read local `.claude/VERSION` → get `upstream.build_version`
-2. Read `kailash/.claude/VERSION` → get current source `version`
-3. If local < source → warn: "COC artifacts are outdated (local: 1.0.0, source: 1.1.0). Run `/sync-to-build` at kailash/ to update."
+2. Read `loom/.claude/VERSION` → get current source `version`
+3. If local < source → warn: "COC artifacts are outdated (local: 1.0.0, source: 1.1.0). Run `/sync-to-build` at loom/ to update."
 
 ### For USE templates
 
-Same check as BUILD repos — compare `upstream.build_version` against kailash/ source version.
+Same check as BUILD repos — compare `upstream.build_version` against loom/ source version.
 
 ### For downstream projects
 
@@ -127,15 +127,15 @@ This ensures existing repos get version tracking on their next session without m
 
 ## When Versions Bump
 
-### Source version (kailash/)
+### Source version (loom/)
 
 Bumped AFTER `/sync` distributes changes. The human decides the bump level:
 
-| Change type | Bump | Example |
-|------------|------|---------|
-| New agents, skills, guides added | Minor (x.Y.0) | 1.0.0 → 1.1.0 |
+| Change type                                                         | Bump          | Example       |
+| ------------------------------------------------------------------- | ------------- | ------------- |
+| New agents, skills, guides added                                    | Minor (x.Y.0) | 1.0.0 → 1.1.0 |
 | Breaking changes (renamed/removed artifacts, changed hook behavior) | Major (X.0.0) | 1.1.0 → 2.0.0 |
-| Fixes, wording updates, description tweaks | Patch (x.y.Z) | 1.1.0 → 1.1.1 |
+| Fixes, wording updates, description tweaks                          | Patch (x.y.Z) | 1.1.0 → 1.1.1 |
 
 The `/sync` command prompts for version bump after Gate 2 completes:
 
@@ -148,6 +148,7 @@ Bump to: [1.0.1] patch  [1.1.0] minor  [2.0.0] major  [S]kip?
 ### USE template version
 
 Set automatically by `/sync` Gate 2:
+
 - `version` matches the source version it was synced from
 - `upstream.build_version` set to source version
 - `upstream.synced_at` set to current timestamp
@@ -155,18 +156,20 @@ Set automatically by `/sync` Gate 2:
 ### BUILD repo version
 
 Set automatically by `/sync-to-build`:
+
 - Same logic as USE template — tracks source version
 
 ### Downstream project version
 
 Set automatically by downstream `/sync`:
+
 - `upstream.template_version` set to template version
 - `upstream.synced_at` set to current timestamp
 
 ## The Update Flow
 
 ```
-Human bumps kailash/ VERSION to 1.1.0
+Human bumps loom/ VERSION to 1.1.0
     │
     ├── /sync py → coc-claude-py VERSION: upstream.build_version = 1.1.0
     │                    │

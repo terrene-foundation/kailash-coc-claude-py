@@ -1,11 +1,11 @@
 # Sync Flow — Merge Semantics and Adaptation
 
-How artifacts actually move between repos. This is the operational companion to [06 - Artifact Lifecycle](06-artifact-lifecycle.md) which covers the *when* and *why*. This guide covers the *how*.
+How artifacts actually move between repos. This is the operational companion to [06 - Artifact Lifecycle](06-artifact-lifecycle.md) which covers the _when_ and _why_. This guide covers the _how_.
 
 ## The Distribution Chain
 
 ```
-BUILD repo ──/codify──> proposal ──> kailash/ ──/sync──> USE template ──> downstream projects
+BUILD repo ──/codify──> proposal ──> loom/ ──/sync──> USE template ──> downstream projects
  (kailash-py)          (.proposals/)  (source)   (Gate 2)  (coc-claude-py)   (user projects)
  (kailash-rs)                         of truth              (coc-claude-rs)
 ```
@@ -22,44 +22,46 @@ BUILD repos (kailash-py, kailash-rs) are where features, bugs, and issues land f
 
 The proposal includes tier suggestions (cc/co/coc/coc-py/coc-rs) for each changed artifact. These are agent suggestions — the human decides during review.
 
-## Step 2: Review at kailash/ (/sync Gate 1)
+## Step 2: Review at loom/ (/sync Gate 1)
 
-When the developer runs `/sync py` (or rs) at kailash/, Gate 1 activates:
+When the developer runs `/sync py` (or rs) at loom/, Gate 1 activates:
 
 ### What it computes
 
-The **expected state** — what the BUILD repo SHOULD have if freshly synced from kailash/:
-- Start with all global files from kailash/.claude/
+The **expected state** — what the BUILD repo SHOULD have if freshly synced from loom/:
+
+- Start with all global files from loom/.claude/
 - Apply the correct variant overlay (py or rs)
 - This produces the "expected" BUILD repo content
 
 ### What it diffs
 
 Compare BUILD repo's actual `.claude/` against expected state:
+
 - **NEW in BUILD**: artifact created by /codify (or ad-hoc)
-- **MODIFIED in BUILD**: artifact changed from what kailash/ would produce
-- **MATCHING**: BUILD has exactly what kailash/ would produce (no action)
+- **MODIFIED in BUILD**: artifact changed from what loom/ would produce
+- **MATCHING**: BUILD has exactly what loom/ would produce (no action)
 - **BUILD-ONLY**: artifact in BUILD that has no source equivalent (preserved)
 
 ### Human classification
 
 For each NEW or MODIFIED artifact, the human decides:
 
-| Classification | Placement | Effect |
-|---------------|-----------|--------|
-| **Global** | `kailash/.claude/{type}/{file}` | Synced to ALL targets (py + rs) |
-| **Variant** | `kailash/.claude/variants/{lang}/{type}/{file}` | Synced to ONE target, overlays global |
-| **Skip** | Not upstreamed | BUILD repo keeps it locally |
+| Classification | Placement                                    | Effect                                |
+| -------------- | -------------------------------------------- | ------------------------------------- |
+| **Global**     | `loom/.claude/{type}/{file}`                 | Synced to ALL targets (py + rs)       |
+| **Variant**    | `loom/.claude/variants/{lang}/{type}/{file}` | Synced to ONE target, overlays global |
+| **Skip**       | Not upstreamed                               | BUILD repo keeps it locally           |
 
 For global changes, the agent asks: "Does the other SDK need an adaptation?" This catches cross-SDK alignment issues before they propagate.
 
 ## Step 3: Distribute to USE Templates (/sync Gate 2)
 
-Gate 2 rebuilds USE template repos from kailash/ source. This is NOT a file copy — it is a computed merge:
+Gate 2 rebuilds USE template repos from loom/ source. This is NOT a file copy — it is a computed merge:
 
 ### Overlay computation
 
-For each syncable file in kailash/.claude/:
+For each syncable file in loom/.claude/:
 
 ```
 if file is in exclude list → skip
@@ -76,7 +78,7 @@ The sync to USE templates follows these rules:
 
 **Replace**: Files that exist in both source and template are REPLACED with the source version (after variant overlay). The source is authoritative.
 
-**Never delete**: No file is ever deleted from the template. If an artifact is removed from kailash/ source, it becomes template-only in the template until manually cleaned up.
+**Never delete**: No file is ever deleted from the template. If an artifact is removed from loom/ source, it becomes template-only in the template until manually cleaned up.
 
 **CLAUDE.md exempt**: The template's CLAUDE.md is NEVER overwritten. Each repo maintains its own identity.
 
@@ -107,6 +109,7 @@ Downstream projects (user applications built on the SDK) receive artifacts from 
 ### Downstream merge rules
 
 Same additive semantics as template sync:
+
 - Source (USE template) files overwrite matching downstream files
 - Downstream-only files are preserved
 - CLAUDE.md is never overwritten
@@ -114,24 +117,24 @@ Same additive semantics as template sync:
 
 ### What downstream NEVER gets
 
-- `sync-manifest.yaml` (kailash/-only)
-- `variants/` directory (kailash/-only, applied during sync)
+- `sync-manifest.yaml` (loom/-only)
+- `variants/` directory (loom/-only, applied during sync)
 - Management agents (sync-reviewer, coc-sync, code-inspector, repo-admin, settings-manager)
-- Meta files (_README.md, _subagent-guide.md)
+- Meta files (\_README.md, \_subagent-guide.md)
 - Per-repo data (learning/, learned-instincts.md, .proposals/)
 
 ## Sync Is Not rsync
 
 The distinction matters:
 
-| rsync behavior | /sync behavior |
-|---------------|---------------|
-| Copies files | Computes expected state, then merges |
-| Optionally deletes extras | Never deletes (additive only) |
-| No content awareness | Applies variant overlays |
-| No validation | Verifies hook paths, checks contamination |
-| No human gate | Gate 1 requires human classification |
-| No adaptation | Variant system adapts content per target |
+| rsync behavior            | /sync behavior                            |
+| ------------------------- | ----------------------------------------- |
+| Copies files              | Computes expected state, then merges      |
+| Optionally deletes extras | Never deletes (additive only)             |
+| No content awareness      | Applies variant overlays                  |
+| No validation             | Verifies hook paths, checks contamination |
+| No human gate             | Gate 1 requires human classification      |
+| No adaptation             | Variant system adapts content per target  |
 
 The `/sync` command delegates to specialized agents (sync-reviewer for Gate 1, coc-sync for Gate 2) because the merge requires understanding file semantics — not just copying bytes.
 
@@ -143,7 +146,7 @@ Run `/sync py` and `/sync rs` separately. If both propose changes to the same gl
 
 ### Global change that needs variant adaptation
 
-The reviewer marks it global AND creates a variant for the SDK that needs adaptation. Both are placed in kailash/ — the global and the variant.
+The reviewer marks it global AND creates a variant for the SDK that needs adaptation. Both are placed in loom/ — the global and the variant.
 
 ### Template has content that source doesn't
 
@@ -151,7 +154,8 @@ Template-only files are preserved. If a template file should be removed, it must
 
 ### BUILD repo has stale artifacts
 
-`/sync-to-build` pushes latest kailash/ content to BUILD repos. After sync, any remaining BUILD-only artifacts are either:
+`/sync-to-build` pushes latest loom/ content to BUILD repos. After sync, any remaining BUILD-only artifacts are either:
+
 - Legitimate local content (preserved)
 - Stale content from before the variant system (cleanup candidate)
 
