@@ -92,6 +92,37 @@ function initializeSession(data) {
     );
   }
 
+  // ── Python virtual environment check ───────────────────────────────────
+  const hasPyproject = fs.existsSync(path.join(cwd, "pyproject.toml"));
+  if (hasPyproject) {
+    const venvPython = path.join(cwd, ".venv", "bin", "python");
+    const hasVenv = fs.existsSync(venvPython);
+    if (!hasVenv) {
+      console.error(
+        "[VENV] ⚠ WARNING: No .venv found in project root. Using global Python is BLOCKED.",
+      );
+      console.error(
+        "[VENV]   Fix: run `uv venv && uv sync` before any Python work.",
+      );
+      console.error(
+        "[VENV]   See rules/python-environment.md for the full policy.",
+      );
+    } else {
+      // Check if venv is stale (pyproject.toml newer than .venv)
+      try {
+        const pyprojectMtime = fs.statSync(
+          path.join(cwd, "pyproject.toml"),
+        ).mtimeMs;
+        const venvMtime = fs.statSync(venvPython).mtimeMs;
+        if (pyprojectMtime > venvMtime) {
+          console.error(
+            "[VENV] pyproject.toml changed since last uv sync. Run `uv sync` to update.",
+          );
+        }
+      } catch {}
+    }
+  }
+
   // ── Parse .env ────────────────────────────────────────────────────────
   const envPath = path.join(cwd, ".env");
   const envExists = fs.existsSync(envPath);

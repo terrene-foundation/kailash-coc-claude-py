@@ -181,7 +181,6 @@ workflow.add_node("NodeType", "node_id", {"param": "value"})
 | Framework    | Purpose                                | Install                        |
 | ------------ | -------------------------------------- | ------------------------------ |
 | **Core SDK** | Workflow orchestration, 140+ nodes     | `pip install kailash`          |
-| **Trust**    | EATP protocol + trust-plane governance | `pip install kailash[trust]`   |
 | **DataFlow** | Zero-config database operations        | `pip install kailash-dataflow` |
 | **Nexus**    | Multi-channel deployment (API+CLI+MCP) | `pip install kailash-nexus`    |
 | **Kaizen**   | AI agent framework                     | `pip install kailash-kaizen`   |

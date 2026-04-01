@@ -1,16 +1,43 @@
 {
-  "version": "1.2.0",
+  "version": "1.4.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
-  "released": "2026-03-31",
+  "released": "2026-04-01",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "1.0.0",
-    "build_version": "2.2.1",
-    "synced_at": "2026-03-31T10:00:00Z"
+    "version": "1.1.0",
+    "build_version": "2.4.0",
+    "synced_at": "2026-04-01T18:00:00Z"
   },
   "changelog": [
+    {
+      "version": "1.4.0",
+      "date": "2026-04-01",
+      "summary": "Downstream proposal guard + SDK pin update to 2.4.0",
+      "changes": [
+        "UPDATED: commands/codify.md — Step 7 scoped to BUILD repos only; downstream repos skip proposals",
+        "UPDATED: rules/artifact-flow.md — New Rule 2a: downstream repos do not propose upstream",
+        "UPDATED: pyproject.toml — SDK pins: kailash 2.3.1→2.4.0, nexus 1.6.0→1.7.1, dataflow 1.3.0→1.5.1, kaizen 2.3.2→2.3.3"
+      ]
+    },
+    {
+      "version": "1.3.0",
+      "date": "2026-04-01",
+      "summary": "Dependency install normalization + Python venv enforcement rule",
+      "changes": [
+        "UPDATED: rules/infrastructure-sql.md (py variant) — pip install kailash[postgres] → pip install kailash",
+        "UPDATED: skills/01-core-sdk/kailash-installation.md — all kailash[extras] → pip install kailash",
+        "UPDATED: skills/04-kaizen/kaizen-trust-eatp.md — kailash[trust] → pip install kailash",
+        "UPDATED: skills/15-enterprise-infrastructure/connection-manager-patterns.md — extras refs → pip install kailash",
+        "UPDATED: skills/15-enterprise-infrastructure/progressive-infrastructure.md — kailash[postgres] → pip install kailash",
+        "UPDATED: skills/26-eatp-reference/SKILL.md — kailash[trust] → pip install kailash",
+        "UPDATED: skills/26-eatp-reference/eatp-sdk-api-reference.md — kailash[trust] → pip install kailash",
+        "UPDATED: skills/26-eatp-reference/eatp-sdk-quickstart.md — kailash[trust] → pip install kailash",
+        "NEW: rules/python-environment.md — Python venv isolation policy (uv + .venv enforcement)",
+        "UPDATED: scripts/hooks/session-start.js — Added Python venv check"
+      ]
+    },
     {
       "version": "1.2.0",
       "date": "2026-03-31",
