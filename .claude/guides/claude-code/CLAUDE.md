@@ -169,7 +169,7 @@ Think of Claude Code as a **highly capable junior developer** with access to a *
 ```
 .claude/
 ├── agents/              # 30 specialized sub-agents
-│   ├── deep-analyst.md
+│   ├── analyst.md
 │   ├── dataflow-specialist.md
 │   ├── testing-specialist.md
 │   └── ... (27 more)
@@ -193,7 +193,7 @@ Think of Claude Code as a **highly capable junior developer** with access to a *
 │   ├── env-models.md   # API keys & model names
 │   ├── git.md          # Git workflow rules
 │   ├── learned-instincts.md # Auto-generated instincts
-│   ├── no-stubs.md     # No stubs/TODOs/placeholders
+│   ├── zero-tolerance.md     # No stubs/TODOs/placeholders
 │   ├── patterns.md     # Kailash pattern rules
 │   ├── security.md     # Security rules
 │   └── testing.md      # Testing policies (real infrastructure recommended)
@@ -314,13 +314,12 @@ Claude automatically selects agents based on task type. For reference:
 | Task Type              | Primary Agent           | Secondary Agents           |
 | ---------------------- | ----------------------- | -------------------------- |
 | Database operations    | `dataflow-specialist`   | `testing-specialist`       |
-| API deployment         | `nexus-specialist`      | `deployment-specialist`    |
+| API deployment         | `nexus-specialist`      | `release-specialist`    |
 | AI/ML features         | `kaizen-specialist`     | `pattern-expert`           |
-| Complex planning       | `deep-analyst`          | `requirements-analyst`     |
-| Code review            | `intermediate-reviewer` | `gold-standards-validator` |
+| Complex planning       | `analyst`          | `analyst`     |
+| Code review            | `reviewer` | `gold-standards-validator` |
 | Security audit         | `security-reviewer`     | -                          |
 | Test writing           | `tdd-implementer`       | `testing-specialist`       |
-| Pattern implementation | `pattern-expert`        | `sdk-navigator`            |
 
 ### Instructing Claude Effectively
 
@@ -371,7 +370,7 @@ Claude follows this pattern for complex tasks:
    └── Validate with hooks
 
 4. REVIEW
-   └── Delegate to intermediate-reviewer
+   └── Delegate to reviewer
    └── Address findings
    └── Iterate if needed
 
@@ -433,7 +432,7 @@ You don't need to specify which agent to use. Just describe the task:
 
 ### Anti-Pattern 2: Ignoring Agent Recommendations
 
-**Don't**: Dismiss intermediate-reviewer findings without addressing
+**Don't**: Dismiss reviewer findings without addressing
 **Why**: Code review catches issues you'll regret later
 
 ### Anti-Pattern 3: Rushing Past Planning

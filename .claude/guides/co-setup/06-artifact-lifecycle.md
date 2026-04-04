@@ -232,8 +232,8 @@ The same architecture applies. kailash-coc-gemini-py is another template that re
 | ------------------------ | -------------------------------------------------------------------- |
 | `coc-sync`               | Rewritten: reads sync-manifest.yaml, applies overlays, variant-aware |
 | **NEW**: `sync-reviewer` | Scans BUILD repos, presents diffs, classifies changes                |
-| `code-inspector`         | Absorbed from ~/repos into loom/agents/management/                   |
-| `repo-admin`             | Absorbed from ~/repos into loom/agents/management/                   |
+| `repo-ops`         | Absorbed from ~/repos into loom/agents/management/                   |
+| `repo-ops`             | Absorbed from ~/repos into loom/agents/management/                   |
 | `settings-manager`       | Absorbed from ~/repos into loom/agents/management/                   |
 
 ## What Changes in Existing Rules

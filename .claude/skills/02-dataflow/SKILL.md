@@ -1,6 +1,6 @@
 ---
 name: dataflow
-description: "Kailash DataFlow - zero-config database framework with automatic model-to-node generation. Use when asking about 'database operations', 'DataFlow', 'database models', 'CRUD operations', 'bulk operations', 'database queries', 'database migrations', 'multi-tenancy', 'multi-instance', 'database transactions', 'PostgreSQL', 'MySQL', 'SQLite', 'MongoDB', 'pgvector', 'vector search', 'document database', 'RAG', 'semantic search', 'existing database', 'database performance', 'database deployment', 'database testing', or 'TDD with databases'. DataFlow is NOT an ORM - it generates 11 workflow nodes per SQL model, 8 nodes for MongoDB, and 3 nodes for vector operations."
+description: "Kailash DataFlow - zero-config data operations framework with automatic model-to-node generation and Data Fabric Engine. Use when asking about 'database operations', 'DataFlow', 'database models', 'CRUD operations', 'bulk operations', 'database queries', 'database migrations', 'multi-tenancy', 'multi-instance', 'database transactions', 'PostgreSQL', 'MySQL', 'SQLite', 'MongoDB', 'pgvector', 'vector search', 'document database', 'RAG', 'semantic search', 'existing database', 'database performance', 'database deployment', 'database testing', 'TDD with databases', 'external data sources', 'data products', 'db.source', 'db.product', 'db.start', 'fabric engine', 'source adapters', 'REST source', 'webhooks', or 'data fabric'. DataFlow is NOT an ORM - it generates 11 workflow nodes per SQL model, 8 nodes for MongoDB, and 3 nodes for vector operations."
 ---
 
 # Kailash DataFlow - Zero-Config Database Framework
@@ -113,6 +113,22 @@ Each `@db.model` class generates:
 
 ### Advanced Features
 
+### Data Fabric Engine
+
+- **[dataflow-fabric-engine](dataflow-fabric-engine.md)** - External data sources (`db.source()`), derived products (`@db.product()`), fabric runtime (`db.start()`), 5 source adapters, webhooks, SSRF protection, observability
+
+### Enterprise Features
+
+- **[dataflow-derived-models](dataflow-derived-models.md)** - Application-layer materialized views (`@db.derived_model`)
+- **[dataflow-file-import](dataflow-file-import.md)** - File ingestion (CSV/Excel/Parquet/JSON) + `db.express.import_file()`
+- **[dataflow-validation-dsl](dataflow-validation-dsl.md)** - Declarative validation (`__validation__` dict)
+- **[dataflow-express-cache](dataflow-express-cache.md)** - Model-scoped Express caching with TTL
+- **[dataflow-read-replicas](dataflow-read-replicas.md)** - Read/write splitting with `read_url`
+- **[dataflow-retention](dataflow-retention.md)** - Data retention (archive/delete/partition policies)
+- **[dataflow-events](dataflow-events.md)** - Write event emission + Core SDK EventBus integration
+
+### Advanced Features
+
 - **[dataflow-multi-instance](dataflow-multi-instance.md)** - Multiple database instances
 - **[dataflow-multi-tenancy](dataflow-multi-tenancy.md)** - Multi-tenant architectures
 - **[dataflow-existing-database](dataflow-existing-database.md)** - Working with existing databases
@@ -132,6 +148,10 @@ Each `@db.model` class generates:
 
 - **[dataflow-connection-config](dataflow-connection-config.md)** - Pool auto-scaling, env vars, override scenarios
 - **[dataflow-monitoring](dataflow-monitoring.md)** - Pool utilization, leak detection, health checks, diagnostics
+
+### ML Integration
+
+- **[dataflow-ml-integration](dataflow-ml-integration.md)** - kailash-ml FeatureStore integration (ConnectionManager, point-in-time queries, polars interop)
 
 ### Troubleshooting
 
@@ -204,4 +224,4 @@ For DataFlow-specific questions, invoke:
 
 - `dataflow-specialist` - DataFlow implementation and patterns
 - `testing-specialist` - DataFlow testing strategies (NO MOCKING policy)
-- `framework-advisor` - Choose between Core SDK and DataFlow
+- ``decide-framework` skill` - Choose between Core SDK and DataFlow

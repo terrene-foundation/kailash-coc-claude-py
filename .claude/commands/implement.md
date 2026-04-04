@@ -20,7 +20,7 @@ description: "Load phase 03 (implement) for the current workspace. Repeat until 
 
 ## Execution Model
 
-This phase executes under the **autonomous execution model** (see `rules/autonomous-execution.md`). Implementation is fully autonomous — agents execute in parallel, self-validate through TDD, and converge through quality gates. The human observes outcomes but does not sit in the execution loop. Pre-existing failures are fixed, not reported (zero-tolerance). Agent-to-agent delegation (intermediate-reviewer, security-reviewer) is autonomous, not human-gated.
+This phase executes under the **autonomous execution model** (see `rules/autonomous-execution.md`). Implementation is fully autonomous — agents execute in parallel, self-validate through TDD, and converge through quality gates. The human observes outcomes but does not sit in the execution loop. Pre-existing failures are fixed, not reported (zero-tolerance). Agent-to-agent delegation (reviewer, security-reviewer) is autonomous, not human-gated.
 
 ## Workflow
 
@@ -103,7 +103,7 @@ Deploy these agents as a team for each implementation cycle:
 
 - **tdd-implementer** — Test-first development, red-green-refactor
 - **testing-specialist** — 3-tier test strategy, Real infrastructure recommended in Tier 2-3
-- **intermediate-reviewer** — Code review after every file change (MANDATORY)
+- **reviewer** — Code review after every file change (MANDATORY)
 - **todo-manager** — Track progress, update todo status, verify completion with evidence
 
 **Specialist (invoke ONE matching the current todo):**
@@ -118,8 +118,8 @@ Deploy these agents as a team for each implementation cycle:
 
 - **uiux-designer** — Design system, visual hierarchy, responsive layouts
 - **react-specialist** or **flutter-specialist** — Framework-specific implementation
-- **ai-ux-designer** — AI interaction patterns (if AI-facing UI)
-- **frontend-developer** — Responsive UI components
+- **uiux-designer** — AI interaction patterns (if AI-facing UI)
+- **react-specialist** — Responsive UI components
 
 **Recovery (invoke when builds break):**
 

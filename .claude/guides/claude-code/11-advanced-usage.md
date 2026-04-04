@@ -21,7 +21,7 @@ By the end of this guide, you will know how to:
 Instead of relying on automatic delegation, request specific agents:
 
 ```
-> Use the deep-analyst to evaluate the architectural risks of adding real-time notifications
+> Use the analyst to evaluate the architectural risks of adding real-time notifications
 ```
 
 ```
@@ -38,9 +38,9 @@ For complex analysis, chain agents in sequence:
 
 ```
 > For this feature, I want you to:
-> 1. Use deep-analyst for risk assessment
-> 2. Use requirements-analyst for breakdown
-> 3. Use framework-advisor for technology selection
+> 1. Use analyst for risk assessment
+> 2. Use analyst for breakdown
+> 3. Use `decide-framework` skill for technology selection
 > 4. Use the appropriate specialist for implementation guidance
 ```
 
@@ -52,7 +52,7 @@ Request parallel agent work for independent tasks:
 > In parallel:
 > - Use testing-specialist to review test coverage
 > - Use security-reviewer to audit security
-> - Use intermediate-reviewer to check code quality
+> - Use reviewer to check code quality
 ```
 
 Claude launches all three agents simultaneously.
@@ -62,7 +62,7 @@ Claude launches all three agents simultaneously.
 Skip automatic delegation when you know best:
 
 ```
-> Skip the deep-analyst, I've already analyzed this. Just implement:
+> Skip the analyst, I've already analyzed this. Just implement:
 > [Your implementation details]
 ```
 

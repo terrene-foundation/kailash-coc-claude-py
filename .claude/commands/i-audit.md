@@ -114,7 +114,7 @@ When auditing AI-facing interfaces, also evaluate:
 Deploy these agents for design audits:
 
 - **uiux-designer** — Deep design analysis and recommendations
-- **ai-ux-designer** — AI-specific interaction pattern evaluation
+- **uiux-designer** — AI-specific interaction pattern evaluation
 - **value-auditor** — Enterprise demo value assessment (via Playwright)
 
 ## Skill References

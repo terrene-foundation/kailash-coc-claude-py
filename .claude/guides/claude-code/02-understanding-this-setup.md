@@ -124,9 +124,8 @@ Claude: [Uses DataFlow patterns from skills]
 │                                                              │
 │  dataflow-specialist   nexus-specialist   kaizen-specialist │
 │  pattern-expert        testing-specialist  security-reviewer │
-│  tdd-implementer       deep-analyst       requirements-analyst│
-│  framework-advisor     intermediate-reviewer                 │
-│  gold-standards-validator  sdk-navigator  deployment-specialist│
+│  tdd-implementer       analyst       analyst│
+│  `decide-framework` skill     reviewer                 │
 │                                                              │
 │  Purpose: Handle complex specialized tasks                   │
 │  Effect: Deep expertise when simple patterns aren't enough   │
@@ -161,7 +160,7 @@ Claude: [Uses DataFlow patterns from skills]
 │  env-models.md       → API keys & model names                │
 │  git.md              → Git workflow requirements              │
 │  learned-instincts.md → Auto-generated instincts             │
-│  no-stubs.md         → No stubs/TODOs/placeholders           │
+│  zero-tolerance.md         → No stubs/TODOs/placeholders           │
 │  patterns.md         → Kailash pattern enforcement            │
 │  security.md         → Security requirements                  │
 │  testing.md          → Testing policies (Real infrastructure recommended)          │
@@ -295,10 +294,10 @@ When you need deep knowledge, agents provide it:
 | Database operations | `dataflow-specialist`   |
 | API deployment      | `nexus-specialist`      |
 | AI/ML features      | `kaizen-specialist`     |
-| Complex planning    | `deep-analyst`          |
+| Complex planning    | `analyst`          |
 | Test architecture   | `testing-specialist`    |
 | Security audit      | `security-reviewer`     |
-| Code review         | `intermediate-reviewer` |
+| Code review         | `reviewer` |
 
 ### Quick Access to Patterns
 

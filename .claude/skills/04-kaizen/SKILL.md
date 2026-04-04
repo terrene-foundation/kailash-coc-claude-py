@@ -487,4 +487,4 @@ For Kaizen-specific questions, invoke:
 
 - `kaizen-specialist` - Kaizen framework implementation
 - `testing-specialist` - Agent testing strategies
-- `framework-advisor` - When to use Kaizen vs other frameworks
+- ``decide-framework` skill` - When to use Kaizen vs other frameworks

@@ -123,14 +123,14 @@ Deploy these agents as a team for codification:
 
 **Knowledge extraction team:**
 
-- **deep-analyst** — Identify core patterns, architectural decisions, and domain knowledge worth capturing
-- **requirements-analyst** — Distill requirements into reusable agent instructions
-- **coc-expert** — Ensure agents and skills follow COC five-layer architecture (codification IS Layer 5 evolution)
+- **analyst** — Identify core patterns, architectural decisions, and domain knowledge worth capturing
+- **analyst** — Distill requirements into reusable agent instructions
+- `co-reference` skill — Ensure agents and skills follow COC five-layer architecture (codification IS Layer 5 evolution)
 
 **Creation team:**
 
-- **documentation-validator** — Validate that skill examples are correct and runnable
-- **intermediate-reviewer** — Review agent/skill quality before finalizing
+- **reviewer** — Validate that skill examples are correct and runnable
+- **reviewer** — Review agent/skill quality before finalizing
 
 **Validation team (red team the agents and skills):**
 

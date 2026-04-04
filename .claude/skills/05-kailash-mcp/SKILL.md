@@ -198,4 +198,4 @@ For MCP-specific questions, invoke:
 
 - `mcp-specialist` - MCP server implementation
 - `testing-specialist` - MCP testing strategies
-- `framework-advisor` - MCP integration architecture
+- ``decide-framework` skill` - MCP integration architecture

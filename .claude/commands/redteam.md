@@ -108,22 +108,22 @@ Deploy these agents as a red team for validation:
 
 **Core red team (always):**
 
-- **deep-analyst** — **Step 1 owner**: read every plan in `02-plans/`, compare against codebase, produce `.spec-coverage` report. Also: failure points, edge cases, systemic issues.
+- **analyst** — **Step 1 owner**: read every plan in `02-plans/`, compare against codebase, produce `.spec-coverage` report. Also: failure points, edge cases, systemic issues.
 - **testing-specialist** — Verify 3-tier test coverage, Real infrastructure recommended compliance
-- **e2e-runner** — Generate and run Playwright E2E tests (web) or Marionette tests (Flutter)
+- **testing-specialist** — Generate and run Playwright E2E tests (web) or Marionette tests (Flutter)
 - **value-auditor** — Evaluate every page/flow from skeptical enterprise buyer perspective
 - **security-reviewer** — Full security audit across the codebase
 
 **Validation perspectives (deploy selectively based on findings):**
 
-- **coc-expert** — Check methodological compliance: are guardrails in place? Is institutional knowledge captured? Are the three fault lines addressed?
+- `co-reference` skill — Check methodological compliance: are guardrails in place? Is institutional knowledge captured? Are the three fault lines addressed?
 - **gold-standards-validator** — Compliance check against project standards
-- **intermediate-reviewer** — Code quality review across all changed files
+- **reviewer** — Code quality review across all changed files
 
 **Frontend validation (if applicable):**
 
 - **uiux-designer** — Audit visual hierarchy, responsive behavior, accessibility
-- **ai-ux-designer** — Audit AI interaction patterns (if AI-facing UI)
+- **uiux-designer** — Audit AI interaction patterns (if AI-facing UI)
 
 ## Convergence Criteria
 

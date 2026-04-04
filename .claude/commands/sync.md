@@ -21,7 +21,7 @@ This is a **merge**, not an overwrite. Three categories of files:
 
 | Category             | Examples                                        | Behavior                      |
 | -------------------- | ----------------------------------------------- | ----------------------------- |
-| **Shared artifacts** | agents/deep-analyst.md, rules/security.md       | **Updated** from template     |
+| **Shared artifacts** | agents/analyst.md, rules/security.md       | **Updated** from template     |
 | **Project-specific** | agents/project/_, skills/project/_, workspaces/ | **Preserved** — never touched |
 | **Per-repo data**    | learning/\*, learned-instincts.md, .proposals/  | **Preserved** — never touched |
 

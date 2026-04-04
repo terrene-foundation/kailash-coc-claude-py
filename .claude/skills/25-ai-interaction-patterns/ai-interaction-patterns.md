@@ -783,7 +783,7 @@ When building AI interfaces with the Kailash SDK ecosystem:
 - **Interactive Widgets (Skill 20)** handle the rendering of AI responses as structured UI
 - **Conversation UX (Skill 22)** handles thread management and branching data models
 
-The patterns in this document are DESIGN patterns, not implementation patterns. They describe WHAT to build and WHY, not HOW to build it in code. For implementation, pair this skill with the relevant framework specialist (frontend-developer, flutter-specialist, react-specialist).
+The patterns in this document are DESIGN patterns, not implementation patterns. They describe WHAT to build and WHY, not HOW to build it in code. For implementation, pair this skill with the relevant framework specialist (react-specialist, flutter-specialist, react-specialist).
 
 ---
 

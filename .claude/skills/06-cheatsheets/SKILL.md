@@ -144,5 +144,4 @@ Use this skill when you need:
 
 For cheatsheet-related questions, invoke:
 - `pattern-expert` - Pattern selection and usage
-- `sdk-navigator` - Find specific patterns in documentation
-- `framework-advisor` - Choose appropriate patterns for your use case
+- ``decide-framework` skill` - Choose appropriate patterns for your use case

@@ -221,7 +221,6 @@ runtime = LocalRuntime()
 
 ## When to Escalate to Subagent
 
-Use `sdk-navigator` subagent when:
 - Finding specific node imports
 - Exploring advanced SDK features
 - Understanding module structure

@@ -50,7 +50,7 @@ What remains to be done. Be specific — include file paths, line numbers, exact
 ### Outstanding
 
 - [ ] `rules/testing.md` missing from USE template — coc-sync Gate 2 should create softened version
-- [ ] 19 BUILD-internal path refs in USE template agents — list: eatp-expert, framework-advisor, ...
+- [ ] BUILD-internal path refs in USE template agents — check for stale agent/skill references
 ```
 
 ### Section 4: Oversight Checklist

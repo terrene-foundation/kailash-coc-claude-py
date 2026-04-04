@@ -1,0 +1,5 @@
+{"timestamp":"2026-04-03T06:24:26.662Z","type":"stop","session_id":"c3e4a340-1811-45c0-9e28-36bef6926136","reason":"signal","success":true}
+{"timestamp":"2026-04-03T06:38:41.192Z","type":"stop","session_id":"c3e4a340-1811-45c0-9e28-36bef6926136","reason":"signal","success":true}
+{"timestamp":"2026-04-03T06:40:58.857Z","type":"stop","session_id":"c3e4a340-1811-45c0-9e28-36bef6926136","reason":"signal","success":true}
+{"timestamp":"2026-04-03T07:32:11.031Z","type":"stop","session_id":"c3e4a340-1811-45c0-9e28-36bef6926136","reason":"signal","success":true}
+{"id":"obs_1775202658930_80vp1p8od","timestamp":"2026-04-03T07:50:58.930Z","type":"session_summary","data":{"file_counts":{"pythonFiles":0,"testFiles":0,"workflowFiles":0},"framework":"core-sdk","duration_estimate":null},"context":{"session_id":"c3e4a340-1811-45c0-9e28-36bef6926136","cwd":"/Users/esperie/repos/loom/kailash-coc-claude-py/.claude/agents","framework":"unknown"}}

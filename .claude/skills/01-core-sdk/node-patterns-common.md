@@ -323,7 +323,6 @@ workflow.add_connection("csv_reader", "data", "processor", "data")
 
 ## When to Escalate to Subagent
 
-Use `sdk-navigator` subagent when:
 
 - Finding specific nodes for your use case
 - Exploring all 110+ available nodes

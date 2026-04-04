@@ -1,1 +1,18 @@
-{"synced_at": "2026-03-31T14:30:00Z", "source": "loom", "target": "kailash-coc-claude-py", "source_version": "1.2.0", "target_version": "1.3.0", "variant": "py", "stats": {"updated": 8, "unchanged": 512, "added": 0}, "artifacts_updated": ["commands/codify.md", "guides/co-setup/05-variant-architecture.md", "guides/co-setup/06-artifact-lifecycle.md", "guides/co-setup/07-sync-flow.md", "guides/co-setup/08-versioning.md", "rules/artifact-flow.md", "skills/02-dataflow/SKILL.md", "skills/02-dataflow/dataflow-quickstart.md"]}
+{
+  "synced_at": "2026-04-04T00:00:00.000000",
+  "source": "loom/.claude/",
+  "target": "kailash-coc-claude-py/.claude/",
+  "variant": "py",
+  "source_version": "1.4.0",
+  "template_version": "1.6.0",
+  "artifacts_updated": 124,
+  "artifacts_created": 9,
+  "artifacts_unchanged": 385,
+  "artifacts_deleted": 17,
+  "content_adaptations": 4,
+  "scripts_updated": 0,
+  "scripts_created": 1,
+  "scripts_unchanged": 57,
+  "settings_changed": false,
+  "claude_md_preserved": true
+}

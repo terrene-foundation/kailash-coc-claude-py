@@ -119,7 +119,7 @@ Same additive semantics as template sync:
 
 - `sync-manifest.yaml` (loom/-only)
 - `variants/` directory (loom/-only, applied during sync)
-- Management agents (sync-reviewer, coc-sync, code-inspector, repo-admin, settings-manager)
+- Management agents (sync-reviewer, coc-sync, repo-ops, repo-ops, settings-manager)
 - Meta files (\_README.md, \_subagent-guide.md)
 - Per-repo data (learning/, learned-instincts.md, .proposals/)
 

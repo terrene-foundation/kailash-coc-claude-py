@@ -12,7 +12,6 @@ Create basic Kailash workflows using WorkflowBuilder pattern with string-based n
 > Priority: `CRITICAL`
 > SDK Version: `0.9.25+`
 > Related Skills: [`connection-patterns`](../connection-patterns.md), [`node-patterns-common`](../node-patterns-common.md), [`runtime-execution`](../runtime-execution.md), [`param-passing-quick`](../param-passing-quick.md)
-> Related Subagents: `pattern-expert` (complex workflows), `sdk-navigator` (finding nodes)
 
 ## Quick Reference
 
@@ -191,7 +190,6 @@ Use `pattern-expert` subagent when:
 - Creating custom nodes from scratch
 - Optimizing workflow performance
 
-Use `sdk-navigator` subagent when:
 
 - Need to find specific nodes for your use case
 - Looking for workflow examples in specific domains (finance, healthcare, etc.)

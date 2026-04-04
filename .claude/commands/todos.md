@@ -72,10 +72,10 @@ Review with red team agents continuously until they are satisfied there are no g
 Deploy these agents as a team for todo creation:
 
 - **todo-manager** — Create and organize the detailed todos, ensure completeness
-- **requirements-analyst** — Break down requirements, identify missing tasks
-- **deep-analyst** — Identify failure points, dependencies, and gaps
-- **coc-expert** — Ensure todos include context/guardrails/learning work, not just features (COC five-layer completeness)
-- **framework-advisor** — Ensure todos cover the right framework choices (if applicable)
+- **analyst** — Break down requirements, identify missing tasks
+- **analyst** — Identify failure points, dependencies, and gaps
+- `co-reference` skill — Ensure todos include context/guardrails/learning work, not just features (COC five-layer completeness)
+- **`decide-framework` skill** — Ensure todos cover the right framework choices (if applicable)
 
 For frontend projects, additionally deploy:
 

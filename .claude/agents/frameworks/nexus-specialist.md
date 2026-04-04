@@ -130,8 +130,8 @@ app = Nexus(auto_discovery=False)
 - **dataflow-specialist**: Database integration with Nexus platform
 - **mcp-specialist**: MCP channel implementation
 - **pattern-expert**: Core SDK workflows for Nexus registration
-- **framework-advisor**: Choose between Core SDK and Nexus
-- **deployment-specialist**: Production deployment and scaling
+- **`decide-framework` skill**: Choose between Core SDK and Nexus
+- **release-specialist**: Production deployment and scaling
 
 ## Full Documentation
 

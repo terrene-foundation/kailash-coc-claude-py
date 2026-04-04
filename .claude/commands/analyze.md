@@ -80,11 +80,10 @@ Work with red team agents to scrutinize analysis, plans and user flows.
 
 Deploy these agents as a team for analysis:
 
-- **deep-analyst** — Failure analysis, complexity assessment, identify risks
-- **requirements-analyst** — Break down requirements, create ADRs, define scope
-- **coc-expert** — Ground analysis in COC methodology; identify institutional knowledge gaps and guard against the three fault lines (amnesia, convention drift, security blindness)
-- **framework-advisor** — Choose implementation approach (if applicable)
-- **sdk-navigator** — Find existing patterns and documentation before designing from scratch (if applicable)
+- **analyst** — Failure analysis, complexity assessment, identify risks
+- **analyst** — Break down requirements, create ADRs, define scope
+- `co-reference` skill — Ground analysis in COC methodology; identify institutional knowledge gaps and guard against the three fault lines (amnesia, convention drift, security blindness)
+- **`decide-framework` skill** — Choose implementation approach (if applicable)
 
 For product/market analysis, additionally deploy:
 
@@ -93,7 +92,7 @@ For product/market analysis, additionally deploy:
 For frontend projects, additionally deploy:
 
 - **uiux-designer** — Information architecture, visual hierarchy, design system planning
-- **ai-ux-designer** — AI interaction patterns (if the project involves AI interfaces)
+- **uiux-designer** — AI interaction patterns (if the project involves AI interfaces)
 
 Red team the analysis with agents until they confirm no gaps remain in research, plans, and user flows.
 

@@ -363,7 +363,7 @@ with SQLitePostureStore("/tmp/eatp/postures.db") as store:
 
 ## Cross-References
 
-- **Agent**: `eatp-expert` — Full EATP framework knowledge
+- **Skill**: `co-reference` — Full EATP framework knowledge
 - **Budget tracking**: `eatp-budget-tracking.md` — Related persistence pattern for budgets
 - **Security patterns**: `eatp-security-patterns.md` — Lock ordering, integer arithmetic, symlink rejection
 - **Source**: `kailash/trust/posture_store.py`, `kailash/trust/postures.py`

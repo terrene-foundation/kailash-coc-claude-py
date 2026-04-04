@@ -76,7 +76,7 @@ Rules are Markdown files that Claude reads and follows:
 | `env-models.md`        | API keys & models     | .env is single source of truth             |
 | `git.md`               | Git workflow          | Branch strategy, commit rules              |
 | `learned-instincts.md` | Auto-generated        | Workflow patterns from usage               |
-| `no-stubs.md`          | No stubs/TODOs        | No placeholders in production code         |
+| `zero-tolerance.md`          | No stubs/TODOs        | No placeholders in production code         |
 | `patterns.md`          | SDK patterns          | Correct API usage, imports                 |
 | `security.md`          | Security requirements | OWASP, secrets, input validation           |
 | `testing.md`           | Testing policies      | Real infrastructure recommended, test-first, coverage           |
@@ -95,7 +95,7 @@ Defines when and how specialized agents MUST be used.
 
 ```
 After completing ANY file modification (Edit, Write), you MUST:
-1. Delegate to intermediate-reviewer for code review
+1. Delegate to reviewer for code review
 2. Wait for review completion before proceeding
 3. Address any findings before moving to next task
 
@@ -127,9 +127,9 @@ When working with Kailash frameworks, you MUST consult:
 
 ```
 For features requiring design decisions:
-1. deep-analyst → Identify failure points
-2. requirements-analyst → Break down requirements
-3. framework-advisor → Choose implementation approach
+1. analyst → Identify failure points
+2. analyst → Break down requirements
+3. `decide-framework` skill → Choose implementation approach
 4. Appropriate specialist → Implementation
 ```
 

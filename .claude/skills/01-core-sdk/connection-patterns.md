@@ -251,7 +251,6 @@ Use `pattern-expert` subagent when:
 - Debugging connection issues
 - Optimizing workflow architecture
 
-Use `sdk-navigator` subagent when:
 - Finding node port names
 - Understanding node input/output structure
 - Resolving connection errors

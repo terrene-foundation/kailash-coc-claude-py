@@ -23,12 +23,11 @@ Software development projects. The AI writes code, tests it, deploys it.
 | --------- | --------------------------------------------------------------------------------------------------------------------------- |
 | Commands  | `/deploy`, `/test`, `/api`, `/db`, `/sdk`, `/ai`, `/design`, `/validate`                                                    |
 | Commands  | `/i-audit`, `/i-harden`, `/i-polish`, `/evolve`, `/learn`                                                                   |
-| Agents    | `tdd-implementer`, `testing-specialist`, `value-auditor`, `build-fix`, `framework-advisor`, `sdk-navigator`                 |
 | Agents    | Framework specialists: `dataflow-specialist`, `nexus-specialist`, `kaizen-specialist`, `mcp-specialist`                     |
-| Agents    | Frontend: `uiux-designer`, `react-specialist`, `flutter-specialist`, `frontend-developer`, `ai-ux-designer`                 |
-| Agents    | Deployment: `deployment-specialist`, `e2e-runner`                                                                           |
+| Agents    | Frontend: `uiux-designer`, `react-specialist`, `flutter-specialist`, `react-specialist`, `uiux-designer`                 |
+| Agents    | Deployment: `release-specialist`, `testing-specialist`                                                                           |
 | Skills    | SDK-specific (01-core-sdk through 25-ai-patterns)                                                                           |
-| Rules     | `no-stubs.md` (strict — MUST NOT), `agents.md` (MANDATORY), `testing.md`, `patterns.md`, `e2e-god-mode.md`, `env-models.md` |
+| Rules     | `zero-tolerance.md` (strict — MUST NOT), `agents.md` (MANDATORY), `testing.md`, `patterns.md`, `e2e-god-mode.md`, `env-models.md` |
 | Hooks     | `validate-workflow.js` (SDK pattern enforcement), `validate-deployment.js`                                                  |
 
 **`start.md` orientation**: Product-building. "You describe what you want, the AI builds it."
@@ -63,7 +62,7 @@ Strategic, legal, or governance knowledge work. The AI researches, drafts, revie
 | Agents    | Publications: `publication-expert`                                                                                                                     |
 | Skills    | Standards reference (26-eatp, 27-care, 28-coc, co-reference)                                                                                           |
 | Skills    | Governance (29-constitution, 30-arxiv, 31-publication, 32-governance-layer, 33-care-implementation, 34-co-domain)                                      |
-| Rules     | `no-stubs.md` (soft — RECOMMENDED), `agents.md` (RECOMMENDED)                                                                                          |
+| Rules     | `zero-tolerance.md` (soft — RECOMMENDED), `agents.md` (RECOMMENDED)                                                                                          |
 | Rules     | `constitution.md`, `publication-quality.md`, `arxiv-submission.md`, `governance-layer-positioning.md`, `co-domain-application.md`, `terrene-naming.md` |
 | Hooks     | `validate-arxiv-content.js`, `validate-publication-content.js`                                                                                         |
 
@@ -118,7 +117,7 @@ Projects that implement governance standards in code. Part coding, part governan
 - Must align with CARE/EATP/CO standards
 - Tests include both code tests and standards conformance
 
-**Archetype-specific components**: Combine coding agents (tdd-implementer, testing-specialist) with standards experts (care-expert, eatp-expert). Use coding rules (strict no-stubs, testing) with governance-aware agent teams in commands.
+**Archetype-specific components**: Combine coding agents (tdd-implementer, testing-specialist) with standards experts (`co-reference` skill, `co-reference` skill). Use coding rules (strict no-stubs, testing) with governance-aware agent teams in commands.
 
 ---
 
@@ -145,16 +144,16 @@ Every repo gets:
 │   ├── wrapup.md          # Copy as-is
 │   └── checkpoint.md      # Copy as-is
 ├── agents/
-│   ├── deep-analyst.md           # Copy as-is
-│   ├── requirements-analyst.md   # Copy as-is
-│   ├── intermediate-reviewer.md  # Copy as-is
+│   ├── analyst.md           # Copy as-is
+│   ├── analyst.md   # Copy as-is
+│   ├── reviewer.md  # Copy as-is
 │   ├── gold-standards-validator.md # Copy as-is
 │   ├── security-reviewer.md      # Copy as-is
 │   ├── open-source-strategist.md # Copy if relevant
 │   └── management/
 │       ├── todo-manager.md       # Copy as-is
 │       ├── gh-manager.md         # Copy as-is
-│       └── git-release-specialist.md # Copy as-is
+│       └── release-specialist.md # Copy as-is
 ├── rules/
 │   ├── git.md                    # Copy as-is
 │   ├── learned-instincts.md      # Auto-generated

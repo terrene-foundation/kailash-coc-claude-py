@@ -176,7 +176,6 @@ print(f"Run ID: {run_id}")
 
 ## When to Escalate to Subagent
 
-Use `sdk-navigator` subagent when:
 
 - Installation fails with complex errors
 - Need custom installation for enterprise environments
@@ -184,7 +183,7 @@ Use `sdk-navigator` subagent when:
 - Setting up CI/CD pipelines
 - Configuring advanced deployment scenarios
 
-Use `deployment-specialist` subagent when:
+Use `release-specialist` subagent when:
 
 - Deploying to production environments
 - Setting up Docker/Kubernetes infrastructure

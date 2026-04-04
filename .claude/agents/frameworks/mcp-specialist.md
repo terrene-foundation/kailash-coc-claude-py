@@ -93,7 +93,7 @@ workflow.add_node("LLMAgentNode", "agent", {
 - **kaizen-specialist**: Kaizen agent integration with MCP tools
 - **nexus-specialist**: MCP channel deployment via Nexus
 - **pattern-expert**: Core SDK patterns for MCP workflows
-- **framework-advisor**: Choose MCP integration approach
+- **`decide-framework` skill**: Choose MCP integration approach
 - **security-reviewer**: MCP authentication and security patterns
 
 ## Full Documentation

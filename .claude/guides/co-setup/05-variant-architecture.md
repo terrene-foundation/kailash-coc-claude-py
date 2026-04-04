@@ -20,8 +20,8 @@ All artifacts belong to exactly one tier:
 | Tier       | Scope                                           | Example                                    | Sync behavior                |
 | ---------- | ----------------------------------------------- | ------------------------------------------ | ---------------------------- |
 | **CC**     | Claude Code — universal                         | guides/claude-code/, cc-audit command      | Sync to ALL repos            |
-| **CO**     | Cognitive Orchestration — universal methodology | co-expert agent, journal rules             | Sync to ALL CO-managed repos |
-| **COC**    | Codegen — language-agnostic                     | analyze command, deep-analyst agent        | Sync to ALL COC repos        |
+| **CO**     | Cognitive Orchestration — universal methodology | `co-reference` skill agent, journal rules             | Sync to ALL CO-managed repos |
+| **COC**    | Codegen — language-agnostic                     | analyze command, analyst agent        | Sync to ALL COC repos        |
 | **COC-py** | Python SDK-specific                             | Python async patterns, DataFlow enterprise | Sync to PY targets only      |
 | **COC-rs** | Rust SDK-specific                               | Rust benchmarks, Ruby examples             | Sync to RS targets only      |
 
@@ -72,7 +72,7 @@ When syncing to an **rs** target: same logic with `variants/rs/`.
 
 Files that are conceptually the same regardless of language:
 
-- Agent definitions with the same role (deep-analyst, security-reviewer)
+- Agent definitions with the same role (analyst, security-reviewer)
 - Rules about methodology (zero-tolerance, journal, communication)
 - Commands about workflow phases (analyze, todos, implement)
 - Skills about concepts (architecture decisions, design principles, CARE/EATP/CO references)
@@ -169,12 +169,12 @@ tiers:
     - commands/cc-audit.md
 
   co:
-    - agents/standards/co-expert.md
-    - agents/standards/care-expert.md
-    - agents/standards/eatp-expert.md
+    - agents/standards/`co-reference` skill.md
+    - agents/standards/`co-reference` skill.md
+    - agents/standards/`co-reference` skill.md
     - skills/co-reference/**
     - skills/26-eatp-reference/**
-    - skills/27-care-reference/**
+    - skills/co-reference/**
     - skills/29-pact/**
     - guides/co-setup/**
     - guides/model-optimization/**
@@ -185,10 +185,10 @@ tiers:
     - rules/terrene-naming.md
     - rules/independence.md
     - rules/git.md
-    - rules/branch-protection.md
+    - rules/git.md
     - rules/security.md
     - rules/agents.md
-    - rules/no-stubs.md
+    - rules/zero-tolerance.md
     - rules/learned-instincts.md
     - commands/learn.md
     - commands/evolve.md
@@ -303,8 +303,8 @@ The management commands currently at ~/repos/.claude/ move to loom/:
 | Current (~/repos)                    | New (loom/)                                     | Notes                                       |
 | ------------------------------------ | ----------------------------------------------- | ------------------------------------------- |
 | `.claude/agents/coc-sync.md`         | `.claude/agents/management/coc-sync.md`         | Rewritten for variant system                |
-| `.claude/agents/code-inspector.md`   | `.claude/agents/management/code-inspector.md`   | Absorbed                                    |
-| `.claude/agents/repo-admin.md`       | `.claude/agents/management/repo-admin.md`       | Absorbed                                    |
+| `.claude/agents/repo-ops.md`   | `.claude/agents/management/repo-ops.md`   | Absorbed                                    |
+| `.claude/agents/repo-ops.md`       | `.claude/agents/management/repo-ops.md`       | Absorbed                                    |
 | `.claude/agents/settings-manager.md` | `.claude/agents/management/settings-manager.md` | Absorbed                                    |
 | `.claude/commands/sync.md`           | `.claude/commands/sync.md`                      | Exists, update for variants                 |
 | `.claude/commands/repos.md`          | `.claude/commands/repos.md`                     | New in loom/                                |

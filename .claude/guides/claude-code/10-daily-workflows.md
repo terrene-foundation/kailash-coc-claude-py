@@ -36,12 +36,12 @@ Start with a clear description:
 
 ### Step 2: Analysis Phase
 
-Claude automatically engages `deep-analyst`:
+Claude automatically engages `analyst`:
 
 ```
 Claude: I'll analyze this feature first.
 
-[Delegating to deep-analyst...]
+[Delegating to analyst...]
 
 Analysis Summary:
 - Complexity: Moderate (15/30)
@@ -147,7 +147,7 @@ def test_user_registration(db):
 
 ```
 
-[Delegating to intermediate-reviewer...]
+[Delegating to reviewer...]
 
 Code Review Summary:
 ✅ DataFlow patterns correct
@@ -217,7 +217,6 @@ Found potential issue at line 45. Let me trace it...
 
 ```
 
-[Delegating to sdk-navigator for similar issues...]
 
 Found in common-mistakes.md:
 "NoneType errors in workflows often occur when node outputs
@@ -354,7 +353,7 @@ Which type of test do you want to write?
 
 > Review my changes before I commit
 
-[Delegating to intermediate-reviewer...]
+[Delegating to reviewer...]
 
 Reviewing 5 changed files...
 
@@ -423,7 +422,7 @@ Ready to commit with noted warnings.
 
 > Set up local development environment
 
-[Delegating to deployment-specialist...]
+[Delegating to release-specialist...]
 
 Creating Docker Compose configuration...
 
@@ -463,7 +462,7 @@ docker compose up
 
 > Prepare for production deployment
 
-[Delegating to deployment-specialist...]
+[Delegating to release-specialist...]
 
 Production checklist:
 
@@ -629,7 +628,7 @@ No new components evolved (thresholds not met).
 | Step | Command/Action |
 |------|----------------|
 | Request | "Review my changes" |
-| Receive | intermediate-reviewer findings |
+| Receive | reviewer findings |
 | Address | Fix issues |
 | Security | security-reviewer before commit |
 | Commit | After all reviews pass |

@@ -1,16 +1,54 @@
 {
-  "version": "1.4.0",
+  "version": "1.6.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
-  "released": "2026-04-01",
+  "released": "2026-04-04",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "1.2.0",
+    "version": "1.4.0",
     "build_version": "2.4.0",
-    "synced_at": "2026-04-01T18:00:00Z"
+    "synced_at": "2026-04-04T00:00:00Z"
   },
   "changelog": [
+    {
+      "version": "1.6.0",
+      "date": "2026-04-04",
+      "summary": "Agent/skill ontology v1.4.0 sync: consolidated agents, co-reference skills, obsolete cleanup",
+      "changes": [
+        "CONSOLIDATED: 33->26 agents (analyst, reviewer, release-specialist absorb deep-analyst, requirements-analyst, intermediate-reviewer, deployment-specialist, git-release-specialist, documentation-validator, e2e-runner)",
+        "MIGRATED: care/co/coc/eatp-expert agents -> skills/co-reference/ (6 new spec files)",
+        "DELETED: agents/standards/ directory (4 expert agents), agents/frontend/ai-ux-designer.md, agents/frontend/frontend-developer.md",
+        "DELETED: rules/branch-protection.md (merged into git.md), rules/no-stubs.md (merged into zero-tolerance.md)",
+        "DELETED: skills/27-care-reference/ (content migrated to skills/co-reference/care-spec.md)",
+        "NEW: skills/co-reference/ — 6 spec files (CARE, EATP, CO, COC, governance-layer-thesis, behavioral-guidelines)",
+        "TIGHTENED: All 19 agents avg 266->77 lines (71% reduction)",
+        "TIGHTENED: 12 SKILL.md files avg 280->180 lines (35% reduction)",
+        "ADAPTED: zero-tolerance.md Rule 4 for USE context (report SDK bugs via GitHub issues)",
+        "ADAPTED: agents.md quality gates softened to RECOMMENDED",
+        "UPDATED: 124 files with v1.4.0 content (agent tightening, skill compression, stale ref cleanup)"
+      ]
+    },
+    {
+      "version": "1.5.0",
+      "date": "2026-04-03",
+      "summary": "Token optimization sync: 90% rule reduction, agent restructure, py variant rules removed (globals apply directly)",
+      "changes": [
+        "TIGHTENED: All 28 rules compressed (enforcement sections, cross-refs, motivational text removed)",
+        "MERGED: no-stubs.md content into zero-tolerance.md Rule 2 (no-stubs.md preserved as template-only)",
+        "MERGED: branch-protection.md content into git.md (branch-protection.md preserved as template-only)",
+        "SCOPED: 19 rules now path-scoped (only load when editing matching files)",
+        "RESTRUCTURED: 13 agents moved to subdirectories (analysis/, implementation/, quality/, release/, testing/)",
+        "DELETED: sdk-navigator.md, framework-advisor.md (merged into skills/13-architecture-decisions/decide-framework.md)",
+        "REMOVED: 12 py variant rules (globals now apply directly with USE-context adaptations)",
+        "UPDATED: rules/framework-first.md — 4-layer hierarchy (Specs, Primitives, Engines, Entrypoints)",
+        "UPDATED: skills/13-architecture-decisions/decide-framework.md — rewritten with 4-layer hierarchy + migration paths",
+        "UPDATED: rules/agents.md — gate-level review (not per-edit), quality gates tied to COC phases",
+        "UPDATED: skills/02-dataflow/SKILL.md — Data Fabric Engine (3 new py variant files from Gate 1)",
+        "UPDATED: skills/10-deployment-git/deployment-ci.md — CI efficiency patterns",
+        "ADAPTED: zero-tolerance.md Rule 4 rewritten for USE context (report via GitHub issues, not fix SDK source)"
+      ]
+    },
     {
       "version": "1.4.0",
       "date": "2026-04-01",
@@ -18,7 +56,7 @@
       "changes": [
         "UPDATED: commands/codify.md — Step 7 scoped to BUILD repos only; downstream repos skip proposals",
         "UPDATED: rules/artifact-flow.md — New Rule 2a: downstream repos do not propose upstream",
-        "UPDATED: pyproject.toml — SDK pins: kailash 2.3.1→2.4.0, nexus 1.6.0→1.7.1, dataflow 1.3.0→1.5.1, kaizen 2.3.2→2.3.3"
+        "UPDATED: pyproject.toml — SDK pins: kailash 2.3.1->2.4.0, nexus 1.6.0->1.7.1, dataflow 1.3.0->1.5.1, kaizen 2.3.2->2.3.3"
       ]
     },
     {
@@ -26,16 +64,16 @@
       "date": "2026-04-01",
       "summary": "Dependency install normalization + Python venv enforcement rule",
       "changes": [
-        "UPDATED: rules/infrastructure-sql.md (py variant) — pip install kailash[postgres] → pip install kailash",
-        "UPDATED: skills/01-core-sdk/kailash-installation.md — all kailash[extras] → pip install kailash",
-        "UPDATED: skills/04-kaizen/kaizen-trust-eatp.md — kailash[trust] → pip install kailash",
-        "UPDATED: skills/15-enterprise-infrastructure/connection-manager-patterns.md — extras refs → pip install kailash",
-        "UPDATED: skills/15-enterprise-infrastructure/progressive-infrastructure.md — kailash[postgres] → pip install kailash",
-        "UPDATED: skills/26-eatp-reference/SKILL.md — kailash[trust] → pip install kailash",
-        "UPDATED: skills/26-eatp-reference/eatp-sdk-api-reference.md — kailash[trust] → pip install kailash",
-        "UPDATED: skills/26-eatp-reference/eatp-sdk-quickstart.md — kailash[trust] → pip install kailash",
-        "NEW: rules/python-environment.md — Python venv isolation policy (uv + .venv enforcement)",
-        "UPDATED: scripts/hooks/session-start.js — Added Python venv check"
+        "UPDATED: rules/infrastructure-sql.md (py variant) -- pip install kailash[postgres] -> pip install kailash",
+        "UPDATED: skills/01-core-sdk/kailash-installation.md -- all kailash[extras] -> pip install kailash",
+        "UPDATED: skills/04-kaizen/kaizen-trust-eatp.md -- kailash[trust] -> pip install kailash",
+        "UPDATED: skills/15-enterprise-infrastructure/connection-manager-patterns.md -- extras refs -> pip install kailash",
+        "UPDATED: skills/15-enterprise-infrastructure/progressive-infrastructure.md -- kailash[postgres] -> pip install kailash",
+        "UPDATED: skills/26-eatp-reference/SKILL.md -- kailash[trust] -> pip install kailash",
+        "UPDATED: skills/26-eatp-reference/eatp-sdk-api-reference.md -- kailash[trust] -> pip install kailash",
+        "UPDATED: skills/26-eatp-reference/eatp-sdk-quickstart.md -- kailash[trust] -> pip install kailash",
+        "NEW: rules/python-environment.md -- Python venv isolation policy (uv + .venv enforcement)",
+        "UPDATED: scripts/hooks/session-start.js -- Added Python venv check"
       ]
     },
     {
@@ -43,15 +81,15 @@
       "date": "2026-03-31",
       "summary": "Gate 1 py changes: DataFlow SyncExpress, PACT approve_bridge, __del__ patterns, Nexus K8s probes, Kaizen agent reference",
       "changes": [
-        "UPDATED: skills/02-dataflow/dataflow-express.md (py variant) — SyncExpress API, SQLite timestamp fix",
-        "UPDATED: skills/29-pact/pact-governance-engine.md — approve_bridge pattern",
-        "UPDATED: rules/patterns.md (py variant) — __del__ cleanup patterns",
-        "UPDATED: skills/03-nexus/nexus-k8s-probes.md — K8s health probe patterns",
-        "UPDATED: skills/04-kaizen/kaizen-tool-hydration.md (variant-only) — tool hydration refinements",
-        "UPDATED: agents/standards/co-expert.md — CO expert updates",
-        "UPDATED: agents/standards/coc-expert.md — COC expert updates",
-        "UPDATED: rules/journal.md — journal rule refinements",
-        "UPDATED: skills/co-reference/SKILL.md — CO reference updates"
+        "UPDATED: skills/02-dataflow/dataflow-express.md (py variant) -- SyncExpress API, SQLite timestamp fix",
+        "UPDATED: skills/29-pact/pact-governance-engine.md -- approve_bridge pattern",
+        "UPDATED: rules/patterns.md (py variant) -- __del__ cleanup patterns",
+        "UPDATED: skills/03-nexus/nexus-k8s-probes.md -- K8s health probe patterns",
+        "UPDATED: skills/04-kaizen/kaizen-tool-hydration.md (variant-only) -- tool hydration refinements",
+        "UPDATED: agents/standards/co-expert.md -- CO expert updates",
+        "UPDATED: agents/standards/coc-expert.md -- COC expert updates",
+        "UPDATED: rules/journal.md -- journal rule refinements",
+        "UPDATED: skills/co-reference/SKILL.md -- CO reference updates"
       ]
     },
     {
@@ -59,12 +97,12 @@
       "date": "2026-03-30",
       "summary": "Engine-first framework rule, layer preference tables, Delegate-vs-BaseAgent skill",
       "changes": [
-        "NEW: rules/framework-first.md — Engine-over-Primitives 3-layer model",
-        "NEW: skills/04-kaizen/kaizen-delegate-vs-baseagent.md — Delegate vs BaseAgent decision guide",
-        "UPDATED: agents/framework-advisor.md — added Step 2b layer selection table",
-        "UPDATED: agents/frameworks/dataflow-specialist.md — added layer preference section",
-        "UPDATED: agents/frameworks/nexus-specialist.md — added layer preference section",
-        "UPDATED: skills/13-architecture-decisions/decide-framework.md — added within-framework layer selection"
+        "NEW: rules/framework-first.md -- Engine-over-Primitives 3-layer model",
+        "NEW: skills/04-kaizen/kaizen-delegate-vs-baseagent.md -- Delegate vs BaseAgent decision guide",
+        "UPDATED: agents/framework-advisor.md -- added Step 2b layer selection table",
+        "UPDATED: agents/frameworks/dataflow-specialist.md -- added layer preference section",
+        "UPDATED: agents/frameworks/nexus-specialist.md -- added layer preference section",
+        "UPDATED: skills/13-architecture-decisions/decide-framework.md -- added within-framework layer selection"
       ]
     },
     {

@@ -5,319 +5,124 @@ description: "Choose between Core SDK, DataFlow, Nexus, and Kaizen frameworks fo
 
 # Framework Selection Guide
 
-Quick decision tree to choose the right Kailash framework: Core SDK, DataFlow, Nexus, or Kaizen.
+## Four-Layer Hierarchy
 
-> **Skill Metadata**
-> Category: `cross-cutting` (decision-support)
-> Priority: `CRITICAL`
-> SDK Version: `0.9.25+`
-> Related Skills: [`dataflow-quickstart`](../../02-dataflow/dataflow-quickstart.md), [`nexus-quickstart`](../../03-nexus/nexus-quickstart.md), [`kaizen-baseagent-template`](../../04-kaizen/kaizen-baseagent-template.md)
-> Related Subagents: `framework-advisor` (complex architecture), `dataflow-specialist`, `nexus-specialist`, `kaizen-specialist`
+```
+Entrypoints  →  Applications (aegis, aether), CLI (cli-rs), others (kz-engage)
+Engines      →  DataFlowEngine, NexusEngine, DelegateEngine/SupervisorAgent, GovernanceEngine
+Primitives   →  DataFlow, @db.model, db.express, Nexus(), BaseAgent, Signature, envelopes
+Specs        →  CARE, EATP, CO, COC, PACT
+```
+
+See `rules/framework-first.md` for the canonical rule. Default to **Engines**. Drop to Primitives only when Engines can't express the behavior.
 
 ## Quick Decision Matrix
 
-| Your Primary Need                        | Choose                | Why                                            |
-| ---------------------------------------- | --------------------- | ---------------------------------------------- |
-| **Custom workflows, integrations**       | **Core SDK**          | Fine-grained control, 140+ nodes               |
-| **Database operations**                  | **DataFlow**          | Zero-config, 11 auto-generated nodes per model |
-| **Multi-channel platform** (API+CLI+MCP) | **Nexus**             | Zero-config multi-channel deployment           |
-| **AI agents, multi-agent systems**       | **Kaizen**            | Signature-based programming, BaseAgent         |
-| **Database + Multi-channel**             | **DataFlow + Nexus**  | Combine frameworks                             |
-| **AI + Workflows**                       | **Core SDK + Kaizen** | Custom workflows with AI                       |
-| **Complete AI platform**                 | **All 4**             | Full-stack enterprise solution                 |
+| Your Primary Need                        | Framework    | Engine Class                         |
+| ---------------------------------------- | ------------ | ------------------------------------ |
+| **Custom workflows, integrations**       | **Core SDK** | `LocalRuntime` / `AsyncLocalRuntime` |
+| **Database operations**                  | **DataFlow** | `DataFlowEngine.builder()`           |
+| **Multi-channel platform** (API+CLI+MCP) | **Nexus**    | `NexusEngine`                        |
+| **AI agents, multi-agent systems**       | **Kaizen**   | `DelegateEngine`, `SupervisorAgent`  |
+| **Organizational governance**            | **PACT**     | `GovernanceEngine`                   |
 
 ## Framework Comparison
 
-### Core SDK (`pip install kailash`)
+### Core SDK (`pip install kailash` / `kailash-core` crate)
 
-**Foundational building blocks for workflow automation**
+- 140+ workflow nodes, WorkflowBuilder API, dual runtime (async/sync)
+- Use when: custom workflows, fine-grained control, domain-specific solutions
 
-**When to Choose:**
+### DataFlow (`pip install kailash-dataflow` / `kailash-dataflow` crate)
 
-- ✅ Building custom workflows and automation
-- ✅ Need fine-grained control over execution
-- ✅ Integrating with existing systems
-- ✅ Creating domain-specific solutions
-- ✅ Single-purpose workflows
+- `@db.model` generates 11 CRUD/bulk nodes per model, MongoDB-style queries
+- **Primitives**: `DataFlow`, `@db.model`, `db.express` (lightweight CRUD convenience)
+- **Engine**: `DataFlowEngine` wraps DataFlow with validation, classification, query tracking, retention
+- Use when: database-first applications, zero-config DB setup, enterprise data management
 
-**Key Components:**
+### Nexus (`pip install kailash-nexus` / `kailash-nexus` crate)
 
-- WorkflowBuilder with 140+ nodes
-- LocalRuntime, ParallelRuntime, AsyncLocalRuntime
-- String-based node API
-- MCP integration built-in
+- Register handler once → API + CLI + MCP simultaneously
+- **Primitives**: `Nexus()`, handlers, channels
+- **Engine**: `NexusEngine` adds middleware stack, auth, K8s probes, OpenAPI
+- Use when: multi-channel deployment, unified sessions, platform-style apps
 
-**Example:**
+### Kaizen (`pip install kailash-kaizen` / `kailash-kaizen` + `kaizen-agents` crates)
 
-```python
-from kailash.workflow.builder import WorkflowBuilder
-from kailash.runtime import LocalRuntime
+- Signature-based programming, A2A protocol, multi-modal
+- **Primitives**: `BaseAgent`, `Signature`, LLM clients
+- **Engine**: `DelegateEngine` (autonomous TAOD loop), `SupervisorAgent` (governed teams)
+- Use when: AI agents, multi-agent coordination, governed autonomy
 
-workflow = WorkflowBuilder()
-workflow.add_node("CSVReaderNode", "reader", {"file_path": "data.csv"})
-workflow.add_node("PythonCodeNode", "process", {"code": "result = len(data)"})
-workflow.add_connection("reader", "data", "process", "data")
+### PACT (`pip install kailash-pact` / `kailash-pact` + `kailash-governance` crates)
 
-runtime = LocalRuntime()
-results, run_id = runtime.execute(workflow.build())
-```
+- D/T/R addressing, constraint envelopes, fail-closed verification
+- **Primitives**: Envelopes, D/T/R addressing, clearance
+- **Engine**: `GovernanceEngine` (thread-safe, RBAC matrix export)
+- Use when: organizational governance, agent access control, budget enforcement
 
-### DataFlow (`pip install kailash-dataflow`)
+## Layer Selection (After Choosing Framework)
 
-**Zero-config database framework built ON Core SDK**
-
-**When to Choose:**
-
-- ✅ Database operations are primary concern
-- ✅ Need automatic CRUD node generation
-- ✅ Want enterprise database features (pooling, transactions)
-- ✅ Building data-intensive applications
-- ✅ PostgreSQL or SQLite database
-
-**Key Features:**
-
-- `@db.model` decorator generates 11 nodes per model
-- MongoDB-style query syntax
-- Multi-tenancy, audit trails, compliance
-- Auto-migration system
-- **NOT an ORM** - workflow-based
-
-**Example:**
-
-```python
-from dataflow import DataFlow
-from kailash.workflow.builder import WorkflowBuilder
-from kailash.runtime import LocalRuntime
-
-db = DataFlow("postgresql://localhost/db")
-
-@db.model
-class User:
-    name: str
-    email: str
-
-# Automatically generates: UserCreateNode, UserReadNode, UserUpdateNode,
-# UserDeleteNode, UserListNode, UserBulkCreateNode, etc.
-
-workflow = WorkflowBuilder()
-workflow.add_node("UserCreateNode", "create", {
-    "name": "Alice",
-    "email": "alice@example.com"
-})
-
-runtime = LocalRuntime()
-results, run_id = runtime.execute(workflow.build())
-```
-
-### Nexus (`pip install kailash-nexus`)
-
-**Multi-channel platform built ON Core SDK**
-
-**When to Choose:**
-
-- ✅ Need API + CLI + MCP access simultaneously
-- ✅ Want zero-configuration platform deployment
-- ✅ Building AI agent integrations (MCP)
-- ✅ Require unified session management
-- ✅ Enterprise platform deployment
-
-**Key Features:**
-
-- True zero-config: `Nexus()` with no parameters
-- Automatic workflow registration
-- Unified sessions across all channels
-- Progressive enterprise enhancement
-
-**Example:**
-
-```python
-from nexus import Nexus
-from kailash.workflow.builder import WorkflowBuilder
-
-app = Nexus()  # Zero configuration!
-
-workflow = WorkflowBuilder()
-workflow.add_node("PythonCodeNode", "process", {
-    "code": "result = {'message': 'Hello!'}"
-})
-
-app.register("my_workflow", workflow.build())
-app.start()  # Now accessible via API, CLI, and MCP!
-```
-
-### Kaizen (`pip install kailash-kaizen`)
-
-**AI agent framework built ON Core SDK**
-
-**When to Choose:**
-
-- ✅ Building AI agents with LLMs
-- ✅ Multi-agent coordination needed
-- ✅ Signature-based programming preferred
-- ✅ Multi-modal processing (vision/audio/text)
-- ✅ A2A protocol for semantic capability matching
-
-**Key Features:**
-
-- BaseAgent architecture with lazy initialization
-- Signature-based I/O (InputField/OutputField)
-- SharedMemoryPool for multi-agent coordination
-- Automatic A2A capability card generation
-
-**Example:**
-
-```python
-from kaizen.core.base_agent import BaseAgent
-from kaizen.signatures import Signature, InputField, OutputField
-from dataclasses import dataclass
-
-class QASignature(Signature):
-    question: str = InputField(description="User question")
-    answer: str = OutputField(description="Answer")
-
-@dataclass
-class QAConfig:
-    llm_provider: str = "openai"
-    model: str = "gpt-3.5-turbo"
-
-class QAAgent(BaseAgent):
-    def __init__(self, config: QAConfig):
-        super().__init__(config=config, signature=QASignature())
-
-    def ask(self, question: str) -> dict:
-        return self.run(question=question)
-
-agent = QAAgent(QAConfig())
-result = agent.ask("What is machine learning?")
-```
+| Framework | Engine (default ✅)                 | Primitives (when Engine can't express it)                              |
+| --------- | ----------------------------------- | ---------------------------------------------------------------------- |
+| DataFlow  | `DataFlowEngine.builder()`          | `db.express` for simple CRUD, `WorkflowBuilder` + nodes for multi-step |
+| Nexus     | `NexusEngine`                       | `Nexus()` for simple handlers, manual channels for custom protocols    |
+| Kaizen    | `DelegateEngine`, `SupervisorAgent` | `BaseAgent` for custom execution loops                                 |
+| PACT      | `GovernanceEngine`                  | Manual envelope construction for custom patterns                       |
 
 ## Framework Combinations
 
 ### DataFlow + Nexus (Multi-Channel Database App)
 
-Perfect for database applications needing API, CLI, and MCP access:
-
-```python
-from dataflow import DataFlow
-from nexus import Nexus
-from kailash.workflow.builder import WorkflowBuilder
-
-# Step 1: Create Nexus with auto_discovery=False
-app = Nexus(auto_discovery=False)
-
-# Step 2: Create DataFlow (defaults work correctly)
-db = DataFlow("postgresql://localhost/db")
-
-@db.model
-class User:
-    name: str
-    email: str
-
-# Step 3: Register workflows
-workflow = WorkflowBuilder()
-workflow.add_node("UserListNode", "list_users", {})
-app.register("list_users", workflow.build())
-
-app.start()
-```
+DataFlow handles database operations, Nexus provides multi-channel access. Use `DataFlowEngine` for production DB, `NexusEngine` for deployment.
 
 ### Core SDK + Kaizen (AI-Powered Workflows)
 
-Ideal for custom workflows with AI decision-making:
+Core SDK provides workflow orchestration, Kaizen provides AI agent integration. Use `DelegateEngine` for autonomous agents within workflows.
 
-```python
-from kailash.workflow.builder import WorkflowBuilder
-from kaizen.core.base_agent import BaseAgent
+### Full Stack (DataFlow + Nexus + Kaizen + PACT)
 
-# Kaizen agent for AI processing
-agent = QAAgent(config)
+Complete enterprise AI platform: DataFlow for data, Nexus for deployment, Kaizen for agents, PACT for governance. Each framework's Engine layer handles its domain.
 
-# Core SDK workflow for orchestration
-workflow = WorkflowBuilder()
-workflow.add_node("LLMAgentNode", "ai_process", {
-    "provider": "openai",
-    "model": "gpt-4"
-})
-```
+## Migration Paths
+
+### Core SDK → DataFlow
+
+1. Identify database operations in existing workflows
+2. Replace custom database nodes with `@db.model` generated nodes
+3. Upgrade from `DataFlow` primitive to `DataFlowEngine` for enterprise features
+
+### Core SDK → Nexus
+
+1. Wrap existing workflows in Nexus handlers
+2. Register with `nexus.register()` for multi-channel access
+3. Upgrade to `NexusEngine` for middleware, auth, monitoring
+
+### Primitives → Engine (Any Framework)
+
+1. Identify which primitive you're using
+2. Check if the Engine layer covers your use case
+3. Migrate to Engine — keeps the same semantics with added enterprise features
 
 ## Decision Flowchart
 
 ```
 START: What's your primary use case?
-  │
-  ├─ Database-heavy application?
-  │    YES → DataFlow
-  │    │
-  │    └─ Need multi-channel access (API/CLI/MCP)?
-  │         YES → DataFlow + Nexus
-  │         NO → DataFlow alone
-  │
-  ├─ Multi-channel platform needed?
-  │    YES → Nexus
-  │    │
-  │    └─ Need database operations?
-  │         YES → DataFlow + Nexus
-  │         NO → Nexus alone
-  │
-  ├─ AI agent system?
-  │    YES → Kaizen
-  │    │
-  │    └─ Need custom workflow orchestration?
-  │         YES → Kaizen + Core SDK
-  │         NO → Kaizen alone
-  │
-  └─ Custom workflows/integrations?
-       YES → Core SDK
+  ├─ Database-heavy? → DataFlow (DataFlowEngine)
+  │    └─ Need multi-channel access? → + Nexus (NexusEngine)
+  ├─ Multi-channel platform? → Nexus (NexusEngine)
+  │    └─ Need database? → + DataFlow (DataFlowEngine)
+  ├─ AI agent system? → Kaizen (DelegateEngine/SupervisorAgent)
+  │    └─ Need governance? → + PACT (GovernanceEngine)
+  └─ Custom workflows? → Core SDK
+       └─ Unsure? Start here, add frameworks as needed
 ```
 
-## When to Escalate to Subagent
+## Critical Rules
 
-Use `framework-advisor` subagent when:
-
-- Complex multi-framework architecture needed
-- Evaluating migration paths between frameworks
-- Enterprise-scale system design
-- Need coordination between multiple specialists
-
-Use framework specialists when you've chosen:
-
-- **DataFlow** → `dataflow-specialist` for implementation
-- **Nexus** → `nexus-specialist` for deployment
-- **Kaizen** → `kaizen-specialist` for AI patterns
-
-## Within-Framework Layer Selection
-
-After choosing your framework, choose your abstraction layer. See `rules/framework-first.md`.
-
-**Rule of thumb**: Start with the Engine layer. Drop to Primitives only when the Engine can't express your need.
-
-| Framework | Start here (Engine) | Drop to this (Primitives) when... |
-|-----------|--------------------|------------------------------------|
-| DataFlow | `db.express.*` | Multi-step workflows, custom transactions |
-| Nexus | `Nexus()` | Custom protocols, non-standard channels |
-| Kaizen | `Delegate` | Custom execution loops, non-TAOD agents |
-| PACT | `GovernanceEngine` | Custom envelope patterns |
-
-## Documentation References
-
-### Framework Documentation
-
-- **Core SDK Overview**: [`CLAUDE.md` (lines 12-17)](../../../../CLAUDE.md#L12-L17)
-- **DataFlow Overview**: [`CLAUDE.md` (lines 19-25)](../../../../CLAUDE.md#L19-L25)
-- **Nexus Overview**: [`CLAUDE.md` (lines 27-33)](../../../../CLAUDE.md#L27-L33)
-- **Kaizen Overview**: [`CLAUDE.md` (lines 35-41)](../../../../CLAUDE.md#L35-L41)
-- **Framework Relationships**: [`CLAUDE.md` (lines 43-46)](../../../../CLAUDE.md#L43-L46)
-
-### Detailed Guides
-
-- **Framework Advisor**: [`.claude/agents/framework-advisor.md`](../../../../.claude/agents/framework-advisor.md)
-
-## Quick Tips
-
-- 💡 **Start with Core SDK**: If unsure, start with Core SDK and add frameworks later
-- 💡 **Frameworks stack**: DataFlow/Nexus/Kaizen are built ON Core SDK, not replacements
-- 💡 **Mix and match**: You can use multiple frameworks in the same project
-- 💡 **Zero-config first**: Try DataFlow/Nexus zero-config before adding complexity
-- 💡 **Consult specialists**: Use framework-specific subagents for detailed implementation
-
-<!--Trigger Keywords: which framework, should I use Core SDK or DataFlow, Nexus vs Core, framework selection, what's the difference between frameworks, choose framework, Core SDK vs DataFlow, DataFlow vs Nexus, framework comparison, best framework for, framework decision -->
+- ✅ Default to Engine layer for each framework
+- ✅ Use Primitives only when Engine can't express the behavior
+- ✅ Combine frameworks as needed — they stack on Core SDK
+- ❌ NEVER use Raw (SQL, FastAPI, raw LLM calls) when a framework exists
+- ❌ NEVER build custom agents when Kaizen exists
+- ❌ NEVER build custom governance when PACT exists

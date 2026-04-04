@@ -273,5 +273,5 @@ docker-compose up --scale nexus=3
 For Nexus-specific questions, invoke:
 
 - `nexus-specialist` - Nexus implementation and deployment
-- `deployment-specialist` - Production deployment patterns
-- `framework-advisor` - When to use Nexus vs other approaches
+- `release-specialist` - Production deployment patterns
+- ``decide-framework` skill` - When to use Nexus vs other approaches
