@@ -118,7 +118,7 @@ workflow.add_connection("analyze_document", "response", "save_results", "data")
 workflow = WorkflowBuilder()
 
 # 1. Read source file
-workflow.add_node("ConditionalNode", "detect_format", {
+workflow.add_node("SwitchNode", "detect_format", {
     "condition": "{{input.file_ext}}",
     "branches": {
         ".csv": "read_csv",
@@ -147,7 +147,7 @@ workflow.add_node("TransformNode", "normalize", {
 })
 
 # 4. Write in target format
-workflow.add_node("ConditionalNode", "write_format", {
+workflow.add_node("SwitchNode", "write_format", {
     "condition": "{{input.target_format}}",
     "branches": {
         "csv": "write_csv",

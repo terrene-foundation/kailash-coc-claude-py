@@ -27,7 +27,7 @@ workflow_everything = WorkflowBuilder()  # Registration + email + billing...
 # ✅ GOOD: Reusable sub-workflows
 def create_validation_workflow():
     workflow = WorkflowBuilder()
-    workflow.add_node("DataValidationNode", "validate", {...})
+    workflow.add_node("CodeValidationNode", "validate", {...})
     return workflow.build()
 
 # Use in multiple workflows

@@ -45,9 +45,9 @@ def runtime():
 
 ```
 tests/
-  tier1_unit/          # Mocking allowed
-  tier2_integration/   # Real infrastructure
-  tier3_e2e/           # Full system
+  unit/          # Mocking allowed
+  integration/   # Real infrastructure
+  e2e/           # Full system
   conftest.py          # Shared fixtures
 ```
 
@@ -73,9 +73,9 @@ tests/
 ## Running Tests
 
 ```bash
-pytest tests/tier1_unit/        # Fast CI
-pytest tests/tier2_integration/ # With real infra
-pytest tests/tier3_e2e/         # Full system
+pytest tests/unit/        # Fast CI
+pytest tests/integration/ # With real infra
+pytest tests/e2e/         # Full system
 pytest --cov=app --cov-report=html  # Coverage
 ```
 

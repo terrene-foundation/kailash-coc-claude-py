@@ -30,7 +30,7 @@ workflow.add_node("DeduplicateNode", "dedupe", {
 })
 
 # 3. Validate schema
-workflow.add_node("DataValidationNode", "validate", {
+workflow.add_node("CodeValidationNode", "validate", {
     "input": "{{dedupe.data}}",
     "schema": {"email": "email", "age": "integer"}
 })

@@ -48,18 +48,18 @@ from kailash.workflow.builder import WorkflowBuilder
 workflow = WorkflowBuilder()
 
 # Step 1: Validate payment details
-workflow.add_node("DataValidationNode", "validate_payment", {
+workflow.add_node("CodeValidationNode", "validate_payment", {
     "schema": {"amount": "decimal > 0", "card": "credit_card"}
 })
 
 # Step 2: Process with payment gateway
-workflow.add_node("APICallNode", "charge_card", {
+workflow.add_node("HTTPRequestNode", "charge_card", {
     "url": "https://api.stripe.com/charges"
     # Creates charge with validated payment details
 })
 
 # Step 3: Record transaction in database
-workflow.add_node("DatabaseExecuteNode", "record_transaction", {
+workflow.add_node("SQLDatabaseNode", "record_transaction", {
     "query": "INSERT INTO transactions ..."
 })
 
