@@ -15,7 +15,7 @@ Common misunderstandings and mistakes when using DataFlow, with solutions.
 
 ## Quick Reference
 
-- **✅ Docker/FastAPI (current version)**: `auto_migrate=True` now works! Uses sync DDL with psycopg2/sqlite3
+- **✅ Docker/async (current version)**: `auto_migrate=True` now works! Uses sync DDL with psycopg2/sqlite3
 - **⚠️ In-Memory SQLite**: `:memory:` databases use lazy creation (sync DDL skipped)
 - **🚨 Sync methods in async context (DF-501)**: Use `create_tables_async()` if needed
 - **🚨 Timestamp fields auto-stripped **: `created_at`/`updated_at` auto-removed with warning
@@ -84,7 +84,7 @@ async def update(self, id: str, data: dict) -> dict:
 
 ### 🚨 #2: Sync Methods in Async Context (DF-501) ⚠️ CRITICAL
 
-**This error occurs when using DataFlow in FastAPI, pytest-asyncio, or any async framework!**
+**This error occurs when using DataFlow in Nexus, pytest-asyncio, or any async framework!**
 
 ```
 RuntimeError: DF-501: Sync Method in Async Context
@@ -118,16 +118,16 @@ async def db_fixture():
 async def startup():
     await db.create_tables_async()
 
-# ✅ CORRECT - FastAPI lifespan pattern (recommended)
+# ✅ CORRECT - Nexus lifespan pattern (recommended)
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app):
     await db.create_tables_async()
     yield
     await db.close_async()
 
-app = FastAPI(lifespan=lifespan)
+app = Nexus(lifespan=lifespan)
 
 # ✅ CORRECT - pytest async fixtures
 @pytest.fixture
@@ -146,7 +146,7 @@ async def db_fixture():
 
 | Sync Method                  | Async Method                       | When to Use                      |
 | ---------------------------- | ---------------------------------- | -------------------------------- |
-| `create_tables()`            | `create_tables_async()`            | Table creation in FastAPI/pytest |
+| `create_tables()`            | `create_tables_async()`            | Table creation in Nexus/pytest   |
 | `close()`                    | `close_async()`                    | Connection cleanup               |
 | `_ensure_migration_tables()` | `_ensure_migration_tables_async()` | Migration system                 |
 
@@ -164,9 +164,9 @@ if __name__ == "__main__":
 
 ---
 
-### ✅ #2.5: Docker/FastAPI Deployment (FIXED in current version)
+### ✅ #2.5: Docker/async Deployment (FIXED in current version)
 
-**`auto_migrate=True` NOW WORKS in Docker/FastAPI!**
+**`auto_migrate=True` NOW WORKS in Docker/async!**
 
 DataFlow uses synchronous database drivers (psycopg2, sqlite3) for table creation, avoiding event loop boundary issues.
 
@@ -174,7 +174,7 @@ DataFlow uses synchronous database drivers (psycopg2, sqlite3) for table creatio
 
 ```python
 from dataflow import DataFlow
-from fastapi import FastAPI
+from nexus import Nexus
 
 # Zero-config: auto_migrate=True (default) now works!
 db = DataFlow("postgresql://...")
@@ -184,7 +184,7 @@ class User:
     id: str
     name: str
 
-app = FastAPI()
+app = Nexus()
 
 @app.post("/users")
 async def create_user(data: dict):
@@ -212,7 +212,7 @@ db = DataFlow(":memory:", auto_migrate=True)  # Tables created on first access
 
 | Context                 | Pattern                       | Notes                       |
 | ----------------------- | ----------------------------- | --------------------------- |
-| **Docker/FastAPI**      | `auto_migrate=True` (default) | ✅ Works in current version |
+| **Docker/async**      | `auto_migrate=True` (default) | ✅ Works in current version |
 | **In-Memory SQLite**    | `auto_migrate=True`           | Uses lazy creation (works)  |
 | **CLI Scripts**         | `auto_migrate=True` (default) | Works                       |
 | **pytest (sync/async)** | `auto_migrate=True` (default) | Works via sync DDL          |
@@ -224,12 +224,12 @@ db = DataFlow(":memory:", auto_migrate=True)  # Tables created on first access
 db = DataFlow("postgresql://...", auto_migrate=False)
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app):
     await db.create_tables_async()  # Or db.create_tables_sync()
     yield
     await db.close_async()
 
-app = FastAPI(lifespan=lifespan)
+app = Nexus(lifespan=lifespan)
 ```
 
 ---
@@ -453,7 +453,7 @@ nexus = Nexus(dataflow_config={"integration": db})  # THIS WILL FAIL
 **Fix: Use auto_discovery=False and manual workflow registration**
 
 ```python
-# DataFlow current version: auto_migrate=True works in Docker/FastAPI
+# DataFlow current version: auto_migrate=True works in Docker/async
 db = DataFlow(
     database_url="postgresql://...",
     auto_migrate=True,  # Works

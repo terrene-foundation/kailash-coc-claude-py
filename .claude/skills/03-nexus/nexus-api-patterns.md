@@ -32,11 +32,11 @@ GET /docs
 
 ## Custom REST Endpoints
 
-Create custom FastAPI-style endpoints with path parameters, query parameters, and rate limiting:
+Create custom Nexus endpoints with path parameters, query parameters, and rate limiting:
 
 ```python
 from nexus import Nexus
-from fastapi import Request
+from nexus.http import Request
 
 app = Nexus()
 
@@ -47,7 +47,7 @@ async def get_conversation(conversation_id: str):
     result = await app._execute_workflow("chat_workflow", {"id": conversation_id})
     return {"conversation_id": conversation_id, "data": result}
 
-# Query parameters (built-in FastAPI support)
+# Query parameters (built-in Nexus support)
 @app.endpoint("/api/search")
 async def search(q: str, limit: int = 10, offset: int = 0):
     """Search with pagination."""
@@ -72,7 +72,7 @@ async def manage_message(msg_id: str, request: Request):
 ```
 
 ### Key Features (v1.1.0):
-- ✅ **Path Parameters**: Automatically validated by FastAPI
+- ✅ **Path Parameters**: Automatically validated by Nexus
 - ✅ **Query Parameters**: Type coercion, defaults, `pattern` validation
 - ✅ **Rate Limiting**: Per-endpoint with automatic cleanup (default 100 req/min)
 - ✅ **Security**: Input size (10MB max), dangerous key blocking, key length (256 chars)

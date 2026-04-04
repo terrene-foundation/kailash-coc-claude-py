@@ -110,7 +110,7 @@ Complete set of 21 Nexus skills covering all aspects from quickstart to advanced
 ### 2. DataFlow Blocking Fix (Lines 320-386 from nexus-specialist)
 
 - auto_discovery=False configuration
-- auto_migrate=True (default, works in Docker/FastAPI)
+- auto_migrate=True (default, works in Docker/async)
 - Performance comparison (30s → <2s)
 - Trade-off analysis
 

@@ -153,7 +153,7 @@ app = Nexus(
 
 db = DataFlow(
     database_url=os.environ["DATABASE_URL"],
-    auto_migrate=True,  # default: Works in Docker/FastAPI
+    auto_migrate=True,  # default: Works in Docker/async
 )
 
 @db.model
@@ -222,7 +222,7 @@ from nexus import Nexus
 from nexus.auth.plugin import NexusAuthPlugin
 from nexus.auth import JWTConfig, TenantConfig, AuditConfig
 from nexus.auth.dependencies import RequireRole, RequirePermission, get_current_user
-from fastapi import Depends
+from nexus.http import Depends
 import os
 
 app = Nexus(auto_discovery=False)
@@ -248,7 +248,7 @@ auth = NexusAuthPlugin(
 
 app.add_plugin(auth)
 
-# Use FastAPI dependencies for endpoint-level auth checks
+# Use Nexus dependencies for endpoint-level auth checks
 @app.handler("admin_dashboard")
 async def admin_dashboard(user=Depends(RequireRole("admin"))) -> dict:
     return {"user_id": user.user_id, "roles": user.roles}
@@ -302,7 +302,7 @@ auth = NexusAuthPlugin.enterprise(
 | `RBACConfig(roles={...})`                   | `rbac={"admin": ["*"], ...}`                    | Plain dict, no RBACConfig class     |
 | `tenant_isolation=True`                     | `tenant_isolation=TenantConfig(...)`            | Must pass config object             |
 | `from nexus.plugins.auth import ...`        | `from nexus.auth.plugin import NexusAuthPlugin` | Correct import path                 |
-| `from __future__ import annotations` + deps | Remove PEP 563 import                           | Breaks FastAPI dependency injection |
+| `from __future__ import annotations` + deps | Remove PEP 563 import                           | Breaks Nexus dependency injection |
 
 ### Middleware Execution Order (automatic)
 
@@ -623,11 +623,11 @@ async def process_order(order: dict):
 
 ## Pattern 9: AsyncLocalRuntime Pattern
 
-Async-first execution for Docker/FastAPI with proper event loop handling.
+Async-first execution for Docker/async with proper event loop handling.
 
 ### When to Use
 
-- FastAPI endpoints
+- Nexus endpoints
 - Docker deployments
 - Concurrent request handling
 - Any async context (`async def`)
@@ -677,7 +677,7 @@ results, run_id = runtime.execute(workflow.build())
 ```python
 from kailash.runtime import get_runtime
 
-runtime = get_runtime()  # AsyncLocalRuntime for Docker/FastAPI, LocalRuntime for CLI
+runtime = get_runtime()  # AsyncLocalRuntime for Docker/async, LocalRuntime for CLI
 ```
 
 ### Common Mistakes
@@ -780,10 +780,10 @@ app = Nexus(
 
 db = DataFlow(
     database_url="...",
-    auto_migrate=True,  # default: Works in Docker/FastAPI
+    auto_migrate=True,  # default: Works in Docker/async
 )
 
-# ALWAYS use AsyncLocalRuntime in FastAPI/async contexts
+# ALWAYS use AsyncLocalRuntime in Nexus/async contexts
 runtime = AsyncLocalRuntime()
 results, run_id = await runtime.execute_workflow_async(workflow.build(), inputs={})
 

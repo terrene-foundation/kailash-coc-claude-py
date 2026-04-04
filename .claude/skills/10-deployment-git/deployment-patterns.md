@@ -471,10 +471,10 @@ kubectl rollout undo deployment/backend -n production
 ### Application Health Endpoints (Python)
 
 ```python
-from fastapi import FastAPI, status
-from fastapi.responses import JSONResponse
+from nexus import Nexus
+from nexus.http import JSONResponse, status
 
-app = FastAPI()
+app = Nexus()
 
 @app.get("/health", status_code=status.HTTP_200_OK)
 async def health_check():

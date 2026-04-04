@@ -12,7 +12,7 @@ Decision guides for selecting the right frameworks, runtimes, databases, nodes, 
 | Decision  | File                                                                      | Quick Answer                                                                |
 | --------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | Framework | [decide-framework](decide-framework.md)                                   | Core SDK (custom), DataFlow (DB), Nexus (multi-channel), Kaizen (AI agents) |
-| Runtime   | [decide-runtime](decide-runtime.md)                                       | Docker/FastAPI -> AsyncLocalRuntime; CLI/Scripts -> LocalRuntime            |
+| Runtime   | [decide-runtime](decide-runtime.md)                                       | Docker/async -> AsyncLocalRuntime; CLI/Scripts -> LocalRuntime            |
 | Database  | [decide-database-postgresql-sqlite](decide-database-postgresql-sqlite.md) | Production -> PostgreSQL; Dev/Test -> SQLite                                |
 | Node      | [decide-node-for-task](decide-node-for-task.md)                           | See node selection flow below                                               |
 | Test Tier | [decide-test-tier](decide-test-tier.md)                                   | Unit (fast), Integration (real infra), E2E (full system)                    |
@@ -30,7 +30,7 @@ Decision guides for selecting the right frameworks, runtimes, databases, nodes, 
 ## Runtime Selection Flow
 
 ```
-Deploying to Docker/FastAPI/Kubernetes?
+Deploying to Docker/async/Kubernetes?
   YES -> AsyncLocalRuntime (async-first, no threads)
   NO  -> CLI/script?
     YES -> LocalRuntime (sync execution)
@@ -74,7 +74,7 @@ Complete user flow         -> Tier 3 (E2E)
 
 ### Runtime
 
-- Docker/FastAPI -> AsyncLocalRuntime (mandatory)
+- Docker/async -> AsyncLocalRuntime (mandatory)
 - NEVER use LocalRuntime in Docker (causes hangs)
 - NEVER mix runtimes in same application
 

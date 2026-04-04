@@ -133,16 +133,16 @@ async def process(data: dict) -> dict:
 
 ---
 
-### Anti-Pattern 2: Raw FastAPI Alongside Nexus
+### Anti-Pattern 2: Raw HTTP Routes Alongside Nexus
 
 **WRONG**:
 
 ```python
 # DON'T: Access private _gateway.app
 app = Nexus()
-fastapi_app = app._gateway.app  # Private attribute!
+internal_app = app._gateway.app  # Private attribute!
 
-@fastapi_app.get("/users")  # Bypasses Nexus features
+@internal_app.get("/users")  # Bypasses Nexus features
 async def get_users():
     return {"users": []}
 ```
@@ -405,7 +405,7 @@ from nexus.auth.dependencies import RequireRole, RequirePermission, get_current_
 from dataflow import DataFlow
 from kailash.workflow.builder import WorkflowBuilder
 from kailash.runtime import AsyncLocalRuntime
-from fastapi import Depends
+from nexus.http import Depends
 
 # ============================================================================
 # Configuration (from environment)
@@ -428,7 +428,7 @@ app = Nexus(
 
 db = DataFlow(
     database_url=DATABASE_URL,
-    auto_migrate=True,  # default: Works in Docker/FastAPI
+    auto_migrate=True,  # default: Works in Docker/async
 )
 
 runtime = AsyncLocalRuntime()  # Initialize once at module level
@@ -713,7 +713,7 @@ from nexus.auth.dependencies import RequirePermission
 from dataflow import DataFlow
 from kailash.workflow.builder import WorkflowBuilder
 from kailash.runtime import AsyncLocalRuntime
-from fastapi import Depends
+from nexus.http import Depends
 
 # ============================================================================
 # Configuration
@@ -924,7 +924,7 @@ app = Nexus(
 )
 
 db = DataFlow(
-    auto_migrate=True,  # default: Works in Docker/FastAPI
+    auto_migrate=True,  # default: Works in Docker/async
 )
 
 runtime = AsyncLocalRuntime()  # CRITICAL for async contexts

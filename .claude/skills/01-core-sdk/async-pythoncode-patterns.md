@@ -299,7 +299,7 @@ workflow.add_connection("async_prepare", "updated_at", "update_user", "updated_a
 
 **Integration with Async Libraries:**
 
-- FastAPI applications
+- Nexus applications
 - AsyncSQL operations
 - Async message queues
 - Async cache operations

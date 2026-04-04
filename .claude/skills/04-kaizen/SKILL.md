@@ -92,36 +92,9 @@ blackboard = Pipeline.blackboard(
 )
 ```
 
-## Reference Documentation
+## Skill Files
 
-### Comprehensive Guides
-
-For in-depth documentation, see `packages/kailash-kaizen/docs/`:
-
-**Core Guides:**
-
-- **[BaseAgent Architecture](../../../packages/kailash-kaizen/docs/guides/baseagent-architecture.md)** - Complete unified agent system guide
-- **[Multi-Agent Coordination](../../../packages/kailash-kaizen/docs/guides/multi-agent-coordination.md)** - Google A2A protocol, 5 coordination patterns
-- **[Signature Programming](../../../packages/kailash-kaizen/docs/guides/signature-programming.md)** - Complete signature system guide
-- **[Hooks System Guide](../../../packages/kailash-kaizen/docs/guides/hooks-system-guide.md)** - Event-driven observability framework
-- **[Integration Patterns](../../../packages/kailash-kaizen/docs/guides/integration-patterns.md)** - DataFlow, Nexus, MCP integration
-- **[Meta-Controller Guide](../../../packages/kailash-kaizen/docs/guides/meta-controller-guide.md)** - Intelligent task delegation
-- **[Planning System Guide](../../../packages/kailash-kaizen/docs/guides/planning-system-guide.md)** - Structured workflow orchestration
-
-**Reference Documentation:**
-
-- **[API Reference](../../../packages/kailash-kaizen/docs/reference/api-reference.md)** - Complete API documentation
-- **[Checkpoint API](../../../packages/kailash-kaizen/docs/reference/checkpoint-api.md)** - State persistence API
-- **[Coordination API](../../../packages/kailash-kaizen/docs/reference/coordination-api.md)** - Multi-agent coordination API
-- **[Interrupts API](../../../packages/kailash-kaizen/docs/reference/interrupts-api.md)** - Graceful shutdown API
-- **[Memory API](../../../packages/kailash-kaizen/docs/reference/memory-api.md)** - 3-tier memory system API
-- **[Observability API](../../../packages/kailash-kaizen/docs/reference/observability-api.md)** - Hooks and monitoring API
-- **[Planning Agents API](../../../packages/kailash-kaizen/docs/reference/planning-agents-api.md)** - Planning/PEV/ToT agents API
-- **[Tools API](../../../packages/kailash-kaizen/docs/reference/tools-api.md)** - Tool calling and approval API
-- **[Configuration Guide](../../../packages/kailash-kaizen/docs/reference/configuration.md)** - All configuration options
-- **[Troubleshooting](../../../packages/kailash-kaizen/docs/reference/troubleshooting.md)** - Common issues and solutions
-
-### Quick Start (Skills)
+### Quick Start
 
 - **[kaizen-quickstart-template](kaizen-quickstart-template.md)** - Quick start guide with templates
 - **[kaizen-baseagent-quick](kaizen-baseagent-quick.md)** - BaseAgent fundamentals
@@ -255,25 +228,9 @@ For in-depth documentation, see `packages/kailash-kaizen/docs/`:
   - `PlanExecutor` with gradient rules (G1-G8)
   - 7 typed modifications with batch-atomic application
 
-### v1.0 Developer Guides
-
-Located in the package source:
-
-- **Performance Optimization** (`09-performance-optimization-guide.md`) - Caching (10-100x speedup), parallel execution
-- **Specialist System** (`06-specialist-system-guide.md`) - Claude Code-style specialists and skills
-- **Native Tool System** (`00-native-tools-guide.md`) - TAOD loop tool integration
-- **Runtime Abstraction** (`01-runtime-abstraction-guide.md`) - Multi-runtime support
-- **LocalKaizenAdapter** (`02-local-kaizen-adapter-guide.md`) - TAOD loop implementation
-- **Memory Provider** (`03-memory-provider-guide.md`) - Memory provider interface
-- **Multi-LLM Routing** (`04-multi-llm-routing-guide.md`) - Intelligent LLM selection
-- **Unified Agent API** (`05-unified-agent-api-guide.md`) - Simplified 2-line agent creation
-- **Task/Skill Tools** (`07-task-skill-tools-guide.md`) - Subagent spawning
-- **Claude Code Parity** (`08-claude-code-parity-tools-guide.md`) - 7 parity tools
-
 ### Testing & Quality
 
 - **[kaizen-testing-patterns](kaizen-testing-patterns.md)** - Testing AI agents
-- **[Performance Benchmarks](../../../packages/kailash-kaizen/docs/benchmarks/BENCHMARK_GUIDE.md)** - Measure Kaizen performance
 
 ## Key Concepts
 
@@ -434,6 +391,71 @@ workflow.add_node("KaizenAgent", "agent1", {
 })
 ```
 
+## Provider Configuration (v2.5.0 — Explicit over Implicit)
+
+As of v2.5.0, provider configuration follows an **explicit over implicit** model. Structured output config is separated from provider-specific settings.
+
+### BaseAgentConfig Fields
+
+| Field                    | Purpose                                                                | Example                                      |
+| ------------------------ | ---------------------------------------------------------------------- | -------------------------------------------- |
+| `response_format`        | Structured output config (json_schema, json_object)                    | `{"type": "json_schema", "json_schema": {}}` |
+| `provider_config`        | Provider-specific operational settings only                            | `{"api_version": "2024-10-21"}`              |
+| `structured_output_mode` | Controls auto-generation: `"auto"` (deprecated), `"explicit"`, `"off"` | `"explicit"`                                 |
+
+### Quick Pattern
+
+```python
+from kaizen.core.config import BaseAgentConfig
+from kaizen.core.structured_output import create_structured_output_config
+
+# Explicit mode (recommended)
+config = BaseAgentConfig(
+    llm_provider="openai",
+    model=os.environ["LLM_MODEL"],
+    response_format=create_structured_output_config(MySignature(), strict=True),
+    structured_output_mode="explicit",
+)
+
+# Azure with provider-specific settings (separate from response_format)
+config = BaseAgentConfig(
+    llm_provider="azure",
+    model=os.environ["LLM_MODEL"],
+    response_format={"type": "json_object"},
+    provider_config={"api_version": "2024-10-21"},
+    structured_output_mode="explicit",
+)
+```
+
+### Azure Env Vars (Canonical Names)
+
+| Canonical           | Legacy (deprecated)                                    |
+| ------------------- | ------------------------------------------------------ |
+| `AZURE_ENDPOINT`    | `AZURE_OPENAI_ENDPOINT`, `AZURE_AI_INFERENCE_ENDPOINT` |
+| `AZURE_API_KEY`     | `AZURE_OPENAI_API_KEY`, `AZURE_AI_INFERENCE_API_KEY`   |
+| `AZURE_API_VERSION` | `AZURE_OPENAI_API_VERSION`                             |
+
+Legacy vars emit `DeprecationWarning`. Use `resolve_azure_env()` from `kaizen.nodes.ai.azure_detection` for canonical-first resolution.
+
+### Anti-Patterns
+
+- **Never** put structured output config in `provider_config` — use `response_format`
+- **Never** rely on auto-generated structured output without understanding it — set `structured_output_mode="explicit"`
+- **Never** use multiple env var names for the same Azure setting without deprecation
+- **Never** use error-based backend switching — detect the backend upfront or set `AZURE_BACKEND` explicitly
+
+### Prompt Utilities
+
+`kaizen.core.prompt_utils` is the single source of truth for signature-based prompt generation:
+
+- `generate_prompt_from_signature(signature)` — builds system prompt from signature fields
+- `json_prompt_suffix(output_fields)` — returns JSON format instructions for Azure `json_object` compatibility
+
+For detailed configuration patterns, see:
+
+- **[kaizen-config-patterns](kaizen-config-patterns.md)** — Domain configs, auto-extraction, provider-specific patterns
+- **[kaizen-structured-outputs](kaizen-structured-outputs.md)** — Full structured output guide with migration examples
+
 ## Critical Rules
 
 - ✅ Define signatures before implementing agents
@@ -443,8 +465,11 @@ workflow.add_node("KaizenAgent", "agent1", {
 - ✅ Test agents with real infrastructure (real infrastructure recommended)
 - ✅ Enable hooks for observability
 - ✅ Use AgentRegistry for distributed coordination
+- ✅ Use `response_format` for structured output (not `provider_config`)
+- ✅ Set `structured_output_mode="explicit"` for new agents
 - ❌ NEVER skip signature definitions
 - ❌ NEVER ignore cost tracking in production
+- ❌ NEVER put structured output keys in `provider_config`
 - ❌ Avoid mocking LLM calls in integration tests (real infrastructure recommended)
 
 ### Kaizen-Agents Governance (v0.1.0)

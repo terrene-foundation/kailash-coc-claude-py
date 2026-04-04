@@ -1,18 +1,18 @@
 {
-  "synced_at": "2026-04-04T14:00:00Z",
+  "synced_at": "2026-04-04T15:20:00Z",
   "source": "loom/.claude",
-  "source_version": "1.5.0",
-  "template_version": "1.9.0",
   "variant": "py",
+  "version": "2.0.0",
+  "upstream_build_version": "2.5.0",
   "files": {
-    "unchanged": 525,
-    "updated": 54,
-    "new": 13,
-    "preserved": 3,
-    "content_adapted": 2
+    "updated": 49,
+    "new": 1,
+    "unchanged": 476,
+    "adapted": 2,
+    "preserved_template_only": 3
   },
   "adaptations": [
-    "rules/agents.md: Quality Gates MUST -> RECOMMENDED, Zero-Tolerance softened for USE",
-    "rules/zero-tolerance.md: Scope softened, Rule 4 rewritten for USE (GitHub issues, not fix SDK source)"
+    "rules/agents.md: MUST gates -> RECOMMENDED gates",
+    "rules/zero-tolerance.md: BUILD fix-directly -> USE GitHub issues"
   ]
 }

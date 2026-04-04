@@ -1,5 +1,5 @@
 {
-  "version": "1.9.0",
+  "version": "2.0.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
   "released": "2026-04-04",
@@ -7,10 +7,25 @@
     "name": "kailash",
     "type": "coc-source",
     "version": "1.5.0",
-    "build_version": "2.4.1",
-    "synced_at": "2026-04-04T14:00:00Z"
+    "build_version": "2.5.0",
+    "synced_at": "2026-04-04T15:20:00Z"
   },
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-04-04",
+      "summary": "v2.5.0 codify: Kaizen provider config (structured outputs, Azure canonical env vars) + FastAPI sweep",
+      "changes": [
+        "NEW: skills/31-error-troubleshooting/error-kaizen-provider-config.md (Azure 400, response_format.type, provider_config deprecation, env var migration)",
+        "UPDATED: skills/04-kaizen/SKILL.md — v2.5.0 Provider Configuration section, config-patterns + structured-outputs links, 2 new critical rules",
+        "UPDATED: skills/31-error-troubleshooting/SKILL.md — Kaizen Provider Errors section, 3 new quick reference rows, 3 new checklist items",
+        "UPDATED: skills/04-kaizen/kaizen-structured-outputs.md — v2.5.0 explicit mode, response_format field, migration from auto",
+        "UPDATED: skills/04-kaizen/kaizen-config-patterns.md — response_format vs provider_config, Azure canonical env vars, Docker Model Runner",
+        "UPDATED: agents/frameworks/kaizen-specialist.md — Explicit Over Implicit section, 4 new Never rules, Azure env var table",
+        "UPDATED: 43 files from FastAPI sweep (Docker/FastAPI -> Docker/async, Nexus async patterns, runtime references)",
+        "ADAPTED: 2 rules preserved USE softening (agents.md RECOMMENDED gates, zero-tolerance.md GitHub issues for SDK bugs)"
+      ]
+    },
     {
       "version": "1.9.0",
       "date": "2026-04-04",

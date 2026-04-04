@@ -85,7 +85,7 @@ Each `@db.model` class generates:
 ## Critical Rules
 
 - ✅ String IDs preserved (no UUID conversion)
-- ✅ Deferred schema operations (safe for Docker/FastAPI)
+- ✅ Deferred schema operations (safe for Docker/async)
 - ✅ Multi-instance isolation (one DataFlow per database)
 - ✅ Result access: `results["node_id"]["result"]`
 - ❌ NEVER use truthiness checks on filter/data parameters (empty dict `{}` is falsy)

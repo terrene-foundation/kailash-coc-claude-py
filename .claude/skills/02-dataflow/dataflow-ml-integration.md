@@ -100,7 +100,7 @@ feature_conn = ConnectionManager("postgresql://...")   # Wastes pool
 model_conn = ConnectionManager("postgresql://...")     # Wastes pool
 ```
 
-**Why**: Per `rules/dataflow-pool.md` and `rules/infrastructure-sql.md` Rule 2 (no separate ConnectionManagers per store), each ConnectionManager creates its own pool. Multiple pools to the same database waste connections.
+**Why:** Per `rules/dataflow-pool.md` and `rules/infrastructure-sql.md` Rule 2 (no separate ConnectionManagers per store), each ConnectionManager creates its own pool. Multiple pools to the same database waste connections.
 
 ## Interop Module
 

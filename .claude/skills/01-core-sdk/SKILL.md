@@ -13,7 +13,7 @@ The Core SDK provides the foundational building blocks for creating custom workf
 
 - **110+ Workflow Nodes**: Pre-built nodes for AI, API, database, file operations, logic, and more
 - **WorkflowBuilder API**: String-based workflow construction with type safety
-- **Dual Runtime Support**: AsyncLocalRuntime (Docker/FastAPI) and LocalRuntime (CLI/scripts)
+- **Dual Runtime Support**: AsyncLocalRuntime (Docker/async) and LocalRuntime (CLI/scripts)
 - **Advanced Patterns**: Cyclic workflows, conditional execution, error handling
 - **MCP Integration**: Built-in Model Context Protocol support
 - **Parameter Passing**: Flexible data flow between nodes
@@ -106,7 +106,7 @@ workflow.connect("node1", "node2", mapping={"content": "input", "meta": "metadat
 
 ### Runtime Selection
 
-- **AsyncLocalRuntime**: For Docker/FastAPI (async contexts) - async-first, no threading, 10-100x faster
+- **AsyncLocalRuntime**: For Docker/async (async contexts) - async-first, no threading, 10-100x faster
 - **LocalRuntime**: For CLI/scripts (sync contexts) - synchronous execution with thread support
 - **get_runtime()**: Auto-detection helper that selects appropriate runtime based on context
 
@@ -140,7 +140,7 @@ Both LocalRuntime and AsyncLocalRuntime inherit from BaseRuntime with shared cap
 - ✅ ALWAYS: `runtime.execute(workflow.build())`
 - ✅ String-based nodes: `workflow.add_node("NodeName", "id", {})`
 - ✅ 4-parameter connections: `(source_id, source_param, target_id, target_param)`
-- ✅ Docker/FastAPI: Use AsyncLocalRuntime (mandatory)
+- ✅ Docker/async: Use AsyncLocalRuntime (mandatory)
 - ✅ CLI/Scripts: Use LocalRuntime
 - ❌ NEVER: `workflow.execute(runtime)`
 - ❌ NEVER: Instance-based nodes

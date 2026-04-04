@@ -334,7 +334,7 @@ results, run_id = runtime.execute(workflow.build())
 
 ## Version Notes
 
-- **v0.9.25+**: AsyncLocalRuntime now default for Docker/FastAPI (no changes to this pattern)
+- **v0.9.25+**: AsyncLocalRuntime now default for Docker/async contexts (no changes to this pattern)
 - **v0.9.20+**: String-based nodes became the recommended production pattern
 - **v0.6.6+**: Auto ID generation and flexible API patterns added
 

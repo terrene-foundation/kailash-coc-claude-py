@@ -1,6 +1,6 @@
 ---
 name: nexus
-description: "Kailash Nexus - zero-config multi-channel platform for deploying workflows as API + CLI + MCP simultaneously. Use when asking about 'Nexus', 'multi-channel', 'platform deployment', 'API deployment', 'CLI deployment', 'MCP deployment', 'unified sessions', 'workflow deployment', 'production deployment', 'API gateway', 'FastAPI alternative', 'session management', 'health monitoring', 'enterprise platform', 'plugins', 'event system', or 'workflow registration'. Also covers K8s integration: 'K8s probes', 'healthz', 'readyz', 'startup probe', 'ProbeManager', 'ProbeState', 'OpenAPI', 'openapi.json', 'OpenApiGenerator', 'security headers', 'CSRF middleware', 'CSRFMiddleware', 'SecurityHeadersMiddleware', 'middleware presets', 'Preset', or 'HSTS'."
+description: "Kailash Nexus - zero-config multi-channel platform for deploying workflows as API + CLI + MCP simultaneously. Use when asking about 'Nexus', 'multi-channel', 'platform deployment', 'API deployment', 'CLI deployment', 'MCP deployment', 'unified sessions', 'workflow deployment', 'production deployment', 'API gateway', 'session management', 'health monitoring', 'enterprise platform', 'plugins', 'event system', or 'workflow registration'. Also covers K8s integration: 'K8s probes', 'healthz', 'readyz', 'startup probe', 'ProbeManager', 'ProbeState', 'OpenAPI', 'openapi.json', 'OpenApiGenerator', 'security headers', 'CSRF middleware', 'CSRFMiddleware', 'SecurityHeadersMiddleware', 'middleware presets', 'Preset', or 'HSTS'."
 ---
 
 # Kailash Nexus - Multi-Channel Platform Framework
@@ -17,7 +17,7 @@ Nexus transforms workflows into a complete platform with:
 - **Enterprise Features**: Health monitoring, plugins, event system, comprehensive logging
 - **DataFlow Integration**: Automatic CRUD API generation from database models
 - **Production Ready**: Deployment patterns, monitoring, troubleshooting guides
-- **FastAPI Alternative**: Workflow-based platform without manual route definition
+- **Zero-Config Platform**: Workflow-based platform without manual route definition
 - **Async-First**: Uses AsyncLocalRuntime by default for optimal performance
 
 ## Quick Start
@@ -47,7 +47,7 @@ app.start()
 - **[nexus-installation](nexus-installation.md)** - Installation and setup
 - **[nexus-architecture](nexus-architecture.md)** - Architecture overview
 - **[README](README.md)** - Framework overview
-- **[nexus-comparison](nexus-comparison.md)** - Nexus vs FastAPI/Flask
+- **[nexus-comparison](nexus-comparison.md)** - Nexus vs traditional frameworks
 
 ### Core Concepts
 
@@ -89,7 +89,7 @@ app.start()
 
 Nexus eliminates boilerplate:
 
-- **No FastAPI routes** - Automatic API generation from workflows
+- **No manual routes** - Automatic API generation from workflows
 - **No CLI arg parsing** - Automatic CLI creation
 - **No MCP server setup** - Automatic MCP integration
 - **Unified deployment** - One command for all channels
@@ -130,7 +130,7 @@ Use Nexus when you need to:
 - Provide multiple access methods (API/CLI/MCP)
 - Build enterprise platforms quickly
 - Auto-generate CRUD APIs (with DataFlow)
-- Replace FastAPI/Flask with workflow-based platform
+- Replace traditional frameworks with workflow-based platform
 - Create multi-channel applications
 - Deploy AI agent platforms (with Kaizen)
 
@@ -205,13 +205,13 @@ app.start()
 
 ## Critical Rules
 
-- ✅ Use Nexus instead of FastAPI for workflow platforms
+- ✅ Use Nexus for workflow platforms
 - ✅ Register workflows, not individual routes
 - ✅ Leverage unified sessions across channels
 - ✅ Enable health monitoring in production
 - ✅ Use plugins for custom behavior
 - ✅ Nexus uses AsyncLocalRuntime by default (correct for Docker)
-- ❌ NEVER mix FastAPI routes with Nexus
+- ❌ NEVER mix raw HTTP routes with Nexus
 - ❌ NEVER implement manual API/CLI/MCP servers when Nexus can do it
 - ❌ NEVER skip health checks in production
 
