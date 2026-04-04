@@ -1,5 +1,5 @@
 {
-  "version": "1.6.0",
+  "version": "1.7.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
   "released": "2026-04-04",
@@ -7,10 +7,25 @@
     "name": "kailash",
     "type": "coc-source",
     "version": "1.4.0",
-    "build_version": "2.4.0",
-    "synced_at": "2026-04-04T00:00:00Z"
+    "build_version": "2.4.1",
+    "synced_at": "2026-04-04T08:00:00Z"
   },
   "changelog": [
+    {
+      "version": "1.7.0",
+      "date": "2026-04-04",
+      "summary": "Red team fixes: phantom nodes, cross-refs, PACT variant, testing dir names",
+      "changes": [
+        "GLOBAL: 22 sub-skill phantom node fixes (APICallNode→HTTPRequestNode, etc.)",
+        "GLOBAL: 10 broken ../nodes/ cross-refs fixed (→../08-nodes-reference/)",
+        "GLOBAL: Hardcoded gpt-4→os.environ['LLM_MODEL'] in cheatsheets, workflow-patterns",
+        "VARIANT-PY: Nexus SKILL.md rewrite (register/start pattern)",
+        "VARIANT-PY: MCP SKILL.md @server.tool() fix",
+        "VARIANT-PY: New 29-pact/SKILL.md (kailash.trust.pact import paths)",
+        "GLOBAL: testing-strategies test dir names (tier1_unit→unit)",
+        "FIX: CI validate workflow excludes legitimate src/kailash/ refs"
+      ]
+    },
     {
       "version": "1.6.0",
       "date": "2026-04-04",
