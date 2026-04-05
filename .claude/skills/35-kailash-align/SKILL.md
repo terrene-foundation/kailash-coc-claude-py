@@ -1,6 +1,6 @@
 ---
 name: kailash-align
-description: "Kailash Align - LLM fine-tuning and alignment framework with 12 supported methods across 4 categories (offline, unpaired, monolithic, online). Use when asking about 'fine-tuning', 'alignment', 'DPO', 'RLHF', 'GRPO', 'LoRA', 'QLoRA', 'SFT', 'adapter registry', 'model serving', 'GGUF export', 'Ollama deployment', 'vLLM', 'reward functions', 'KaizenModelBridge', 'alignment evaluation', 'win-rate', 'adapter chaining', or 'LLM training'."
+description: "Kailash Align — LLM fine-tuning/alignment with 12 methods (DPO, RLHF, LoRA, GRPO). Use for fine-tuning, adapter management, eval, model serving."
 ---
 
 # Kailash Align - LLM Fine-Tuning & Alignment

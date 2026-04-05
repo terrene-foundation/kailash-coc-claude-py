@@ -1,6 +1,6 @@
 ---
 name: kailash-ml
-description: "Kailash ML - classical and deep learning lifecycle framework with polars-native engines, agent-augmented AutoML, and ONNX cross-language serving. Use when asking about 'feature store', 'model registry', 'training pipeline', 'inference server', 'drift monitoring', 'AutoML', 'hyperparameter search', 'ensemble', 'ONNX export', 'ML agents', 'RL training', 'feature engineering', 'model lifecycle', 'experiment tracking', 'ML guardrails', 'model serving', 'batch inference', or 'drift detection'."
+description: "Kailash ML — classical + deep learning lifecycle with polars-native engines, AutoML, ONNX serving. Use for feature stores, model training, drift monitoring, inference."
 ---
 
 # Kailash ML - Classical & Deep Learning Lifecycle

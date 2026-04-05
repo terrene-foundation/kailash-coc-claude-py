@@ -216,7 +216,7 @@ KAILASH_MCP_ENABLE_VALIDATION=false kailash-mcp --project-root .
 
 ## When to Escalate to Subagent
 
-Use `mcp-specialist` when:
+Use `mcp-platform-specialist` when:
 
 - Designing custom tier boundaries for a new contributor
 - Implementing subprocess isolation for Tier 4 tools

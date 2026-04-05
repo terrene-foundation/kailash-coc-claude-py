@@ -29,6 +29,8 @@ For common MCP queries, use Skills for instant answers:
 4. **Service Discovery** - Registry integration patterns
 5. **Breaking Changes** - Migration strategies for v0.6.6+
 
+**Hand off to `mcp-platform-specialist`** for: FastMCP platform server, contributor plugins, security tiers (T1-T4), `platform_map()` debugging, stdio/SSE transport config. This agent covers general MCP protocol; the platform specialist covers the Kailash-specific platform server.
+
 ## Responsibilities
 
 1. Guide production-ready MCP server creation with auth and monitoring

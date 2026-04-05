@@ -1,6 +1,6 @@
 ---
 name: kailash-mcp
-description: "Kailash MCP (Model Context Protocol) - production-ready MCP server implementation for AI agent integration. Use when asking about 'MCP', 'Model Context Protocol', 'MCP server', 'MCP client', 'MCP tools', 'MCP resources', 'MCP prompts', 'MCP authentication', 'MCP transports', 'stdio transport', 'SSE transport', 'HTTP transport', 'MCP testing', 'progress reporting', or 'structured tools'."
+description: "Kailash MCP — production-ready MCP server, platform server, tools, resources, transports. Use for MCP integration, platform config, security tiers."
 ---
 
 # Kailash MCP - Model Context Protocol Integration
@@ -206,6 +206,6 @@ def analyze_tool(text: str) -> str:
 
 For MCP-specific questions, invoke:
 
-- `mcp-specialist` - MCP server implementation
+- `mcp-platform-specialist` - Platform server, contributor plugins, security tiers, platform_map
+- `mcp-specialist` - General MCP protocol, custom servers, auth, transports
 - `testing-specialist` - MCP testing strategies
-- ``decide-framework` skill` - MCP integration architecture

@@ -166,7 +166,7 @@ Connections are detected via deterministic naming conventions (e.g., a handler r
 
 ## When to Escalate to Subagent
 
-Use `mcp-specialist` when:
+Use `mcp-platform-specialist` when:
 
 - Troubleshooting contributor registration failures
 - Implementing custom transport configurations

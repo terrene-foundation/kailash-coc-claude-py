@@ -8,9 +8,12 @@ When working with Kailash frameworks, MUST consult the relevant specialist:
 - **nexus-specialist**: API or deployment work
 - **kaizen-specialist**: AI agent work
 - **mcp-specialist**: MCP integration work
+- **mcp-platform-specialist**: FastMCP platform server, contributor plugins, security tiers
 - **pact-specialist**: Organizational governance work
+- **ml-specialist**: ML lifecycle, feature stores, training, drift monitoring, AutoML
+- **align-specialist**: LLM fine-tuning, LoRA adapters, alignment methods, model serving
 
-**Applies when**: Creating workflows, modifying DB models, setting up endpoints, building agents, implementing governance.
+**Applies when**: Creating workflows, modifying DB models, setting up endpoints, building agents, implementing governance, training ML models, fine-tuning LLMs, configuring MCP platform server.
 
 **Why:** Framework specialists encode hard-won patterns and constraints that generalist agents miss, leading to subtle misuse of DataFlow, Nexus, or Kaizen APIs.
 
@@ -29,11 +32,11 @@ When multiple independent operations are needed, launch agents in parallel using
 
 **Why:** Sequential execution of independent operations wastes the autonomous execution multiplier, turning a 1-session task into a multi-session bottleneck.
 
-## Quality Gates (RECOMMENDED — Gate-Level Review)
+## Quality Gates (MUST — Gate-Level Review)
 
-Reviews are recommended at COC phase boundaries, not per-edit. Users may skip when appropriate.
+Reviews happen at COC phase boundaries, not per-edit. Skip only when explicitly told to.
 
-**Why:** Skipping gate reviews lets analysis gaps, security holes, and naming violations propagate, where they are far more expensive to fix later.
+**Why:** Skipping gate reviews lets analysis gaps, security holes, and naming violations propagate to downstream repos where they are far more expensive to fix.
 
 | Gate                | After Phase  | Review                                                                        |
 | ------------------- | ------------ | ----------------------------------------------------------------------------- |
@@ -45,7 +48,7 @@ Reviews are recommended at COC phase boundaries, not per-edit. Users may skip wh
 
 ## Zero-Tolerance
 
-Pre-existing failures should be fixed when found (see `rules/zero-tolerance.md` Rule 1). SDK bugs should be reported via GitHub issues, not worked around (Rule 4).
+Pre-existing failures MUST be fixed (see `rules/zero-tolerance.md` Rule 1). No workarounds for SDK bugs — deep dive and fix directly (Rule 4).
 
 **Why:** Workarounds create parallel implementations that diverge from the SDK, doubling maintenance cost and masking the root bug from being fixed (see `rules/zero-tolerance.md` Rule 4).
 

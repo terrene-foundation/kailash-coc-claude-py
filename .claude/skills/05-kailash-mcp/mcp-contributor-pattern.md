@@ -347,7 +347,7 @@ async def test_full_server_starts_with_contributor():
 
 ## When to Escalate to Subagent
 
-Use `mcp-specialist` when:
+Use `mcp-platform-specialist` when:
 
 - Implementing cross-framework scanning in `platform_map`
 - Adding Tier 4 execution tools with subprocess isolation

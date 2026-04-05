@@ -345,7 +345,7 @@ Resources provide the same data but through the MCP resource protocol. Useful fo
 
 ## When to Escalate to Subagent
 
-Use `mcp-specialist` when:
+Use `mcp-platform-specialist` when:
 
 - Detection heuristics are missing artifacts that should be found
 - Implementing custom connection detection logic
