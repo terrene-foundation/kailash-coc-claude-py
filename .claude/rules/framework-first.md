@@ -19,12 +19,14 @@ Specs        →  CARE, EATP, CO, COC, PACT (standards/protocols/methodology)
 
 Specs define → Primitives implement building blocks → Engines compose into opinionated frameworks → Entrypoints are products users interact with.
 
-| Framework    | Raw (never ❌)      | Primitives                                   | Engine (default ✅)                                                     | Entrypoints              |
-| ------------ | ------------------- | -------------------------------------------- | ----------------------------------------------------------------------- | ------------------------ |
-| **DataFlow** | Raw SQL, SQLAlchemy | `DataFlow`, `@db.model`, `db.express`, nodes | `DataFlowEngine.builder()` (validation, classification, query tracking) | aegis, aether, kz-engage |
-| **Nexus**    | Raw HTTP frameworks | `Nexus()`, handlers, channels                | `NexusEngine` (middleware stack, auth, K8s)                             | aegis, aether            |
-| **Kaizen**   | Raw LLM API calls   | `BaseAgent`, `Signature`                     | `DelegateEngine`, `SupervisorAgent`                                     | kaizen-cli-rs            |
-| **PACT**     | Manual policy       | Envelopes, D/T/R addressing                  | `GovernanceEngine` (thread-safe, fail-closed)                           | aegis                    |
+| Framework    | Raw (never ❌)      | Primitives                                          | Engine (default ✅)                                                     | Entrypoints              |
+| ------------ | ------------------- | --------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------ |
+| **DataFlow** | Raw SQL, SQLAlchemy | `DataFlow`, `@db.model`, `db.express`, nodes        | `DataFlowEngine.builder()` (validation, classification, query tracking) | aegis, aether, kz-engage |
+| **Nexus**    | Raw HTTP frameworks | `Nexus()`, handlers, channels                       | `NexusEngine` (middleware stack, auth, K8s)                             | aegis, aether            |
+| **Kaizen**   | Raw LLM API calls   | `BaseAgent`, `Signature`                            | `DelegateEngine`, `SupervisorAgent`                                     | kaizen-cli-rs            |
+| **PACT**     | Manual policy       | Envelopes, D/T/R addressing                         | `GovernanceEngine` (thread-safe, fail-closed)                           | aegis                    |
+| **ML**       | Raw sklearn/torch   | `FeatureStore`, `ModelRegistry`, `TrainingPipeline` | `AutoMLEngine`, `InferenceServer` (ONNX, drift, caching)                | aegis, aether            |
+| **Align**    | Raw TRL/PEFT        | `AlignmentConfig`, `AlignmentPipeline`              | `align.train()`, `align.deploy()` (GGUF, Ollama, vLLM)                  | —                        |
 
 **Note**: `db.express` is a primitive convenience for lightweight CRUD (~23x faster by bypassing workflow). `DataFlowEngine` wraps `DataFlow` with enterprise features (validation, classification, query engine, retention).
 
