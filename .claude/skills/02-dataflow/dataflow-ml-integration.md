@@ -34,7 +34,7 @@ SQLite / PostgreSQL / MySQL
 ```python
 from kailash.db.connection import ConnectionManager
 from kailash_ml import FeatureStore
-from kailash_ml_protocols import FeatureSchema, FeatureField
+from kailash_ml.types import FeatureSchema, FeatureField
 
 # 1. Create ConnectionManager (caller owns lifecycle)
 conn = ConnectionManager("sqlite:///ml.db")
@@ -111,7 +111,7 @@ kailash-ml uses polars as its native data format. The `interop` module provides 
 | `to_sklearn_input()`       | polars -> numpy               | Training with sklearn      |
 | `from_sklearn_output()`    | numpy -> polars               | Predictions back to polars |
 | `to_lgb_dataset()`         | polars -> LightGBM Dataset    | LightGBM training          |
-| `to_hf_dataset()`         | polars -> HuggingFace Dataset | Tokenization, NLP          |
+| `to_hf_dataset()`          | polars -> HuggingFace Dataset | Tokenization, NLP          |
 | `polars_to_arrow()`        | polars -> Arrow               | Zero-copy Arrow interop    |
 | `to_pandas()`              | polars -> pandas              | Legacy library compat      |
 | `from_pandas()`            | pandas -> polars              | Ingest from pandas sources |
@@ -121,8 +121,8 @@ All converters handle categoricals, nulls, and dtype preservation.
 
 ## Cross-References
 
-- `packages/kailash-ml/src/kailash_ml/engines/feature_store.py` -- FeatureStore implementation
-- `packages/kailash-ml/src/kailash_ml/engines/_feature_sql.py` -- All SQL in one module
-- `packages/kailash-ml/src/kailash_ml/interop.py` -- Polars conversion module
+- `kailash_ml.engines.feature_store` -- FeatureStore implementation
+- `kailash_ml.engines._feature_sql` -- All SQL in one module
+- `kailash_ml.interop` -- Polars conversion module
 - `rules/infrastructure-sql.md` -- SQL safety patterns (identifier validation, transactions)
 - `rules/dataflow-pool.md` -- Connection pool rules (no separate ConnectionManagers)

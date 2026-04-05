@@ -1,18 +1,26 @@
 {
-  "synced_at": "2026-04-04T15:20:00Z",
+  "synced_at": "2026-04-05T07:20:00Z",
   "source": "loom/.claude",
   "variant": "py",
-  "version": "2.0.0",
-  "upstream_build_version": "2.5.0",
+  "version": "2.2.0",
+  "upstream_loom_version": "1.7.0",
+  "upstream_build_version": "2.5.1",
   "files": {
-    "updated": 49,
+    "updated": 4,
     "new": 1,
-    "unchanged": 476,
-    "adapted": 2,
+    "unchanged": 525,
+    "adapted": 0,
     "preserved_template_only": 3
   },
   "adaptations": [
-    "rules/agents.md: MUST gates -> RECOMMENDED gates",
-    "rules/zero-tolerance.md: BUILD fix-directly -> USE GitHub issues"
-  ]
+    "rules/agents.md: MUST gates -> RECOMMENDED gates (preserved from v2.1.0)",
+    "rules/zero-tolerance.md: BUILD fix-directly -> USE GitHub issues (preserved from v2.1.0)"
+  ],
+  "sdk_pins": {
+    "kailash": ">=2.5.1",
+    "kailash-nexus": ">=1.9.0",
+    "kailash-dataflow": ">=1.7.1",
+    "kailash-kaizen": ">=2.5.0",
+    "kailash-pact": ">=0.7.1"
+  }
 }

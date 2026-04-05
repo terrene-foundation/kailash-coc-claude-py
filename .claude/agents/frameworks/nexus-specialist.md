@@ -79,6 +79,25 @@ async def greet(name: str, greeting: str = "Hello") -> dict:
 app = Nexus(auto_discovery=False)
 ```
 
+## Transport Layer
+
+Nexus has 4 transports (all implement `Transport` ABC from `nexus.transports.base`):
+
+| Transport            | File                      | Purpose                                      |
+| -------------------- | ------------------------- | -------------------------------------------- |
+| `HTTPTransport`      | `transports/http.py`      | FastAPI/Starlette HTTP endpoints (default)   |
+| `MCPTransport`       | `transports/mcp.py`       | MCP protocol via FastMCP (background thread) |
+| `WebSocketTransport` | `transports/websocket.py` | Bidirectional real-time (JSON-RPC style)     |
+| `WebhookTransport`   | `transports/webhook.py`   | Inbound receiver + outbound delivery         |
+
+**Middleware**: `nexus.middleware.cache.ResponseCacheMiddleware` — TTL + LRU + ETag.
+
+**Security patterns for transports:**
+
+- Webhook: HMAC-SHA256 signatures (`hmac.compare_digest`), SSRF prevention via DNS-pinned delivery, idempotency deduplication
+- WebSocket: `max_connections` enforcement, generic error messages (never leak exception details)
+- All: bounded collections for connection/delivery tracking
+
 ## Framework Selection
 
 **Choose Nexus when:**

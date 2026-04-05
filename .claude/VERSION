@@ -1,16 +1,29 @@
 {
-  "version": "2.1.0",
+  "version": "2.2.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
   "released": "2026-04-05",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "1.6.0",
-    "build_version": "2.5.0",
-    "synced_at": "2026-04-05T10:00:00Z"
+    "version": "1.7.0",
+    "build_version": "2.5.1",
+    "synced_at": "2026-04-05T14:00:00Z"
   },
   "changelog": [
+    {
+      "version": "2.2.0",
+      "date": "2026-04-05",
+      "summary": "v2.5.1 codify: SSRF prevention, Nexus transports, ML protocol consolidation, SDK pin bump",
+      "changes": [
+        "UPDATED: skills/18-security-patterns/SKILL.md — SSRF prevention (DNS-pinned delivery, IPv4-mapped IPv6) + Error Message Security",
+        "UPDATED: skills/02-dataflow/dataflow-ml-integration.md — kailash_ml_protocols->kailash_ml.types import fix, BUILD paths stripped",
+        "UPDATED: agents/frameworks/nexus-specialist.md — Transport Layer section (4 transports, ResponseCache, security patterns)",
+        "UPDATED: agents/frameworks/ml-specialist.md — kailash_ml.types import paths",
+        "NEW: skills/04-kaizen/kaizen-ml-integration.md — ML+Kaizen integration patterns (9 engines, type contracts, AutoML guardrails)",
+        "UPDATED: pyproject.toml — SDK pins: kailash 2.4.0->2.5.1, nexus 1.7.1->1.9.0, dataflow 1.5.1->1.7.1, kaizen 2.3.3->2.5.0, pact 0.5.0->0.7.1"
+      ]
+    },
     {
       "version": "2.1.0",
       "date": "2026-04-05",
@@ -63,8 +76,8 @@
         "UPDATED: 46 global skill files — hardcoded model names replaced with os.environ['LLM_MODEL']",
         "UPDATED: 95 py variant skill sub-files — Python-specific API corrections (phantom nodes, import paths, Nexus/Kaizen/PACT/EATP fixes)",
         "UPDATED: 6 py variant SKILL.md indexes (03-nexus, 05-mcp, 08-nodes, 13-architecture, 18-security, 29-pact)",
-        "FIXED: session-start.js — shell injection in checkSdkPinFreshness() (execSync→execFileSync)",
-        "FIXED: version-utils.js — command injection in fetchUpstreamVersion() (execSync→execFileSync)",
+        "FIXED: session-start.js — shell injection in checkSdkPinFreshness() (execSync->execFileSync)",
+        "FIXED: version-utils.js — command injection in fetchUpstreamVersion() (execSync->execFileSync)",
         "FIXED: NaN bypass on COC sync marker timestamp — added isFinite check",
         "FIXED: 9 broken dataflow-specialist.md file path links in skill sub-files",
         "CLEANED: 8 workspaces/ provenance refs in global skills",
@@ -77,13 +90,13 @@
       "date": "2026-04-04",
       "summary": "Red team fixes: phantom nodes, cross-refs, PACT variant, testing dir names",
       "changes": [
-        "GLOBAL: 22 sub-skill phantom node fixes (APICallNode→HTTPRequestNode, etc.)",
-        "GLOBAL: 10 broken ../nodes/ cross-refs fixed (→../08-nodes-reference/)",
-        "GLOBAL: Hardcoded gpt-4→os.environ['LLM_MODEL'] in cheatsheets, workflow-patterns",
+        "GLOBAL: 22 sub-skill phantom node fixes (APICallNode->HTTPRequestNode, etc.)",
+        "GLOBAL: 10 broken ../nodes/ cross-refs fixed (->../08-nodes-reference/)",
+        "GLOBAL: Hardcoded gpt-4->os.environ['LLM_MODEL'] in cheatsheets, workflow-patterns",
         "VARIANT-PY: Nexus SKILL.md rewrite (register/start pattern)",
         "VARIANT-PY: MCP SKILL.md @server.tool() fix",
         "VARIANT-PY: New 29-pact/SKILL.md (kailash.trust.pact import paths)",
-        "GLOBAL: testing-strategies test dir names (tier1_unit→unit)",
+        "GLOBAL: testing-strategies test dir names (tier1_unit->unit)",
         "FIX: CI validate workflow excludes legitimate src/kailash/ refs"
       ]
     },
@@ -114,7 +127,7 @@
         "MERGED: no-stubs.md content into zero-tolerance.md Rule 2 (no-stubs.md preserved as template-only)",
         "MERGED: branch-protection.md content into git.md (branch-protection.md preserved as template-only)",
         "SCOPED: 19 rules now path-scoped (only load when editing matching files)",
-        "RESTRUCTURED: 13 agents moved to subdirectories (analysis/, implementation/, quality/, release/, testing/)",
+        "RESTRUCTURED: 13 agents moved to subdirectories (analysis, frameworks, frontend, implementation, management, quality, release, testing)",
         "DELETED: sdk-navigator.md, framework-advisor.md (merged into skills/13-architecture-decisions/decide-framework.md)",
         "REMOVED: 12 py variant rules (globals now apply directly with USE-context adaptations)",
         "UPDATED: rules/framework-first.md — 4-layer hierarchy (Specs, Primitives, Engines, Entrypoints)",

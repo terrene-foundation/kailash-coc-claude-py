@@ -79,7 +79,7 @@ await fs.initialize()
 
 ```python
 from kailash_ml import TrainingPipeline, ModelRegistry
-from kailash_ml_protocols import FeatureSchema, FeatureField
+from kailash_ml.types import FeatureSchema, FeatureField
 
 schema = FeatureSchema(
     name="user_churn",
@@ -145,7 +145,7 @@ result = await engine.run(schema=schema, data=df)
 `validate_model_class()` in `_shared.py` restricts dynamic imports to:
 `sklearn.`, `lightgbm.`, `xgboost.`, `catboost.`, `kailash_ml.`, `torch.`, `lightning.`
 
-**Why:** Prevents arbitrary code execution via model class strings.
+**Why**: Prevents arbitrary code execution via model class strings.
 
 ### Financial Field Validation
 
@@ -154,7 +154,7 @@ result = await engine.run(schema=schema, data=df)
 - `AutoMLConfig.max_llm_cost_usd`
 - `GuardrailConfig.max_llm_cost_usd`, `GuardrailConfig.min_confidence`
 
-**Why:** NaN bypasses all numeric comparisons; Inf defeats upper-bound checks.
+**Why**: NaN bypasses all numeric comparisons; Inf defeats upper-bound checks.
 
 ### Bounded Collections
 
