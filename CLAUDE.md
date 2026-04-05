@@ -109,8 +109,11 @@ Phase commands replace the manual copy-paste workflow. Each loads the correspond
 - **nexus-specialist** — Multi-channel platform (API/CLI/MCP)
 - **kaizen-specialist** — AI agents, signatures, multi-agent coordination
 - **mcp-specialist** — MCP server implementation
+- **mcp-platform-specialist** — FastMCP platform server, contributor plugins, security tiers
 - **infrastructure-specialist** — Progressive infrastructure, dialect-portable SQL, task queues
 - **pact-specialist** — Organizational governance (D/T/R, envelopes, clearance)
+- **ml-specialist** — ML lifecycle, feature stores, training, drift monitoring
+- **align-specialist** — LLM fine-tuning, LoRA adapters, alignment, model serving
 
 ### Implementation (`agents/implementation/`)
 
