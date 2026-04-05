@@ -1,6 +1,6 @@
 ---
 name: ml-specialist
-description: "ML lifecycle specialist. Use for feature stores, model training, drift monitoring, or AutoML pipelines."
+description: "kailash-ml specialist. Use for training, inference, drift, AutoML, experiments, ensembles, features, or ML examples."
 tools: Read, Write, Edit, Bash, Grep, Glob, Task
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: nexus-specialist
-description: "Nexus multi-channel specialist. Use for production deployment, API+CLI+MCP orchestration, or DataFlow integration."
+description: "kailash-nexus specialist. Use for API+CLI+MCP deployment, handlers, transports, middleware, sessions, or webhooks."
 tools: Read, Write, Edit, Bash, Grep, Glob, Task
 model: opus
 ---

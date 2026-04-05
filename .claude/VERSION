@@ -1,16 +1,25 @@
 {
-  "version": "2.2.0",
+  "version": "2.3.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
   "released": "2026-04-05",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "1.7.0",
+    "version": "1.8.0",
     "build_version": "2.5.1",
-    "synced_at": "2026-04-05T14:00:00Z"
+    "synced_at": "2026-04-05T16:00:00Z"
   },
   "changelog": [
+    {
+      "version": "2.3.0",
+      "date": "2026-04-05",
+      "summary": "Framework specialist descriptions — package-name-first for reliable routing",
+      "changes": [
+        "UPDATED: 8 framework specialist agent descriptions — lead with kailash-{package}, dense keyword triggers",
+        "Agents: ml, align, dataflow, nexus, kaizen, mcp, pact, infrastructure specialists"
+      ]
+    },
     {
       "version": "2.2.0",
       "date": "2026-04-05",

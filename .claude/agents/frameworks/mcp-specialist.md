@@ -1,6 +1,6 @@
 ---
 name: mcp-specialist
-description: MCP specialist for production-ready server implementation. Use for AI agent and MCP integration.
+description: "kailash-mcp specialist. Use for MCP servers, tools, resources, transports, authentication, or AI agent integration."
 tools: Read, Write, Edit, Bash, Grep, Glob, Task
 model: opus
 ---
