@@ -1,16 +1,28 @@
 {
-  "version": "2.5.0",
+  "version": "2.6.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
   "released": "2026-04-05",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "build_version": "2.5.1",
-    "synced_at": "2026-04-05T19:00:00Z"
+    "synced_at": "2026-04-05T21:00:00Z"
   },
   "changelog": [
+    {
+      "version": "2.6.0",
+      "date": "2026-04-05",
+      "summary": "Skill tightening long tail: 14 files updated (6 global + 8 py variant), 2 stale variant entries removed",
+      "changes": [
+        "TIGHTENED: 6 global skill files (async-pythoncode, dataflow-debug, nexus-workflow-reg, kaizen-agent-registry, kaizen-observability, production-testing)",
+        "TIGHTENED: 8 py variant skill files (codegen-decision-tree, golden-patterns, SKILL.md, UNIFIED_AGENT x2, kaizen-config, kaizen-structured, kaizen-tool-calling)",
+        "DELETED VARIANT: async-pythoncode-patterns.md — now uses global directly (variant was identical)",
+        "DELETED VARIANT: nexus-workflow-registration.md — now uses global directly (variant was identical)",
+        "CLEANED: sync-manifest.yaml — 2 stale variant entries removed for deleted files"
+      ]
+    },
     {
       "version": "2.5.0",
       "date": "2026-04-05",
