@@ -21,11 +21,11 @@ classifiers = [
 ]
 dependencies = [
     # Kailash SDK — all standard deps included in base install
-    "kailash>=2.5.1",
+    "kailash>=2.6.0",
     "kailash-nexus>=1.9.0",
-    "kailash-dataflow>=1.7.1",
+    "kailash-dataflow>=1.8.0",
     "kailash-kaizen>=2.5.0",
-    "kailash-pact>=0.7.1",
+    "kailash-pact>=0.8.0",
     # Utilities
     "rich>=13.0.0",
     "python-dotenv>=1.0.0",
