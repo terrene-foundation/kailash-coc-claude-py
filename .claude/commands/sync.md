@@ -23,7 +23,7 @@ This is a **merge**, not an overwrite. Three categories of files:
 | -------------------- | ----------------------------------------------- | ----------------------------- |
 | **Shared artifacts** | agents/analyst.md, rules/security.md            | **Updated** from template     |
 | **Project-specific** | agents/project/_, skills/project/_, workspaces/ | **Preserved** — never touched |
-| **Per-repo data**    | learning/\*, learned-instincts.md, .proposals/  | **Preserved** — never touched |
+| **Per-repo data**    | learning/\*, .proposals/                        | **Preserved** — never touched |
 
 **Rule**: If a file exists in BOTH the template and this repo, the template version wins (it's the upstream source). If a file exists ONLY in this repo, it's preserved. If a file exists ONLY in the template, it's added.
 
@@ -79,7 +79,7 @@ Compare `.coc-sync-marker` timestamps. If already fresh: "Already up to date."
 
 - `agents/**/*.md` (except `agents/project/`)
 - `commands/*.md`
-- `rules/*.md` (except `rules/learned-instincts.md`)
+- `rules/*.md`
 - `skills/**/*` (except `skills/project/`)
 - `guides/**/*`
 
@@ -92,7 +92,6 @@ Compare `.coc-sync-marker` timestamps. If already fresh: "Already up to date."
 - `agents/project/**` — project-specific agents
 - `skills/project/**` — project-specific skills
 - `learning/**` — per-repo learning data
-- `rules/learned-instincts.md` — auto-generated
 - `.proposals/**` — review artifacts
 - `settings.local.json` — per-repo settings
 - `workspaces/**` — project workspaces

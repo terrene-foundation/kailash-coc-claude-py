@@ -75,8 +75,8 @@ This is encoded in:
 The setup learns from usage:
 
 - Observations are logged during sessions
-- Patterns are extracted into instincts
-- High-confidence instincts evolve into skills
+- Patterns are aggregated into a learning digest
+- The `/codify` command processes the digest into skills and rules
 - The system gets better over time
 
 > "Every session makes the next session better."
@@ -187,12 +187,11 @@ Think of Claude Code as a **highly capable junior developer** with access to a *
 │   ├── CLAUDE.md       # This file
 │   └── 01-*.md         # Sequential guides
 │
-├── rules/               # 9 mandatory rule files
+├── rules/               # 8 mandatory rule files
 │   ├── agents.md       # Agent orchestration rules
 │   ├── e2e-god-mode.md # E2E testing requirements
 │   ├── env-models.md   # API keys & model names
 │   ├── git.md          # Git workflow rules
-│   ├── learned-instincts.md # Auto-generated instincts
 │   ├── zero-tolerance.md     # No stubs/TODOs/placeholders
 │   ├── patterns.md     # Kailash pattern rules
 │   ├── security.md     # Security rules
@@ -219,10 +218,9 @@ scripts/
 │   ├── validate-skills.js
 │   └── ... (3 more)
 │
-├── learning/            # 4 learning system scripts
+├── learning/            # 2 learning system scripts
 │   ├── observation-logger.js
-│   ├── instinct-processor.js
-│   └── ... (2 more)
+│   └── digest-builder.js
 │
 └── plugin/              # Distribution scripts
     └── build-plugin.js
@@ -311,15 +309,15 @@ User: "Run rm -rf /"
 
 Claude automatically selects agents based on task type. For reference:
 
-| Task Type              | Primary Agent           | Secondary Agents           |
-| ---------------------- | ----------------------- | -------------------------- |
-| Database operations    | `dataflow-specialist`   | `testing-specialist`       |
-| API deployment         | `nexus-specialist`      | `release-specialist`    |
-| AI/ML features         | `kaizen-specialist`     | `pattern-expert`           |
-| Complex planning       | `analyst`          | `analyst`     |
-| Code review            | `reviewer` | `gold-standards-validator` |
-| Security audit         | `security-reviewer`     | -                          |
-| Test writing           | `tdd-implementer`       | `testing-specialist`       |
+| Task Type           | Primary Agent         | Secondary Agents           |
+| ------------------- | --------------------- | -------------------------- |
+| Database operations | `dataflow-specialist` | `testing-specialist`       |
+| API deployment      | `nexus-specialist`    | `release-specialist`       |
+| AI/ML features      | `kaizen-specialist`   | `pattern-expert`           |
+| Complex planning    | `analyst`             | `analyst`                  |
+| Code review         | `reviewer`            | `gold-standards-validator` |
+| Security audit      | `security-reviewer`   | -                          |
+| Test writing        | `tdd-implementer`     | `testing-specialist`       |
 
 ### Instructing Claude Effectively
 
@@ -475,24 +473,24 @@ You don't need to specify which agent to use. Just describe the task:
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   INSTINCT PROCESSING                        │
+│                   DIGEST BUILDING                            │
 │                                                              │
-│   Observations → Pattern Analysis → Instinct Formation       │
+│   Observations → Aggregation → Learning Digest               │
 │                                                              │
 │   Example:                                                   │
 │   50 DataFlow observations → 90% use @db.model               │
-│   → Instinct: "Prefer @db.model for DataFlow models"         │
+│   → Digest: "Prefer @db.model for DataFlow models"           │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   EVOLUTION                                  │
+│                   CODIFICATION                               │
 │                                                              │
-│   High-confidence Instincts → New Skills/Commands            │
+│   /codify processes digest → New Skills/Rules                │
 │                                                              │
 │   Example:                                                   │
-│   Instinct (95% confidence) → New skill: "dataflow-models"   │
+│   High-frequency pattern → New skill: "dataflow-models"      │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -501,8 +499,7 @@ You don't need to specify which agent to use. Just describe the task:
 
 ```bash
 /learn           # Log an observation manually
-/evolve          # Process instincts into skills
-/checkpoint      # Save current learning state
+/codify          # Process learning digest into skills and rules
 ```
 
 ---
@@ -536,12 +533,12 @@ You don't need to specify which agent to use. Just describe the task:
 
 ### Critical Rules
 
-| Rule                          | Enforcement                 | Consequence         |
-| ----------------------------- | --------------------------- | ------------------- |
-| Real infrastructure recommended in Tier 2-3        | `validate-workflow.js` hook | Test marked invalid |
-| Security review before commit | `agents.md` rule            | Commit blocked      |
-| Absolute imports only         | `validate-workflow.js` hook | Warning issued      |
-| Use `.build()` before execute | `validate-workflow.js` hook | Warning issued      |
+| Rule                                        | Enforcement                 | Consequence         |
+| ------------------------------------------- | --------------------------- | ------------------- |
+| Real infrastructure recommended in Tier 2-3 | `validate-workflow.js` hook | Test marked invalid |
+| Security review before commit               | `agents.md` rule            | Commit blocked      |
+| Absolute imports only                       | `validate-workflow.js` hook | Warning issued      |
+| Use `.build()` before execute               | `validate-workflow.js` hook | Warning issued      |
 
 ### Framework Selection
 

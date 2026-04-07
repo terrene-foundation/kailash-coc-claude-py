@@ -121,7 +121,7 @@ Same additive semantics as template sync:
 - `variants/` directory (loom/-only, applied during sync)
 - Management agents (sync-reviewer, coc-sync, repo-ops, repo-ops, settings-manager)
 - Meta files (\_README.md, \_subagent-guide.md)
-- Per-repo data (learning/, learned-instincts.md, .proposals/)
+- Per-repo data (learning/, .proposals/)
 
 ## Sync Is Not rsync
 

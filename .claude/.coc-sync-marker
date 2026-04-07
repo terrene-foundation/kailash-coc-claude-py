@@ -1,14 +1,14 @@
 {
-  "synced_at": "2026-04-07T10:00:00Z",
+  "synced_at": "2026-04-07T14:00:00Z",
   "source": "loom/.claude",
   "variant": "py",
-  "template_version": "2.9.0",
+  "template_version": "3.0.0",
   "upstream_version": "2.5.0",
   "build_version": "2.6.0",
-  "files_updated": 2,
+  "files_updated": 10,
   "files_created": 0,
-  "files_unchanged": 0,
-  "content_adaptations": 0,
-  "build_refs_stripped": 0,
+  "files_unchanged": 601,
+  "content_adaptations": 5,
+  "build_refs_stripped": 6,
   "cross_refs_fixed": 0
 }

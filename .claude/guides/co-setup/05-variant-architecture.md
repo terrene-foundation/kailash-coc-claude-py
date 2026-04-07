@@ -20,8 +20,8 @@ All artifacts belong to exactly one tier:
 | Tier       | Scope                                           | Example                                    | Sync behavior                |
 | ---------- | ----------------------------------------------- | ------------------------------------------ | ---------------------------- |
 | **CC**     | Claude Code — universal                         | guides/claude-code/, cc-audit command      | Sync to ALL repos            |
-| **CO**     | Cognitive Orchestration — universal methodology | `co-reference` skill agent, journal rules             | Sync to ALL CO-managed repos |
-| **COC**    | Codegen — language-agnostic                     | analyze command, analyst agent        | Sync to ALL COC repos        |
+| **CO**     | Cognitive Orchestration — universal methodology | `co-reference` skill agent, journal rules  | Sync to ALL CO-managed repos |
+| **COC**    | Codegen — language-agnostic                     | analyze command, analyst agent             | Sync to ALL COC repos        |
 | **COC-py** | Python SDK-specific                             | Python async patterns, DataFlow enterprise | Sync to PY targets only      |
 | **COC-rs** | Rust SDK-specific                               | Rust benchmarks, Ruby examples             | Sync to RS targets only      |
 
@@ -62,7 +62,7 @@ When syncing to a **py** target:
    - If a file exists ONLY in variant → **added** (language-specific addition)
    - If a file exists ONLY in global → **copied as-is** (shared)
 3. Copy scripts (hooks follow same overlay logic)
-4. Exclude: learning/, learned-instincts.md, .env, .git
+4. Exclude: learning/, .env, .git
 
 When syncing to an **rs** target: same logic with `variants/rs/`.
 
@@ -189,10 +189,7 @@ tiers:
     - rules/security.md
     - rules/agents.md
     - rules/zero-tolerance.md
-    - rules/learned-instincts.md
     - commands/learn.md
-    - commands/evolve.md
-    - commands/checkpoint.md
     - commands/journal.md
     - commands/ws.md
     - commands/wrapup.md
@@ -291,7 +288,6 @@ variant_only:
 # Exclusions (never synced, per-repo)
 exclude:
   - learning/**
-  - rules/learned-instincts.md
   - .coc-sync-marker
   - settings.local.json
 ```
@@ -303,8 +299,8 @@ The management commands currently at ~/repos/.claude/ move to loom/:
 | Current (~/repos)                    | New (loom/)                                     | Notes                                       |
 | ------------------------------------ | ----------------------------------------------- | ------------------------------------------- |
 | `.claude/agents/coc-sync.md`         | `.claude/agents/management/coc-sync.md`         | Rewritten for variant system                |
-| `.claude/agents/repo-ops.md`   | `.claude/agents/management/repo-ops.md`   | Absorbed                                    |
-| `.claude/agents/repo-ops.md`       | `.claude/agents/management/repo-ops.md`       | Absorbed                                    |
+| `.claude/agents/repo-ops.md`         | `.claude/agents/management/repo-ops.md`         | Absorbed                                    |
+| `.claude/agents/repo-ops.md`         | `.claude/agents/management/repo-ops.md`         | Absorbed                                    |
 | `.claude/agents/settings-manager.md` | `.claude/agents/management/settings-manager.md` | Absorbed                                    |
 | `.claude/commands/sync.md`           | `.claude/commands/sync.md`                      | Exists, update for variants                 |
 | `.claude/commands/repos.md`          | `.claude/commands/repos.md`                     | New in loom/                                |

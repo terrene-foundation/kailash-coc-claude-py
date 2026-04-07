@@ -82,11 +82,11 @@ Complete set of 21 Nexus skills covering all aspects from quickstart to advanced
 
 ### v1.3.0 Additions (4 Skills - HIGH)
 
-18. **nexus-handler-support** - Register Python functions as multi-channel workflows
+18. **nexus-handler-support** - Register functions as multi-channel handlers
     - Priority: HIGH
-    - `@app.handler()` decorator, `register_handler()`, parameter derivation, sandbox bypass
+    - Handler decorator, imperative registration, parameter derivation, sandbox bypass
 
-19. **nexus-auth-plugin** - NexusAuthPlugin unified authentication
+19. **nexus-auth-plugin** - Unified authentication plugin
     - Priority: HIGH
     - JWT, RBAC, SSO (GitHub/Google/Azure), rate limiting, tenant isolation, audit logging
 
@@ -196,7 +196,7 @@ nexus-architecture
 - ✅ Architecture overview
 - ✅ Event system
 - ✅ Plugin development
-- ✅ Handler support (`@app.handler()` decorator)
+- ✅ Handler support (decorator and imperative registration)
 - ✅ Authentication plugin (JWT, RBAC, SSO, rate limiting, tenant, audit)
 - ✅ Golden patterns catalog (7 patterns)
 - ✅ Codegen decision tree (anti-patterns, scaffolding)

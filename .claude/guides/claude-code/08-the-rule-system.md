@@ -69,17 +69,16 @@ Rules are Markdown files that Claude reads and follows:
 
 ### All 9 Rule Files
 
-| File                   | Domain                | Key Rules                                  |
-| ---------------------- | --------------------- | ------------------------------------------ |
-| `agents.md`            | Agent orchestration   | Mandatory delegations, review requirements |
-| `e2e-god-mode.md`      | E2E testing           | Implement everything, no placeholders      |
-| `env-models.md`        | API keys & models     | .env is single source of truth             |
-| `git.md`               | Git workflow          | Branch strategy, commit rules              |
-| `learned-instincts.md` | Auto-generated        | Workflow patterns from usage               |
-| `zero-tolerance.md`          | No stubs/TODOs        | No placeholders in production code         |
-| `patterns.md`          | SDK patterns          | Correct API usage, imports                 |
-| `security.md`          | Security requirements | OWASP, secrets, input validation           |
-| `testing.md`           | Testing policies      | Real infrastructure recommended, test-first, coverage           |
+| File                | Domain                | Key Rules                                             |
+| ------------------- | --------------------- | ----------------------------------------------------- |
+| `agents.md`         | Agent orchestration   | Mandatory delegations, review requirements            |
+| `e2e-god-mode.md`   | E2E testing           | Implement everything, no placeholders                 |
+| `env-models.md`     | API keys & models     | .env is single source of truth                        |
+| `git.md`            | Git workflow          | Branch strategy, commit rules                         |
+| `zero-tolerance.md` | No stubs/TODOs        | No placeholders in production code                    |
+| `patterns.md`       | SDK patterns          | Correct API usage, imports                            |
+| `security.md`       | Security requirements | OWASP, secrets, input validation                      |
+| `testing.md`        | Testing policies      | Real infrastructure recommended, test-first, coverage |
 
 ---
 
@@ -498,7 +497,7 @@ MUST NOT [prohibited action].
 
 1. **Rules are mandatory instructions** - Claude reads and follows them
 
-2. **9 rule files cover all domains** - agents, e2e, env-models, git, instincts, no-stubs, patterns, security, testing
+2. **8 rule files cover all domains** - agents, e2e, env-models, git, zero-tolerance, patterns, security, testing
 
 3. **MUST rules define requirements** - What Claude must do
 
@@ -510,13 +509,13 @@ MUST NOT [prohibited action].
 
 ### Quick Reference
 
-| Domain       | Key Rules                                           |
-| ------------ | --------------------------------------------------- |
-| **Agents**   | Review after changes, security review before commit |
-| **Testing**  | Real infrastructure recommended in Tier 2-3, test-first                  |
-| **Security** | Validate input, manage secrets, OWASP               |
-| **Patterns** | runtime.execute(), absolute imports                 |
-| **Git**      | Branch strategy, pre-commit checks                  |
+| Domain       | Key Rules                                               |
+| ------------ | ------------------------------------------------------- |
+| **Agents**   | Review after changes, security review before commit     |
+| **Testing**  | Real infrastructure recommended in Tier 2-3, test-first |
+| **Security** | Validate input, manage secrets, OWASP                   |
+| **Patterns** | runtime.execute(), absolute imports                     |
+| **Git**      | Branch strategy, pre-commit checks                      |
 
 ### Rule Priority
 

@@ -93,7 +93,6 @@ Phase commands replace the manual copy-paste workflow. Each loads the correspond
 | 3-tier testing, real infrastructure recommended | `rules/testing.md`              | `tests/**`, `**/*test*`, `**/*spec*`, `conftest.py`         |
 | Trust-plane security                            | `rules/trust-plane-security.md` | `**/trust/**`                                               |
 | Zero-tolerance enforcement                      | `rules/zero-tolerance.md`       | **Global — overrides all**                                  |
-| Auto-generated workflow instincts               | `rules/learned-instincts.md`    | Global                                                      |
 
 **Note**: Rules with path scoping are loaded only when editing matching files. Global rules load every session.
 

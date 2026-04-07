@@ -17,18 +17,21 @@ pip install kailash-ml[rl]        # + Stable-Baselines3, Gymnasium
 pip install kailash-ml[agents]    # + kailash-kaizen (agent integration)
 pip install kailash-ml[xgb]       # + XGBoost
 pip install kailash-ml[catboost]  # + CatBoost
+pip install kailash-ml[explain]    # + SHAP (model explainability)
+pip install kailash-ml[imbalance]  # + imbalanced-learn (SMOTE, ADASYN)
 pip install kailash-ml[full]      # Everything
 ```
 
-## 5 Core Engines
+## 6 Core Engines
 
 | Engine               | Purpose                                   | Key Pattern                                     |
 | -------------------- | ----------------------------------------- | ----------------------------------------------- |
 | **FeatureStore**     | Feature ingestion + point-in-time queries | ConnectionManager-backed, polars-native         |
 | **ModelRegistry**    | Model versioning + lifecycle              | staging → shadow → production → archived        |
-| **TrainingPipeline** | Schema-driven training + eval             | FeatureStore + ModelRegistry integration        |
+| **TrainingPipeline** | Schema-driven training + eval + calibrate | FeatureStore + ModelRegistry integration        |
 | **InferenceServer**  | Model serving + batch inference           | Nexus HTTP exposure, ONNX runtime, caching      |
 | **DriftMonitor**     | Statistical drift detection               | KS, chi-squared, PSI, Jensen-Shannon divergence |
+| **ModelExplainer**   | SHAP-based model explainability           | Global/local/dependence explanations, plotly    |
 
 ## Quick Start
 
@@ -88,6 +91,74 @@ report = await monitor.check_drift("model_v1", current_df)
 # report.overall_drift, report.feature_results, report.recommendations
 ```
 
+### Model Explainability (requires `[explain]`)
+
+```python
+from kailash_ml import ModelExplainer
+
+explainer = ModelExplainer(model=fitted_model, X=train_df, feature_names=schema.feature_names)
+global_report = explainer.explain_global(max_display=10)
+# global_report["feature_importance"]: sorted feature → mean |SHAP| dict
+local_report = explainer.explain_local(X=test_df, index=0)
+# local_report["feature_contributions"]: per-feature SHAP for one prediction
+fig = explainer.to_plotly("summary")  # "summary", "beeswarm", "dependence"
+```
+
+### Preprocessing Pipeline
+
+```python
+from kailash_ml.engines import PreprocessingPipeline
+
+pipeline = PreprocessingPipeline()
+result = pipeline.setup(
+    data=df, target="churned",
+    normalize=True, normalize_method="zscore",       # zscore, minmax, robust, maxabs
+    imputation="knn", impute_n_neighbors=5,           # knn, iterative, or default (median/mode)
+    remove_multicollinearity=True, multicollinearity_threshold=0.9,
+    fix_imbalance=True, imbalance_method="smote",     # smote, adasyn (requires [imbalance])
+)
+# result.X_train, result.X_test, result.y_train, result.y_test
+```
+
+### Model Calibration
+
+```python
+result = await pipeline.calibrate(
+    model_name="churn_v1",
+    method="isotonic",  # "platt" (sigmoid) or "isotonic"
+    cv=5,
+)
+# Returns calibrated model with CalibratedClassifierCV
+```
+
+### Nested Runs & Auto-Logging
+
+```python
+from kailash_ml import ExperimentTracker
+
+tracker = ExperimentTracker(conn)
+await tracker.initialize()
+
+# Nested runs — group trials under a parent
+async with tracker.run("hyperopt-sweep") as parent:
+    for params in param_grid:
+        async with tracker.run("trial", parent_run_id=parent.run_id) as child:
+            await child.log_params(params)
+
+# Auto-logging — TrainingPipeline and HyperparameterSearch log automatically
+pipeline = TrainingPipeline(feature_store=fs, model_registry=registry, experiment_tracker=tracker)
+result = await pipeline.train(schema=schema, model_spec=spec, eval_spec=eval_spec)
+# Metrics, params, and artifacts logged to tracker automatically
+```
+
+### Inference Validation
+
+```python
+server = InferenceServer(model_registry=registry)
+# Raises ValueError if input DataFrame is missing required features
+prediction = await server.predict("model_v1", input_df)
+```
+
 ## Decision Tree: kailash-ml vs kailash-align vs kailash-kaizen
 
 | You Want To...                        | Use                                                 |
@@ -115,7 +186,8 @@ kailash-ml/
     training_pipeline.py    <- TrainingPipeline (schema-driven)
     inference_server.py     <- InferenceServer (Nexus, ONNX, caching)
     drift_monitor.py        <- DriftMonitor (KS/chi2/PSI/JS)
-    experiment_tracker.py   <- MLflow-compatible run tracking
+    model_explainer.py      <- ModelExplainer (SHAP, requires [explain])
+    experiment_tracker.py   <- MLflow-compatible run tracking (nested runs, auto-logging)
     hyperparameter_search.py <- Grid/random/bayesian/successive halving
     automl_engine.py        <- Agent-infused AutoML
     ensemble.py             <- Blend/stack/bag/boost

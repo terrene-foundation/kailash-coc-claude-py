@@ -337,7 +337,7 @@ Use fresh + summary when:
 ### Decisions Made
 
 - Chose DataFlow over raw SQL for the refactor
-- Will use Nexus for API deployment (not FastAPI directly)
+- Will use Nexus for API deployment
 
 ### Open Questions
 

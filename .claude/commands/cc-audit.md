@@ -1,42 +1,67 @@
 ---
 name: cc-audit
-description: "Audit project artifacts for quality, completeness, effectiveness, and template alignment"
+description: "Audit CC artifacts for quality, completeness, effectiveness, token efficiency, and sync integrity"
 ---
 
-# CC Artifact Audit (Project)
+# CC Artifact Audit (COC Source)
 
-Reviews your project's artifacts for quality and template alignment. Checks that project-specific artifacts (agents/project/, skills/project/) are well-formed, and that shared artifacts are current with your upstream template.
+Reviews all artifacts for quality AND sync correctness. This is the **COC source** version — it audits loom/'s variant system, manifest integrity, and USE template distribution.
+
+For project-level audits in downstream repos, see the USE template version.
 
 ## Your Role
 
-Specify scope: `all`, `fidelity` (quality only), `sync` (template alignment only), or a specific file/type.
+Specify scope: `all`, `fidelity`, `sync`, or a specific file/type.
 
 ## Phase 1: Fidelity Audit
 
-1. **Inventory**: List project-specific artifacts (agents/project/, skills/project/) with line counts.
+1. **Inventory**: List all artifacts with file paths and line counts.
 
 2. **Four-dimension audit** per artifact:
    - **Competency**: Precise instructions? Knows its domain?
    - **Completeness**: Edge cases? Missing handoffs?
    - **Effectiveness**: Reliable behavior? Output format specified?
-   - **Token Efficiency**: Lean? No redundancy?
+   - **Token Efficiency**: Lean? Path-scoped? No redundancy?
 
 3. **Hard limits** (cc-artifacts rules):
    - Agent descriptions under 120 chars with trigger phrases
    - Agents under 400 lines, commands under 150 lines
-   - CLAUDE.md under 200 lines
+   - CLAUDE.md under 200 lines, no restated rules
    - Rules have DO/DO NOT examples and Why rationale
 
 4. **Cross-reference check**: Every referenced artifact exists on disk.
 
-## Phase 2: Template Alignment
+5. **Token budget**: Estimate per-turn cost.
 
-5. **Freshness**: Check `.coc-sync-marker` — when was the last sync from the upstream template? If stale, recommend running `/sync`.
+## Phase 2: Sync Integrity Audit (COC-specific)
 
-6. **Shared artifact integrity**: Are shared artifacts (from template) still intact, or have they been locally modified? Local modifications to shared files will be overwritten on next `/sync`.
+6. **Manifest validation** (`sync-manifest.yaml`):
+   - Every `variants:` entry has global + variant files on disk
+   - Every `variant_only:` entry exists on disk
+   - No orphan files in `variants/` undeclared in manifest
+   - Every syncable file in a tier (cc/co/coc) or explicitly excluded
+   - No contradictions (tier + exclude, or variants + variant_only)
 
-7. **Hook integrity**: Every hook in settings.json has a script on disk.
+7. **Exclusion verification**:
+   - Management agents (sync-reviewer, coc-sync, repo-ops, repo-ops, settings-manager) excluded
+   - Management commands (repos, inspect, settings) excluded
+   - Meta files (\_README, \_subagent-guide) excluded
+   - Per-repo data (learning/) excluded
+
+8. **Authority chain**:
+   - `artifact-flow.md` Rule 1 says atelier/ owns CC+CO, loom/ owns COC
+   - Consistent with atelier/'s artifact-flow.md? No contradictions?
+
+9. **USE template contamination** (scan kailash-coc-claude-py/ and -rs/):
+   - `grep -rl "src/kailash/" .claude/agents/ .claude/rules/` → must be 0
+   - `grep -rl "packages/kailash-" .claude/rules/` → must be 0
+   - Management agents must NOT be present
+   - BUILD-only commands (/release) flagged
+
+10. **Hook integrity**:
+    - Every hook in settings.json has a script on disk
+    - Source and template settings.json are consistent
 
 ## Phase 3: Report + Convergence
 
-Report findings as CRITICAL/HIGH/NOTE. Run iteratively until zero CRITICAL and zero HIGH.
+Report findings as CRITICAL/HIGH/NOTE. Run iteratively until zero CRITICAL and zero HIGH remain.

@@ -222,14 +222,13 @@ app.start()
 
 **Goal**: Start simple, add features as needed
 
-```python
+```
 # Start simple
 app = Nexus()
 
-# Add features progressively
-app.enable_auth = True
-app.enable_monitoring = True
-app.rate_limit = 1000
+# Add features progressively via configuration
+# Auth, monitoring, and rate limiting are configured per-language
+# See language-specific variant for configuration patterns
 ```
 
 **Implementation**:

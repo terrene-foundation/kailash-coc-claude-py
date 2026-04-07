@@ -188,9 +188,8 @@ def create_production_app():
         api_port=int(os.getenv("API_PORT", "8000")),
         mcp_port=int(os.getenv("MCP_PORT", "3001")),
         auto_discovery=False,
-        enable_auth=True,
-        enable_monitoring=True
     )
+    # Enable auth and monitoring per language-specific configuration
 
     db = DataFlow(
         database_url=os.getenv("DATABASE_URL"),

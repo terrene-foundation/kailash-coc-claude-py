@@ -1,16 +1,56 @@
 {
-  "version": "2.9.0",
+  "version": "3.1.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
   "released": "2026-04-07",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "build_version": "2.6.0",
-    "synced_at": "2026-04-07T10:00:00Z"
+    "synced_at": "2026-04-07T16:30:00Z"
   },
   "changelog": [
+    {
+      "version": "3.1.0",
+      "date": "2026-04-07",
+      "summary": "L5 learning system redesign — digest-based pipeline replaces instinct/evolve/checkpoint",
+      "changes": [
+        "DELETED: scripts/learning/instinct-processor.js, instinct-evolver.js, checkpoint-manager.js",
+        "DELETED: scripts/hooks/lib/instinct-renderer.js",
+        "DELETED: .claude/rules/learned-instincts.md (no more auto-injected rules)",
+        "DELETED: .claude/commands/evolve.md, checkpoint.md",
+        "NEW: scripts/learning/digest-builder.js (pure aggregation → learning-digest.json)",
+        "UPDATED: scripts/hooks/session-end.js — calls digest-builder, logs accomplishments + decisions",
+        "UPDATED: scripts/hooks/user-prompt-rules-reminder.js — detects user corrections",
+        "UPDATED: scripts/hooks/validate-workflow.js — rule_violation type with specific rule names",
+        "UPDATED: scripts/hooks/validate-bash-command.js — error_occurrence → rule_violation",
+        "UPDATED: scripts/hooks/stop.js — removed stop observation noise",
+        "UPDATED: scripts/hooks/lib/learning-utils.js — simplified ensureLearningDir",
+        "UPDATED: scripts/learning/observation-logger.js — new observation types",
+        "UPDATED: scripts/plugin/post-install.js, pre-uninstall.js — digest-aware",
+        "UPDATED: .claude/commands/codify.md — step 1 reads learning-digest.json + journals + session notes",
+        "UPDATED: .claude/commands/learn.md — shows digest summary instead of instinct stats",
+        "UPDATED: 13 guides — removed all instinct/evolve/checkpoint references"
+      ]
+    },
+    {
+      "version": "3.0.0",
+      "date": "2026-04-07",
+      "summary": "Nexus skills restructured (23 global language-neutral + 20 py variants), ML SKILL.md + ml-specialist updated, agents.md worktree section stripped, BUILD path leaks fixed",
+      "changes": [
+        "UPDATED: skills/03-nexus/ — 23 global files language-neutral, 20 py variant overlays applied",
+        "UPDATED: skills/34-kailash-ml/SKILL.md — ModelExplainer, preprocessing, calibration, nested runs, auto-logging",
+        "UPDATED: agents/frameworks/ml-specialist.md — py variant with ModelExplainer, ExperimentTracker patterns",
+        "UPDATED: agents/frameworks/nexus-specialist.md — py variant with transport/security patterns",
+        "UPDATED: skills/29-pact/pact-governance-engine.md — py variant, BUILD paths converted to module refs",
+        "UPDATED: skills/02-dataflow/dataflow-ml-integration.md — BUILD paths converted to module refs",
+        "UPDATED: skills/project/ml-quick-reference.md — BUILD paths converted to module refs",
+        "ADAPTED: rules/agents.md — Rust worktree isolation section stripped (Python-irrelevant)",
+        "ADAPTED: rules/zero-tolerance.md — USE softening preserved (scope, Rule 4 GitHub issues)",
+        "UPDATED: scripts/hooks/lib/version-utils.js — upstream sync"
+      ]
+    },
     {
       "version": "2.9.0",
       "date": "2026-04-07",

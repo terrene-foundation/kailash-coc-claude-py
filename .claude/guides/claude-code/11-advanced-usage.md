@@ -520,50 +520,7 @@ Customize for your projects.
 
 ---
 
-## Part 10: Advanced Learning
-
-### Manual Instinct Creation
-
-Create instincts directly:
-
-```json
-// ~/.claude/kailash-learning/instincts/personal/my-instinct.json
-{
-  "id": "instinct_my_pattern",
-  "pattern": "my_special_pattern",
-  "description": "Always do X when Y",
-  "confidence": 0.95,
-  "evidence": {
-    "observation_count": 100,
-    "success_rate": 0.98,
-    "manual": true
-  }
-}
-```
-
-### Inherited Instincts
-
-Share instincts across team:
-
-```bash
-# Export
-cp ~/.claude/kailash-learning/instincts/personal/*.json ./team-instincts/
-
-# Import (other team member)
-cp ./team-instincts/*.json ~/.claude/kailash-learning/instincts/inherited/
-```
-
-### Evolution Tuning
-
-Adjust thresholds:
-
-```bash
-node scripts/learning/instinct-evolver.js --skill-threshold 0.80 --command-threshold 0.85
-```
-
----
-
-## Part 11: Integration with External Tools
+## Part 10: Integration with External Tools
 
 ### IDE Integration
 
@@ -613,7 +570,7 @@ repos:
 
 ---
 
-## Part 12: Key Takeaways
+## Part 11: Key Takeaways
 
 ### Summary
 
@@ -627,15 +584,12 @@ repos:
 
 5. **Multi-project** - Per-project overrides with shared base
 
-6. **Advanced learning** - Manual instincts, team sharing
-
 ### Power User Checklist
 
 - [ ] Created at least one custom hook
 - [ ] Added project-specific rules
 - [ ] Built a custom skill for your domain
 - [ ] Optimized context loading patterns
-- [ ] Set up learning checkpoints
 - [ ] Integrated with CI/CD
 
 ---

@@ -70,9 +70,9 @@ Use `self.run()` with a rich Signature. Permitted: input validation, error handl
 
 Provider config follows an explicit model. Three fields, three purposes:
 
-- `response_format` — Structured output config (`{"type": "json_schema", ...}` or `{"type": "json_object"}`)
-- `provider_config` — Provider-specific operational settings only (`{"api_version": "...", "deployment": "..."}`)
-- `structured_output_mode` — `"explicit"` (recommended), `"auto"` (deprecated), `"off"`
+- `response_format` -- Structured output config (`{"type": "json_schema", ...}` or `{"type": "json_object"}`)
+- `provider_config` -- Provider-specific operational settings only (`{"api_version": "...", "deployment": "..."}`)
+- `structured_output_mode` -- `"explicit"` (recommended), `"auto"` (deprecated), `"off"`
 
 Deprecation shim auto-migrates `provider_config` with `"type"` key to `response_format`. New code MUST use `response_format` directly.
 
@@ -167,7 +167,7 @@ from kaizen_agents import (
 )
 ```
 
-Also available via `kaizen_agents.patterns`. The deprecated `kaizen_agents.agents.coordination` module was removed in v0.6.0 — all imports must use the paths above.
+Also available via `kaizen_agents.patterns`. The deprecated `kaizen_agents.agents.coordination` module was removed in v0.6.0 -- all imports must use the paths above.
 
 ### Deprecation Notes
 

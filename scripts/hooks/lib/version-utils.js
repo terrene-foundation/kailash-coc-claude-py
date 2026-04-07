@@ -1,16 +1,18 @@
 /**
  * Version tracking utilities for CO/COC artifact ecosystem.
  *
- * Each repo has a .claude/VERSION file (JSON) with:
- *   - version: semver string (this repo's artifact version)
- *   - upstream: { name, repo, version, version_url } or null
- *   - changelog: array of version entries
+ * Each repo has a .claude/VERSION file (JSON) with type-specific fields:
+ *   - coc-source:        version, no upstream (loom/)
+ *   - coc-use-template:  upstream.build_version (coc-claude-py, coc-claude-rs)
+ *   - coc-build:         upstream.build_version (kailash-py, kailash-rs)
+ *   - coc-project:       upstream.template_version (downstream projects)
  *
  * The session-start hook calls checkVersion() to:
- *   1. Read local VERSION
- *   2. If upstream defined, try to fetch upstream VERSION
- *   3. Compare upstream.version (what we last synced from) vs remote version
- *   4. Return status for human-facing output
+ *   1. Read local VERSION (auto-create if missing with detected type)
+ *   2. Source repos: report source status
+ *   3. Template/BUILD repos: display tracked build version info (no fetch)
+ *   4. Downstream projects: display tracked template version info (no fetch)
+ *   5. Legacy repos with version_url: fetch remote and compare
  */
 
 const fs = require("fs");
@@ -106,15 +108,37 @@ function compareVersions(local, remote) {
 
 /**
  * Simple semver comparison: is a newer than b?
+ * Returns false for missing/malformed inputs (NaN guard).
  */
 function isNewer(a, b) {
+  if (!a || !b || typeof a !== "string" || typeof b !== "string") return false;
   const pa = a.split(".").map(Number);
   const pb = b.split(".").map(Number);
   for (let i = 0; i < 3; i++) {
-    if ((pa[i] || 0) > (pb[i] || 0)) return true;
-    if ((pa[i] || 0) < (pb[i] || 0)) return false;
+    const ai = pa[i];
+    const bi = pb[i];
+    if (Number.isNaN(ai) || Number.isNaN(bi)) return false;
+    if ((ai || 0) > (bi || 0)) return true;
+    if ((ai || 0) < (bi || 0)) return false;
   }
   return false;
+}
+
+/**
+ * Detect repo type for bootstrap based on directory structure.
+ * @param {string} cwd - project root
+ * @returns {string} "coc-build" | "coc-project"
+ */
+function detectRepoType(cwd) {
+  const hasPyproject = fs.existsSync(path.join(cwd, "pyproject.toml"));
+  const hasCargo = fs.existsSync(path.join(cwd, "Cargo.toml"));
+  const hasPackages = fs.existsSync(path.join(cwd, "packages"));
+  const hasSrc = fs.existsSync(path.join(cwd, "src"));
+
+  if ((hasPackages || hasSrc) && (hasPyproject || hasCargo)) {
+    return "coc-build";
+  }
+  return "coc-project";
 }
 
 /**
@@ -128,17 +152,25 @@ function checkVersion(cwd) {
     // Auto-create VERSION if .claude/ exists but VERSION doesn't (per 08-versioning.md)
     const claudeDir = path.join(cwd, ".claude");
     if (fs.existsSync(claudeDir)) {
+      const detectedType = detectRepoType(cwd);
       const bootstrapped = {
         version: "0.0.0",
-        type: "coc-project",
+        type: detectedType,
         updated: new Date().toISOString().split("T")[0],
         description:
           "Auto-created — run /sync to pull latest template artifacts",
-        upstream: {
-          template: "unknown",
-          template_version: "0.0.0",
-          synced_at: null,
-        },
+        upstream:
+          detectedType === "coc-build"
+            ? {
+                source: "unknown",
+                build_version: "0.0.0",
+                synced_at: null,
+              }
+            : {
+                template: "unknown",
+                template_version: "0.0.0",
+                synced_at: null,
+              },
       };
       const versionPath = path.join(claudeDir, "VERSION");
       try {
@@ -150,7 +182,7 @@ function checkVersion(cwd) {
         return {
           status: "bootstrapped",
           messages: [
-            "[VERSION] Created initial VERSION file (v0.0.0)",
+            `[VERSION] Created initial VERSION file (v0.0.0, type: ${detectedType})`,
             "[VERSION] Run /sync to pull latest template artifacts",
           ],
         };
@@ -165,12 +197,42 @@ function checkVersion(cwd) {
     `[VERSION] ${local.description || local.type} v${local.version}`,
   ];
 
-  if (!local.upstream) {
-    messages.push("[VERSION] Source repo — no upstream to check");
+  const repoType = local.type || "coc-project";
+  const upstream = local.upstream || {};
+
+  // --- Source repos: fetch remote, compare ---
+  if (repoType === "coc-source" || !local.upstream) {
+    if (!local.upstream) {
+      messages.push("[VERSION] Source repo — no upstream to check");
+    } else {
+      messages.push("[VERSION] Source repo (coc-source)");
+    }
     return { status: "source", messages };
   }
 
-  const remote = fetchUpstreamVersion(local.upstream.version_url);
+  // --- USE template / BUILD repos: display tracked version info ---
+  if (repoType === "coc-use-template" || repoType === "coc-build") {
+    const buildVer = upstream.build_version || "unknown";
+    const syncedAt = upstream.synced_at ? ` synced ${upstream.synced_at}` : "";
+    messages.push(
+      `[VERSION] COC artifacts from loom v${local.version}, build v${buildVer}${syncedAt}`,
+    );
+    return { status: "tracked", messages };
+  }
+
+  // --- Downstream projects: display template tracking info ---
+  if (repoType === "coc-project") {
+    const tmpl = upstream.template || "unknown";
+    const tmplVer = upstream.template_version || "unknown";
+    const syncedAt = upstream.synced_at ? `, synced ${upstream.synced_at}` : "";
+    messages.push(
+      `[VERSION] COC from template ${tmpl}, v${tmplVer}${syncedAt}`,
+    );
+    return { status: "tracked", messages };
+  }
+
+  // --- Fallback: legacy repos with upstream.version_url (source-style fetch) ---
+  const remote = fetchUpstreamVersion(upstream.version_url);
   const result = compareVersions(local, remote);
 
   if (result.status === "current") {
@@ -192,4 +254,5 @@ module.exports = {
   fetchUpstreamVersion,
   compareVersions,
   checkVersion,
+  detectRepoType,
 };

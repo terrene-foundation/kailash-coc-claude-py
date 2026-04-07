@@ -15,7 +15,7 @@ Every CO setup consists of five component types. Each maps to a specific CO laye
 │  COMMANDS (.claude/commands/)                    [CO L4]     │
 │  Structured workflows with approval gates                   │
 │  /analyze → /todos → /implement → /redteam → /codify        │
-│  Plus: /ws, /wrapup, /checkpoint                            │
+│  Plus: /ws, /wrapup                                         │
 └─────────────────────────────────────────────────────────────┘
                              │
                              ▼
@@ -43,11 +43,11 @@ Every CO setup consists of five component types. Each maps to a specific CO laye
 ┌─────────────────────────────────────────────────────────────┐
 │  RULES (.claude/rules/)                          [CO L3]     │
 │  Soft enforcement — constraints the AI reads and follows    │
-│  Agents, security, git, no-stubs, learned-instincts         │
+│  Agents, security, git, no-stubs                            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Layer 5 (Learning)** spans all components — the `/codify` command captures patterns, the learning system logs observations, and instincts evolve into rules.
+**Layer 5 (Learning)** spans all components — the `/codify` command captures patterns, the learning system logs observations, and the digest builder aggregates them for codification.
 
 ## Shared vs Project-Specific
 
@@ -55,10 +55,9 @@ Every CO setup consists of five component types. Each maps to a specific CO laye
 
 | Component | Files                                   | Purpose                                                            |
 | --------- | --------------------------------------- | ------------------------------------------------------------------ |
-| Commands  | `ws.md`, `wrapup.md`, `checkpoint.md`   | Utility — workspace status, session notes, learning checkpoints    |
+| Commands  | `ws.md`, `wrapup.md`                    | Utility — workspace status, session notes                          |
 | Commands  | `implement.md`, `codify.md`, `todos.md` | Core workflow — shared structure with project-specific agent teams |
 | Rules     | `git.md`                                | Git workflow conventions                                           |
-| Rules     | `learned-instincts.md`                  | Auto-generated from observations                                   |
 | Guides    | `claude-code/`                          | How Claude Code works                                              |
 | Guides    | `co-setup/`                             | This guide                                                         |
 
@@ -77,25 +76,25 @@ Every CO setup consists of five component types. Each maps to a specific CO laye
 
 ### Archetype-Specific
 
-| Component | Coding Repos                                                                                         | Governance/Non-Coding                                                                                                           |
-| --------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Commands  | `deploy.md`, `test.md`, `api.md`, `db.md`, `sdk.md`, `ai.md`, `design.md`                            | `arxiv.md`, `publish.md`, `governance-layer.md`, `co-domain.md`                                                                 |
-| Agents    | `tdd-implementer`, `testing-specialist`, `value-auditor`, `build-fix`, ``decide-framework` skill`           | `constitution-expert`, `governance-layer-expert`, `publication-expert`, `care-platform-architect`                               |
-| Agents    | `dataflow-specialist`, `nexus-specialist`, `kaizen-specialist`, `mcp-specialist`                     | `care-implementation-expert`, `co-domain-expert`                                                                                |
-| Agents    | `uiux-designer`, `react-specialist`, `flutter-specialist`, `react-specialist`, `uiux-designer`    | —                                                                                                                               |
-| Skills    | SDK-specific (01-25)                                                                                 | Standards reference (26-34)                                                                                                     |
+| Component | Coding Repos                                                                                               | Governance/Non-Coding                                                                                                                 |
+| --------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Commands  | `deploy.md`, `test.md`, `api.md`, `db.md`, `sdk.md`, `ai.md`, `design.md`                                  | `arxiv.md`, `publish.md`, `governance-layer.md`, `co-domain.md`                                                                       |
+| Agents    | `tdd-implementer`, `testing-specialist`, `value-auditor`, `build-fix`, ``decide-framework` skill`          | `constitution-expert`, `governance-layer-expert`, `publication-expert`, `care-platform-architect`                                     |
+| Agents    | `dataflow-specialist`, `nexus-specialist`, `kaizen-specialist`, `mcp-specialist`                           | `care-implementation-expert`, `co-domain-expert`                                                                                      |
+| Agents    | `uiux-designer`, `react-specialist`, `flutter-specialist`, `react-specialist`, `uiux-designer`             | —                                                                                                                                     |
+| Skills    | SDK-specific (01-25)                                                                                       | Standards reference (26-34)                                                                                                           |
 | Rules     | `zero-tolerance.md` (strict MUST), `agents.md` (MANDATORY), `testing.md`, `patterns.md`, `e2e-god-mode.md` | `zero-tolerance.md` (soft RECOMMENDED), `agents.md` (RECOMMENDED), `constitution.md`, `publication-quality.md`, `arxiv-submission.md` |
-| Hooks     | `validate-workflow.js`, `validate-deployment.js`                                                     | `validate-arxiv-content.js`, `validate-publication-content.js`                                                                  |
+| Hooks     | `validate-workflow.js`, `validate-deployment.js`                                                           | `validate-arxiv-content.js`, `validate-publication-content.js`                                                                        |
 
 ### Shared Across Both Archetypes
 
-| Component | Files                                                                                                                                      |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Component | Files                                                                                                       |
+| --------- | ----------------------------------------------------------------------------------------------------------- |
 | Agents    | `analyst`, `analyst`, `reviewer`, `gold-standards-validator`, `security-reviewer`, `open-source-strategist` |
-| Agents    | ``co-reference` skill`, ``co-reference` skill`, ``co-reference` skill`, ``co-reference` skill`                                                                                    |
-| Agents    | `todo-manager`, `gh-manager`, `release-specialist`                                                                                     |
-| Hooks     | `validate-bash-command.js`, `user-prompt-rules-reminder.js`, `pre-compact.js`                                                              |
-| Rules     | `git.md`, `learned-instincts.md`                                                                                                           |
+| Agents    | ``co-reference` skill`, ``co-reference` skill`, ``co-reference` skill`, ``co-reference` skill`              |
+| Agents    | `todo-manager`, `gh-manager`, `release-specialist`                                                          |
+| Hooks     | `validate-bash-command.js`, `user-prompt-rules-reminder.js`, `pre-compact.js`                               |
+| Rules     | `git.md`                                                                                                    |
 
 ## Component Interaction Model
 
