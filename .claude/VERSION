@@ -1,20 +1,36 @@
 {
-  "version": "3.1.1",
+  "version": "3.1.2",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
   "released": "2026-04-08",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "2.5.1",
+    "version": "2.5.2",
     "build_version": "2.6.0",
     "synced_at": "2026-04-08T00:00:00Z"
   },
   "changelog": [
     {
+      "version": "3.1.2",
+      "date": "2026-04-08",
+      "summary": "REVERT 3.1.1: restore `paths:` frontmatter on 8 rule files. Previous diagnosis was wrong — Claude Code path-scoped rules load ONCE on first matching read and stay sticky, NOT per tool call. Stripping `paths:` moved rules into the always-on baseline (~5500 tokens per stripped large rule), increasing session cost. Verified empirically via subprocess tests + Claude Code official docs (`code.claude.com/docs/en/memory`: 'Path-scoped rules trigger when Claude reads files matching the pattern, not on every tool use').",
+      "changes": [
+        "RESTORED: rules/agent-reasoning.md — paths: **/kaizen/**, **/*agent*, **/agents/**",
+        "RESTORED: rules/artifact-flow.md — paths: .claude/**, sync-manifest.yaml, **/VERSION, *.md",
+        "RESTORED: rules/env-models.md — paths: **/*.py, **/*.ts, **/*.js, .env*",
+        "RESTORED: rules/framework-first.md — paths: **/*.py, **/*.rs",
+        "RESTORED: rules/patterns.md — paths: **/*.py, **/*.ts, **/*.js",
+        "RESTORED: rules/python-environment.md — paths: **/*.py, pyproject.toml, conftest.py, tests/**",
+        "RESTORED: rules/terrene-naming.md — paths: **/*.md, **/README*, **/LICENSE*, **/CLAUDE.md",
+        "RESTORED: rules/testing.md — paths: tests/**, **/*test*, **/*spec*, conftest.py",
+        "NOTE: Wide patterns are restored as-is (per user direction). Narrowing is a separate refinement task — wide is not a problem because rules inject once per session, not per call."
+      ]
+    },
+    {
       "version": "3.1.1",
       "date": "2026-04-08",
-      "summary": "fix(rules): strip broad path matchers causing per-read context bloat — rules now load once in system prompt instead of re-injecting on every matching tool call",
+      "summary": "[REVERTED in 3.1.2] fix(rules): strip broad path matchers — based on incorrect diagnosis. See 3.1.2 for evidence and revert.",
       "changes": [
         "UPDATED: rules/patterns.md, env-models.md, framework-first.md, python-environment.md, terrene-naming.md, artifact-flow.md, agent-reasoning.md, testing.md — removed broad `paths:` frontmatter",
         "UPDATED: scripts/hooks/session-start.js — session notes inject as pointer lines only (was dumping ~12KB per session)",
