@@ -56,6 +56,37 @@ process.stdin.on("end", () => {
 // Log triage
 // ---------------------------------------------------------------------------
 
+// Directories pruned from the log scan. These produce WARN+ entries that are
+// NOT session-actionable (tool caches, browser captures, build output, VCS
+// internals, language package dirs). Adding a dir here means "the agent
+// cannot fix issues surfaced by logs under this path, so don't waste a
+// disposition turn on them."
+//
+// If you add a project-specific dir, prefer putting it here upstream in loom/
+// and syncing out, rather than editing downstream copies.
+const EXCLUDED_DIRS = [
+  ".playwright-mcp", // Playwright MCP browser console captures
+  ".chrome-devtools", // Chrome DevTools MCP captures
+  "node_modules",
+  ".venv",
+  "venv",
+  ".next",
+  ".nuxt",
+  ".cache",
+  "target", // Rust build output
+  "dist",
+  "build",
+  ".pytest_cache",
+  "__pycache__",
+  ".mypy_cache",
+  ".ruff_cache",
+  ".tox",
+  "coverage",
+  ".coverage",
+  ".git",
+  ".claude", // hook logs, learning observations
+];
+
 function triageLogs(cwd) {
   const messages = [];
 
@@ -90,8 +121,16 @@ function triageLogs(cwd) {
 
 function scanRecentLogs(cwd) {
   try {
-    // find *.log modified in last 120 min; grep WARN|ERROR|FAIL; cap output
-    const cmd = `find "${cwd}" -type f -name "*.log" -mmin -120 2>/dev/null | head -20 | xargs -I{} grep -HnE 'WARN|ERROR|FAIL' {} 2>/dev/null | head -200`;
+    // Build -prune expression for excluded tool-cache directories so we don't
+    // scan .playwright-mcp/, node_modules/, .venv/, etc. These dirs produce
+    // WARN+ entries that are not session-actionable and drown real signal.
+    const prune = EXCLUDED_DIRS.map((d) => `-name '${d}'`).join(" -o ");
+    // find: prune tool cache dirs, then match *.log modified in last 120 min
+    const cmd =
+      `find "${cwd}" \\( -type d \\( ${prune} \\) -prune \\) -o ` +
+      `-type f -name '*.log' -mmin -120 -print 2>/dev/null ` +
+      `| head -20 | xargs -I{} grep -HnE 'WARN|ERROR|FAIL' {} 2>/dev/null ` +
+      `| head -200`;
     const out = execSync(cmd, { encoding: "utf8", timeout: 3000 });
     return out
       .split("\n")
