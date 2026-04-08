@@ -165,6 +165,31 @@ npm ls --all 2>&1 | grep -iE 'missing|warn|err'
 
 **Why:** Logs that no one reads are worse than no logs at all — they create the illusion of observability while letting the underlying problem fester. Without dedup, a 200-warning test run becomes 200 disposition lines and the agent rationally skips the gate; with dedup, it becomes 5–10 unique entries that are tractable.
 
+### 6. Bulk Operations MUST Log Partial Failures at WARN
+
+Any bulk operation (BulkCreate, BulkUpdate, BulkDelete, BulkUpsert) that catches per-row exceptions MUST emit at least one WARN-level log line when `failed > 0`, including: operation name, total rows, failure count, and a sample error. Exception handlers in bulk ops MUST NOT use `except Exception: continue` or `except Exception: pass` without a WARN log.
+
+```python
+# DO — WARN on partial failure
+if failed_count > 0:
+    logger.warning(
+        "bulk_create.partial_failure",
+        attempted=total, failed=failed_count,
+        first_error=str(errors[0]) if errors else "unknown",
+    )
+
+# DO NOT — silent swallow (confirmed absent in kailash-py bulk_create.py:496-498)
+except Exception:
+    continue  # zero logging, zero signal
+```
+
+**Why:** Source audit confirmed: `BulkCreate._handle_batch_error()` has `except Exception: continue` with zero logging; `BulkUpsert` uses `print()` instead of a structured logger. A bulk op returning `failed: 10663` with no WARN line is invisible to alerting pipelines. See 0052-DISCOVERY §2.1 and `guides/deterministic-quality/06-observability-primitives.md` §2.
+
+**BLOCKED responses:**
+- "The caller will see the return value, no log needed"
+- "We return a failure list, that's enough"
+- "We already log at DEBUG"
+
 ## MUST NOT
 
 - **No log-and-continue on caught exceptions without action.** If you catch an exception, log it AND either retry, fall back, or re-raise. `logger.error(...); pass` is BLOCKED — same class as `except: pass` in `rules/zero-tolerance.md` Rule 3. **Exception:** hooks and cleanup paths where failure is expected — log at WARN and continue, same carve-out as `zero-tolerance.md` Rule 3.

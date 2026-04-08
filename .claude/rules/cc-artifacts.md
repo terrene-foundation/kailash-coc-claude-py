@@ -79,6 +79,12 @@ const timeout = setTimeout(() => {
 
 **Why:** A hanging hook blocks the entire Claude Code session indefinitely.
 
+### 10. New Rules Follow `rules/rule-authoring.md`
+
+Every new rule MUST pass the "Loud, Linguistic, Layered" test from `rules/rule-authoring.md`: MUST/MUST NOT as primary modal, BLOCKED phrases for rationalizations, DO/DO NOT examples, `Why:` per clause, `paths:` frontmatter unless universal, `Origin:` line.
+
+**Why:** Rules authored without the meta-rule score 2/6 on quality criteria (validated by subprocess test). With the meta-rule, 6/6. See `guides/deterministic-quality/01-rule-authoring-principles.md` for evidence.
+
 ## MUST NOT
 
 - **No knowledge dumps**: Agent files ≤400 lines. Extract reference to skills.

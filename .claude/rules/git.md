@@ -50,5 +50,22 @@ CC system prompt provides the template. Additionally, always include a `## Relat
 - No direct push to main, no force push to main
 - No secrets in commits (API keys, passwords, tokens, .env files)
 - No large binaries (>10MB single file)
+- Commit bodies MUST answer **why**, not **what** (the diff shows what)
 
-**Why:** Mixed commits are impossible to revert cleanly, leaked secrets require immediate key rotation across all environments, and large binaries permanently bloat the repo since git never forgets them.
+**Why:** Mixed commits are impossible to revert cleanly, leaked secrets require immediate key rotation across all environments, and large binaries permanently bloat the repo since git never forgets them. Commit bodies that explain "why" are the cheapest form of institutional documentation — co-located with the code, versioned, searchable via `git log --grep`, and never stale (they describe a point in time). See 0052-DISCOVERY §2.10.
+
+```
+# DO — explains why
+feat(dataflow): add WARN log on bulk partial failure
+
+BulkCreate silently swallowed per-row exceptions via
+`except Exception: continue` with zero logging. Operators
+saw `failed: 10663` in the result dict but no WARN line
+in the log pipeline, so alerting never fired.
+
+# DO NOT — restates the diff
+feat(dataflow): add logging to bulk create
+
+Added logger.warning call in _handle_batch_error method.
+Updated BulkResult to emit WARN in __post_init__.
+```
