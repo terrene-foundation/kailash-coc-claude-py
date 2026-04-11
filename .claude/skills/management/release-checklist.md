@@ -6,7 +6,7 @@ Reference material for the /release command.
 ```bash
 # Core SDK — both must match
 grep 'version' pyproject.toml | head -1
-grep '__version__' src/kailash/__init__.py
+grep '__version__' $(find . -name '__init__.py' -path '*/kailash/*' | head -1)
 
 # Each framework — version + dependency must be correct
 for fw in packages/kailash-dataflow packages/kailash-kaizen packages/kailash-nexus; do
@@ -113,7 +113,7 @@ Quick reference for all version locations in this monorepo:
 
 | Package          | pyproject.toml                             | **init**.py                                          | SDK Dep     |
 | ---------------- | ------------------------------------------ | ---------------------------------------------------- | ----------- |
-| kailash          | `pyproject.toml`                           | `src/kailash/__init__.py`                            | —           |
+| kailash          | `pyproject.toml`                           | `{package}/__init__.py`                            | —           |
 | kailash-dataflow | `packages/kailash-dataflow/pyproject.toml` | `packages/kailash-dataflow/src/dataflow/__init__.py` | `kailash>=` |
 | kailash-kaizen   | `packages/kailash-kaizen/pyproject.toml`   | `packages/kailash-kaizen/src/kaizen/__init__.py`     | `kailash>=` |
 | kailash-nexus    | `packages/kailash-nexus/pyproject.toml`    | `packages/kailash-nexus/src/nexus/__init__.py`       | `kailash>=` |

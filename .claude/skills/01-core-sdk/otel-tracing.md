@@ -63,6 +63,6 @@ bridge.record_node(node_id, node_type, duration_s)
 
 ## Source Files
 
-- `src/kailash/runtime/tracing.py` — TracingLevel, WorkflowTracer
-- `src/kailash/runtime/instrumentation/` — nodes, dataflow, database
-- `src/kailash/runtime/metrics.py` — MetricsBridge
+- `kailash.runtime.tracing` — TracingLevel, WorkflowTracer
+- `kailash.runtime.instrumentation.` — nodes, dataflow, database
+- `kailash.runtime.metrics` — MetricsBridge
