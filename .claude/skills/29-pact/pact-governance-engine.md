@@ -119,7 +119,7 @@ item = KnowledgeItem(
 decision = engine.check_access(
     role_address="D1-R1-D2-R1-T1-R1",
     knowledge_item=item,
-    posture=TrustPostureLevel.CONTINUOUS_INSIGHT,
+    posture=TrustPostureLevel.DELEGATING,
 )
 decision.allowed      # bool
 decision.reason       # str
@@ -181,9 +181,12 @@ engine.set_task_envelope(TaskEnvelope(
 
 ### Clearance
 
+VettingStatus FSM: `PENDING -> {ACTIVE, REVOKED}`, `ACTIVE -> {SUSPENDED, EXPIRED, REVOKED}`, `SUSPENDED -> {ACTIVE, REVOKED}`, `EXPIRED -> {ACTIVE, REVOKED}`, `REVOKED -> {}` (terminal).
+
 ```python
 from kailash.trust.pact.clearance import RoleClearance, VettingStatus
 
+# Grant clearance (FSM-validated for living states, unconditional for terminal/missing)
 engine.grant_clearance(
     role_address="D1-R1-T1-R1",
     clearance=RoleClearance(
@@ -194,6 +197,11 @@ engine.grant_clearance(
     ),
 )
 
+# Transition status (FSM-validated, e.g., suspend during investigation)
+engine.transition_clearance("D1-R1-T1-R1", VettingStatus.SUSPENDED)
+engine.transition_clearance("D1-R1-T1-R1", VettingStatus.ACTIVE)  # reinstate
+
+# Revoke (sets REVOKED status, preserves record for audit trail)
 engine.revoke_clearance(role_address="D1-R1-T1-R1")
 ```
 
@@ -249,6 +257,6 @@ All public methods acquire `self._lock` before accessing shared state. Safe for 
 - `pact-envelopes.md` -- envelope model and intersection algorithm
 - `pact-access-enforcement.md` -- 5-step access algorithm
 - `pact-dtr-addressing.md` -- D/T/R grammar
-- Source: `src/kailash/trust/pact/engine.py`
-- Source: `src/kailash/trust/pact/envelopes.py` (SignedEnvelope)
-- Source: `src/kailash/trust/enforce/shadow_store.py` (ShadowStore protocol)
+- Module: `kailash.trust.pact.engine`
+- Module: `kailash.trust.pact.envelopes` (SignedEnvelope)
+- Module: `kailash.trust.enforce.shadow_store` (ShadowStore protocol)

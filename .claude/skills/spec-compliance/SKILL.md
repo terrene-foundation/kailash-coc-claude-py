@@ -33,12 +33,12 @@ For each spec section, write down a literal acceptance assertion table, then ver
 
 Read the spec text verbatim. For each promised artifact, write the literal assertion:
 
-| Spec promise                                                                 | Acceptance assertion                                                                                                                        |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| "`StreamingAgent.run_stream()` yields `TextDelta` tokens incrementally"      | grep `def run_stream` in src; AST: must yield ≥2 distinct values across the loop, NOT a single yield from a single `inner.run_async()` call |
-| "`BaseAgentConfig` has frozen field `posture: Posture`"                      | grep `posture:` in `BaseAgentConfig` dataclass body                                                                                         |
-| "`@deprecated` decorator applied to 7 extension points"                      | grep `@deprecated` in `base_agent.py` — must hit ≥7 distinct methods                                                                        |
-| "MOVE `client.py` from `old_path/` to `new_path/`"                           | source must be deleted OR <50 LOC OR import-and-warn shim                                                                                   |
+| Spec promise                                                            | Acceptance assertion                                                                                                                        |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`StreamingAgent.run_stream()` yields `TextDelta` tokens incrementally" | grep `def run_stream` in src; AST: must yield ≥2 distinct values across the loop, NOT a single yield from a single `inner.run_async()` call |
+| "`BaseAgentConfig` has frozen field `posture: Posture`"                 | grep `posture:` in `BaseAgentConfig` dataclass body                                                                                         |
+| "`@deprecated` decorator applied to 7 extension points"                 | grep `@deprecated` in `base_agent.py` — must hit ≥7 distinct methods                                                                        |
+| "MOVE `handler.py` from `app/legacy/` to `app/v2/`"                     | source must be deleted OR <50 LOC OR import-and-warn shim                                                                                   |
 
 ### Step 2: Run The 9 Verification Checks
 
@@ -102,11 +102,11 @@ For every "MOVE A → B" task, the source path A MUST satisfy ONE of:
 - (c) imports from B AND emits `DeprecationWarning`
 
 ```bash
-wc -l old_path/client.py new_path/client.py
+wc -l app/legacy/handler.py app/v2/handler.py
 # Both 1088 lines → CRITICAL: copied not moved (drift risk)
 
 # If source is a thin shim, verify it imports from new path AND warns:
-grep -E "from new_module.client import|warnings.warn.*Deprecat" old_path/client.py
+grep -E "from app.v2.handler import|warnings.warn.*Deprecat" app/legacy/handler.py
 ```
 
 #### 5. New Test Coverage Verification

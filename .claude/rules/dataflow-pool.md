@@ -43,6 +43,30 @@ Config flags MUST have backing implementation. A flag set to `True` with no cons
 
 **Why:** A flag that appears configurable but does nothing misleads operators into thinking a feature is active when it isn't.
 
+**Extended enforcement (DataFlow 2.0 Phase 5.11):** every attribute on the DataFlow / adapter / connection manager whose name ends in `_url`, `_backend`, `_client`, `_executor`, `_store`, or `_policy` MUST have at least one production call site that reads it. Set-but-never-read is the same failure mode as a deceptive flag — the orphan attribute implies a feature the framework never actually delivers.
+
+```python
+# DO — url is stored AND read
+class RedisFabricCacheBackend:
+    def __init__(self, redis_url: str):
+        self._redis_url = redis_url            # stored
+        self._client = redis.asyncio.from_url(redis_url)  # read at init
+
+    async def get(self, key):
+        return await self._client.get(key)     # read on every operation
+
+# DO NOT — url stored, never consumed
+class PipelineExecutor:
+    def __init__(self, redis_url: Optional[str] = None):
+        self._redis_url = redis_url            # stored
+        self._cache = {}                        # actually uses in-memory dict
+    # Nothing ever reads self._redis_url; operators think they're using Redis
+```
+
+**Why:** The orphan-attribute pattern is the exact bug Phase 5.2 fixed in `PipelineExecutor` — `redis_url` was stored and logged at init but the executor used an in-memory dict internally. Operators believed the cache was Redis-backed for weeks. The fix requires every `_url` / `_backend` / `_client` to have a grep-able consumer.
+
+**Audit protocol:** run `rg 'self\._(url|backend|client|executor|store|policy)\w*\s*=' .` and for each match, verify there's at least one `self._<attr>.` read in the same class OR a downstream passthrough to another class that consumes it.
+
 ### 4. Bounded max_overflow
 
 ```python

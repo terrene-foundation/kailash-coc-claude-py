@@ -24,7 +24,7 @@ ctx = agent.context                        # GovernanceContext (frozen=True)
 ctx.allowed_actions                        # frozenset({"read", "write"})
 ctx.posture                                # TrustPostureLevel.SUPERVISED
 ctx.effective_clearance_level              # ConfidentialityLevel.RESTRICTED
-# ctx.posture = TrustPostureLevel.DELEGATED  -> FrozenInstanceError
+# ctx.posture = TrustPostureLevel.AUTONOMOUS  -> FrozenInstanceError
 ```
 
 ### Tool Registration (Default-Deny)
@@ -172,7 +172,7 @@ elif verdict.level == "flagged":
 - `pact-governance-engine.md` -- engine.get_context(), engine.verify_action()
 - `pact-envelopes.md` -- effective envelope in context
 - `pact-kaizen-integration.md` -- wrapping Kaizen agents
-- Source: `src/kailash/trust/pact/agent.py`
-- Source: `src/kailash/trust/pact/decorators.py`
-- Source: `src/kailash/trust/pact/middleware.py`
-- Source: `src/kailash/trust/pact/context.py`
+- Module: `kailash.trust.pact.agent`
+- Module: `kailash.trust.pact.decorators`
+- Module: `kailash.trust.pact.middleware`
+- Module: `kailash.trust.pact.context`
