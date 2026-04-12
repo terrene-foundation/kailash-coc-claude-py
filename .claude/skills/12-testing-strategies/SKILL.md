@@ -60,6 +60,60 @@ tests/
 | Nexus API     | 3    | Real HTTP requests to running server                       |
 | Kaizen Agents | 2    | Real LLM calls with response caching                       |
 
+## Regression Test Design
+
+Regression tests lock in bug fixes. They MUST exercise the actual
+code path -- call the function, assert the raise or return value.
+**Source-grep tests are BLOCKED as the sole assertion** because they
+pin the implementation, not the contract: when the fix moves to a
+shared helper (the right refactor), the grep breaks even though the
+protection is still in place.
+
+```python
+# Behavioral (survives refactors)
+@pytest.mark.regression
+def test_null_byte_rejected():
+    parsed = urlparse("mysql://user:%00x@h/db")
+    with pytest.raises(ValueError, match="null byte"):
+        decode_userinfo_or_raise(parsed)
+
+# Source-grep (BLOCKED as sole assertion)
+def test_null_byte_exists_in_source():
+    assert "\\x00" in open("src/myapp/db/connection.py").read()
+```
+
+See `rules/testing.md` "MUST: Behavioral Regression Tests Over
+Source-Grep" for the full rule and rationale.
+
+## Optional Dependency Testing
+
+Tests that exercise optional extras (e.g., `[hpo]`, `[redis]`, `[vault]`)
+MUST guard against the dependency being absent. Use `pytest.importorskip`
+at module or class scope so the test is _skipped_ (not _failed_) in CI
+environments that don't install the extra.
+
+```python
+# At module level — skips entire file if optuna is missing
+optuna = pytest.importorskip("optuna", reason="optuna required for HPO tests")
+
+class TestSuccessiveHalving:
+    @pytest.mark.asyncio
+    async def test_pruning(self):
+        # optuna is guaranteed available here
+        ...
+```
+
+**Why:** Base CI installs core dependencies only. A test that imports
+an optional extra without a skip guard fails every CI matrix entry,
+blocking unrelated PRs. `pytest.importorskip` is the standard
+mechanism — it imports the module if available and calls `pytest.skip`
+if not.
+
+**Where to place the guard:** Before the first use of the optional
+module — typically at module scope (before the test class) or inside
+a fixture. Placing it inside a test function body is too late if the
+class-level setup already depends on the import.
+
 ## Critical Rules
 
 - Tier 1: Mock external dependencies
