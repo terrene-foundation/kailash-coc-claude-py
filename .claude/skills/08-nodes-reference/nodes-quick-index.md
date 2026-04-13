@@ -5,7 +5,7 @@ description: "Quick reference to all Kailash nodes. Use when asking 'node list',
 
 # Nodes Quick Index
 
-Quick reference to verified Kailash workflow nodes (source-checked against `src/kailash/nodes/`).
+Quick reference to verified Kailash workflow nodes.
 
 > **Skill Metadata**
 > Category: `nodes`

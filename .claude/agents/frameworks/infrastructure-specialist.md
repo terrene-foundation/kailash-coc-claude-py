@@ -59,7 +59,7 @@ Enterprise infrastructure specialist for the Kailash progressive infrastructure 
 
 ### QueryDialect Strategy Pattern
 
-The `QueryDialect` abstract base class in `src/kailash/db/dialect.py` provides dialect-specific SQL generation. Three concrete implementations: `PostgresDialect`, `MySQLDialect`, `SQLiteDialect`.
+The `QueryDialect` abstract base class in `kailash.db.dialect` provides dialect-specific SQL generation. Three concrete implementations: `PostgresDialect`, `MySQLDialect`, `SQLiteDialect`.
 
 ```python
 from kailash.db.dialect import detect_dialect
@@ -199,6 +199,6 @@ When this guidance is insufficient, consult:
 
 - `.claude/skills/15-enterprise-infrastructure/` - Complete infrastructure skills directory
 - `docs/enterprise-infrastructure/` - Full documentation with architecture diagrams
-- `src/kailash/db/` - QueryDialect, ConnectionManager, registry, migration
-- `src/kailash/infrastructure/` - Store backends, task queue, worker registry, idempotency
+- `kailash.db` module — QueryDialect, ConnectionManager, registry, migration
+- `kailash.infrastructure` module — Store backends, task queue, worker registry, idempotency
 - `workspaces/enterprise-infrastructure/04-validate/` - Red team report and convergence results

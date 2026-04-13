@@ -91,7 +91,7 @@ USE templates serve downstream projects that DON'T own the SDK source. This mean
 - `zero-tolerance.md` Rule 4 says "file a GitHub issue" (not "fix it directly")
 - `release.md` describes publishing workflows appropriate to the variant (PyPI vs cargo)
 - `testing.md` uses language-appropriate examples and tooling
-- BUILD-specific paths (`src/kailash/`, `packages/kailash-dataflow/`) appear in path-scoped rules only (they guide developers working WITH the SDK, even though they don't own it)
+- SDK module paths and package references appear in path-scoped rules only (they guide developers working WITH the SDK, even though they don't own it)
 
 These adaptations are handled by the **variant overlay system** — not by runtime transformation. If a file needs different content in BUILD vs USE context, a variant is created.
 

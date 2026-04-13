@@ -13,7 +13,7 @@ but the contract is the same.
 
 ### 1. `preencode_password_special_chars(url)` -- Input Sanitization
 
-Lives in: `src/kailash/config/database_config.py` (builder methods)
+Lives in: `kailash.config.database_config` (builder methods)
 
 Handles raw user-provided URLs that contain unencoded `# $ @ ? :`
 in the password segment. Returns a URL with those characters

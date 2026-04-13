@@ -139,7 +139,7 @@ for table in tables_to_drop:
 
 **Why:** Hardcoded lists become dynamic lists. A future refactor that reads the table list from a config file, or appends a caller-supplied suffix, or loops over model names from a registry, silently re-opens the injection vector with no test signal because the validation call was never there. The validation call is a permanent marker of intent that survives the refactor.
 
-Origin: Red team review of PR #430 (2026-04-12) surfaced this in `src/kailash/nodes/admin/schema_manager.py::_drop_existing_schema` and `_get_table_row_counts` — hardcoded lists without validation. Fixed in commit 803e10e0.
+Origin: Red team review of PR #430 (2026-04-12) surfaced hardcoded identifier lists without validation in schema manager DDL paths. Fixed in commit 803e10e0.
 
 ## MUST NOT
 
