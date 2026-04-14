@@ -167,11 +167,11 @@ engine = GovernanceEngine(
 # N6 conformance is a test-time validation, not runtime
 ```
 
-## Related Modules
+## Related Files
 
-- `kailash.trust.pact.engine` -- GovernanceEngine with all N1-N5 wiring
-- `kailash.trust.pact.knowledge` -- FilterDecision, KnowledgeFilter protocol, KnowledgeQuery
-- `kailash.trust.pact.suspension` -- PlanSuspension, SuspensionTrigger, ResumeCondition
-- `kailash.trust.pact.observation` -- Observation, ObservationSink protocol
-- `kailash.trust.pact.audit` -- TieredAuditDispatcher
+- `src/kailash/trust/pact/engine.py` -- GovernanceEngine with all N1-N5 wiring
+- `src/kailash/trust/pact/knowledge.py` -- FilterDecision, KnowledgeFilter protocol, KnowledgeQuery
+- `src/kailash/trust/pact/suspension.py` -- PlanSuspension, SuspensionTrigger, ResumeCondition
+- `src/kailash/trust/pact/observation.py` -- Observation, ObservationSink protocol
+- `src/kailash/trust/pact/audit.py` -- TieredAuditDispatcher
 - `tests/trust/pact/conformance/` -- Cross-SDK test vectors and tests

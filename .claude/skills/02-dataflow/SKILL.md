@@ -35,11 +35,11 @@ await db.initialize()
 
 # Async Express (default) — 23x faster than workflow primitives
 result = await db.express.create("User", {"name": "Alice", "email": "alice@example.com"})
-user = await db.express.read("User", str(result["id"]))
+user = await db.express.read("User", result["id"])  # accepts both str and int IDs
 users = await db.express.list("User", {"active": True})
 count = await db.express.count("User")
-await db.express.update("User", str(result["id"]), {"name": "Bob"})
-await db.express.delete("User", str(result["id"]))
+await db.express.update("User", result["id"], {"name": "Bob"})
+await db.express.delete("User", result["id"])
 
 # Sync Express (CLI scripts, non-async contexts)
 result = db.express_sync.create("User", {"name": "Alice", "email": "alice@example.com"})
@@ -157,6 +157,10 @@ Each `@db.model` class generates:
 
 - **[dataflow-provenance-audit](dataflow-provenance-audit.md)** - Provenance[T] field tracking, audit trail persistence, EventStoreBackend
 - **[dataflow-fabric-cache-consumers](dataflow-fabric-cache-consumers.md)** - Fabric cache control, consumer adapters, MCP tool generation
+
+### Cache Patterns
+
+- **[cache-cas-fail-closed](cache-cas-fail-closed.md)** - CAS (compare-and-swap) fail-closed pattern when primitive can only be satisfied by one backend
 
 ### Troubleshooting
 

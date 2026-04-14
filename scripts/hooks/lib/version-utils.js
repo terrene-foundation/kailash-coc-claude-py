@@ -211,7 +211,23 @@ function checkVersion(cwd) {
   }
 
   // --- USE template / BUILD repos: display tracked version info ---
+  // But first: detect if this is a template-derived repo that needs correction.
+  // When a user creates a repo via "Use this template" on GitHub, they inherit
+  // the template's VERSION with type "coc-use-template" — but their repo is
+  // actually a downstream project (coc-project).
   if (repoType === "coc-use-template" || repoType === "coc-build") {
+    if (repoType === "coc-use-template" && !isActualTemplateRepo(cwd)) {
+      const corrected = correctTemplateDerivedVersion(cwd, local);
+      if (corrected) {
+        messages.push(
+          `[VERSION] ⚠ Auto-corrected: this repo was created from a USE template but is a downstream project`,
+        );
+        messages.push(
+          `[VERSION] Type changed to coc-project, template set to ${corrected.upstream.template}. Run /sync to update.`,
+        );
+        return { status: "corrected", messages };
+      }
+    }
     const buildVer = upstream.build_version || "unknown";
     const syncedAt = upstream.synced_at ? ` synced ${upstream.synced_at}` : "";
     messages.push(
@@ -228,6 +244,11 @@ function checkVersion(cwd) {
     messages.push(
       `[VERSION] COC from template ${tmpl}, v${tmplVer}${syncedAt}`,
     );
+    if (tmpl === "unknown") {
+      messages.push(
+        `[VERSION] ⚠ Template unknown — set upstream.template in .claude/VERSION (e.g., "kailash-coc-claude-py") then run /sync`,
+      );
+    }
     return { status: "tracked", messages };
   }
 
@@ -249,10 +270,137 @@ function checkVersion(cwd) {
   return { status: result.status, messages };
 }
 
+/**
+ * Known USE template repos — GitHub slugs that ARE actual templates.
+ * If a repo's git remote matches one of these, it's the real template,
+ * not a downstream project created from it.
+ */
+const KNOWN_TEMPLATE_REPOS = {
+  "terrene-foundation/kailash-coc-claude-py": "kailash-coc-claude-py",
+  "terrene-foundation/kailash-coc-claude-rs": "kailash-coc-claude-rs",
+  "terrene-foundation/kailash-coc-claude-rb": "kailash-coc-claude-rb",
+  "terrene-foundation/kailash-coc-claude-prism": "kailash-coc-claude-prism",
+};
+
+/**
+ * Check if this repo is actually a USE template repo (not just derived from one).
+ * Checks directory name (monorepo safeguard) and git remote origin.
+ */
+function isActualTemplateRepo(cwd) {
+  const dirName = path.basename(cwd);
+  if (Object.values(KNOWN_TEMPLATE_REPOS).includes(dirName)) {
+    return true;
+  }
+  try {
+    let remote = execFileSync(
+      "git",
+      ["-C", cwd, "remote", "get-url", "origin"],
+      { encoding: "utf8", timeout: 3000, stdio: ["pipe", "pipe", "pipe"] },
+    ).trim();
+    // Normalize SSH URLs: git@github.com:owner/repo.git → owner/repo
+    if (remote.startsWith("git@")) {
+      remote = (remote.split(":")[1] || "").replace(/\.git$/, "");
+    }
+    for (const slug of Object.keys(KNOWN_TEMPLATE_REPOS)) {
+      if (remote.includes(slug)) return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Auto-correct a VERSION file that was inherited from a USE template.
+ * Converts coc-use-template → coc-project with proper upstream fields.
+ * Returns the corrected version object, or null on failure.
+ */
+function correctTemplateDerivedVersion(cwd, original) {
+  const templateName = guessTemplateName(cwd, original);
+  const templateSlug = templateName
+    ? Object.entries(KNOWN_TEMPLATE_REPOS).find(
+        ([, name]) => name === templateName,
+      )?.[0] || null
+    : null;
+
+  const corrected = {
+    version: original.version || "0.0.0",
+    type: "coc-project",
+    description: original.description
+      ? original.description.replace(/USE template/i, "downstream project")
+      : "Downstream project (auto-corrected from template)",
+    updated: new Date().toISOString().split("T")[0],
+    upstream: {
+      template: templateName || "unknown",
+      template_repo: templateSlug || null,
+      template_version: original.version || "0.0.0",
+      synced_at: (original.upstream || {}).synced_at || null,
+      sdk_packages: (original.upstream || {}).sdk_packages || {},
+    },
+  };
+
+  const versionPath = path.join(cwd, ".claude", "VERSION");
+  try {
+    fs.writeFileSync(versionPath, JSON.stringify(corrected, null, 2) + "\n");
+    return corrected;
+  } catch (e) {
+    console.error(`[VERSION] Failed to write corrected VERSION: ${e.message}`);
+    return null;
+  }
+}
+
+/**
+ * Guess which template this repo was derived from.
+ * Uses the variant field or upstream.name from the original VERSION.
+ */
+function guessTemplateName(cwd, original) {
+  const variant = original.variant;
+  if (variant) {
+    return `kailash-coc-claude-${variant}`;
+  }
+  // Check git remote for template repo name hints
+  try {
+    const remote = execFileSync(
+      "git",
+      ["-C", cwd, "remote", "get-url", "origin"],
+      { encoding: "utf8", timeout: 3000, stdio: ["pipe", "pipe", "pipe"] },
+    ).trim();
+    // Check if the repo was CREATED from a template — git initial commit
+    // may reference the template. Also check first commit message.
+  } catch {}
+  // Check description — but "Rust-backed" bindings means rs template,
+  // even though "Python/Ruby" appears first in the description.
+  const desc = (original.description || "").toLowerCase();
+  if (
+    desc.includes("rust-backed") ||
+    desc.includes("kailash-rs") ||
+    desc.includes("rs bindings")
+  ) {
+    return "kailash-coc-claude-rs";
+  }
+  if (desc.includes("prism") || desc.includes("composable")) {
+    return "kailash-coc-claude-prism";
+  }
+  if (desc.includes("ruby") && !desc.includes("rust")) {
+    return "kailash-coc-claude-rb";
+  }
+  if (desc.includes("python") || desc.includes("-py")) {
+    return "kailash-coc-claude-py";
+  }
+  // Check upstream.name or upstream.source
+  const upstreamName = (original.upstream || {}).name || "";
+  if (upstreamName) {
+    return "kailash-coc-claude-py";
+  }
+  return null;
+}
+
 module.exports = {
   readLocalVersion,
   fetchUpstreamVersion,
   compareVersions,
   checkVersion,
   detectRepoType,
+  isActualTemplateRepo,
+  correctTemplateDerivedVersion,
 };

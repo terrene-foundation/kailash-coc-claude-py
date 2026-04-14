@@ -16,9 +16,13 @@ description: "Load phase 05 (codify) for the current workspace. Update existing 
 - Read `docs/` and `docs/00-authority/` for knowledge base
 - Output: update existing agents and skills in their canonical locations (e.g., `agents/frameworks/`, `skills/01-core-sdk/`, `skills/02-dataflow/`, etc.)
 
-## Where /codify Writes
+## BUILD vs USE Repo Distinction (where does /codify write?)
 
-Project-specific artifacts go to `.claude/agents/project/<name>.md` and `.claude/skills/project/<name>/SKILL.md`. These stay **local** — no upstream proposal is created. The `project/` directories are preserved across `/sync` (shared artifacts may be updated by the template; `project/` is never touched).
+`/codify` writes to different locations depending on which repo it runs in. Before extracting knowledge, determine the repo type and follow the correct placement rule:
+
+- **BUILD repos** (kailash-py, kailash-rs, kailash-prism — source of truth for the SDKs): write to **canonical locations** (`agents/frameworks/`, `agents/analysis/`, `skills/01-core-sdk/`, `skills/02-dataflow/`, `rules/*.md`, etc.) AND append an entry to `.claude/.proposals/latest.yaml` so loom/ can pick the change up via Gate 1. BUILD repos MUST NOT write to `agents/project/` or `skills/project/` — those directories are a downstream-USE-only convention and should not exist in a BUILD repo.
+- **loom/** (COC authority): write to canonical locations and variant overlays (`.claude/agents/...`, `.claude/variants/{lang}/...`). loom/ has no `project/` subdirectories. Propose CC/CO-tier artifacts upstream to atelier/ as described in Step 7.
+- **Downstream USE repos** (consumer projects that `pip install kailash`, `gem install kailash`, etc.): write project-specific artifacts to `.claude/agents/project/<name>.md` and `.claude/skills/project/<name>/SKILL.md`. These stay **LOCAL** — no proposal file is created, no upstream flow. The `project/` directories are the preservation boundary on `/sync` (shared artifacts are overwritten by the template; `project/` is preserved).
 
 See `rules/artifact-flow.md` for the authority chain and `guides/co-setup/03-creating-components.md` for component placement.
 

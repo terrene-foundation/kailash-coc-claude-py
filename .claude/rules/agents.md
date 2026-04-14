@@ -75,6 +75,22 @@ Pre-existing failures MUST be fixed (see `rules/zero-tolerance.md` Rule 1). No w
 
 **Why:** Workarounds create parallel implementations that diverge from the SDK, doubling maintenance cost and masking the root bug from being fixed (see `rules/zero-tolerance.md` Rule 4).
 
+## MUST: Worktree Isolation for Compiling Agents
+
+When launching agents that will compile Rust code (build, test, implement), MUST use `isolation: "worktree"` to avoid build directory lock contention.
+
+```
+# DO: Independent target/ dirs, compile in parallel
+Agent(isolation: "worktree", prompt: "implement feature X...")
+Agent(isolation: "worktree", prompt: "implement feature Y...")
+
+# DO NOT: Multiple agents sharing same target/ (serializes on lock)
+Agent(prompt: "implement feature X...")
+Agent(prompt: "implement feature Y...")  # Blocks waiting for X's build lock
+```
+
+**Why:** Cargo uses an exclusive filesystem lock on `target/`. Two cargo processes in the same directory serialize completely, turning parallel agents into sequential execution. Worktrees give each agent its own `target/` directory.
+
 ## MUST NOT
 
 - Framework work without specialist

@@ -56,7 +56,7 @@ Before any release work, determine WHAT needs releasing by analyzing unreleased 
 1. **Diff analysis** — Compare `main` against the last release tag for each package:
 
    ```
-   git log <last-tag>..HEAD -- src/                        → Core SDK changes?
+   git log <last-tag>..HEAD -- src/kailash/           → Core SDK changes?
    git log <last-tag>..HEAD -- packages/kailash-dataflow/  → DataFlow changes?
    git log <last-tag>..HEAD -- packages/kailash-kaizen/    → Kaizen changes?
    git log <last-tag>..HEAD -- packages/kailash-nexus/     → Nexus changes?
@@ -76,10 +76,10 @@ For each package being released, update version in BOTH locations. Missing eithe
 
 ##### Core SDK (`kailash`)
 
-| File                        | Field                   | Example                 |
-| --------------------------- | ----------------------- | ----------------------- |
-| `pyproject.toml`            | `version = "X.Y.Z"`     | `version = "1.0.0"`     |
-| `src/<package>/__init__.py` | `__version__ = "X.Y.Z"` | `__version__ = "1.0.0"` |
+| File                      | Field                   | Example                 |
+| ------------------------- | ----------------------- | ----------------------- |
+| `pyproject.toml`          | `version = "X.Y.Z"`     | `version = "1.0.0"`     |
+| `src/kailash/__init__.py` | `__version__ = "X.Y.Z"` | `__version__ = "1.0.0"` |
 
 ##### Framework Packages
 

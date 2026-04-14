@@ -282,8 +282,8 @@ Validate attribute names against `^[a-zA-Z_][a-zA-Z0-9_]*$`. Validate float valu
 
 ## Cross-References
 
-- `kailash.nodes.transaction.node_executor` — Pattern 1 reference implementation
-- `kailash.runtime.shutdown` — Pattern 6 reference implementation
-- `kailash.middleware.gateway.event_store_sqlite` — Pattern 3 reference implementation
-- `kailash.nodes.transaction.participant_transport` — Pattern 4 reference implementation
+- `src/kailash/nodes/transaction/node_executor.py` — Pattern 1 reference implementation
+- `src/kailash/runtime/shutdown.py` — Pattern 6 reference implementation
+- `src/kailash/middleware/gateway/event_store_sqlite.py` — Pattern 3 reference implementation
+- `src/kailash/nodes/transaction/participant_transport.py` — Pattern 4 reference implementation
 - `.claude/rules/trust-plane-security.md` — Security patterns for trust-plane (complementary)

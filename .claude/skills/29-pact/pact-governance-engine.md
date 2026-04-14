@@ -257,6 +257,6 @@ All public methods acquire `self._lock` before accessing shared state. Safe for 
 - `pact-envelopes.md` -- envelope model and intersection algorithm
 - `pact-access-enforcement.md` -- 5-step access algorithm
 - `pact-dtr-addressing.md` -- D/T/R grammar
-- Source: `kailash.trust.pact.engine`
-- Source: `kailash.trust.pact.envelopes` (SignedEnvelope)
-- Source: `kailash.trust.enforce.shadow_store` (ShadowStore protocol)
+- Source: `src/kailash/trust/pact/engine.py`
+- Source: `src/kailash/trust/pact/envelopes.py` (SignedEnvelope)
+- Source: `src/kailash/trust/enforce/shadow_store.py` (ShadowStore protocol)

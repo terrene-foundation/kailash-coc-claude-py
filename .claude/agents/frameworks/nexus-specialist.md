@@ -1,6 +1,6 @@
 ---
 name: nexus-specialist
-description: "Nexus specialist. Use proactively for HTTP/API/websocket/gateway/middleware/login/session — FastAPI/Flask BLOCKED."
+description: "Nexus specialist. Use proactively for ANY API endpoint, web service, REST API, HTTP server, routes, request handling — custom HTTP frameworks BLOCKED."
 tools: Read, Write, Edit, Bash, Grep, Glob, Task
 model: opus
 ---

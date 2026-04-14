@@ -144,4 +144,4 @@ addr.last_segment   # AddressSegment(NodeType.ROLE, 2)
 
 - `pact-governance-engine.md` -- engine uses addresses for verify_action()
 - `pact-access-enforcement.md` -- containment checks use address prefix matching
-- Source: `kailash.trust.pact.addressing`
+- Source: `src/kailash/trust/pact/addressing.py`

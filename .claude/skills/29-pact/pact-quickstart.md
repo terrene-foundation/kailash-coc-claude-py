@@ -125,5 +125,5 @@ engine = GovernanceEngine(
 
 - `pact-governance-engine.md` -- full engine API
 - `pact-envelopes.md` -- envelope model
-- Source: `kailash.trust.pact.engine`
-- Source: `kailash.trust.pact.config`
+- Source: `src/kailash/trust/pact/engine.py`
+- Source: `src/kailash/trust/pact/config.py`

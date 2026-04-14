@@ -110,7 +110,7 @@ from kailash_ml import DriftMonitor
 
 monitor = DriftMonitor(conn)
 await monitor.initialize()
-await monitor.set_reference("model_v1", reference_df)
+await monitor.set_reference_data("model_v1", reference_df)
 report = await monitor.check_drift("model_v1", current_df)
 # report.overall_drift, report.feature_results, report.recommendations
 ```

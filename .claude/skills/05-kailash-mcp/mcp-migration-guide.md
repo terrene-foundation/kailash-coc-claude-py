@@ -35,7 +35,7 @@ The legacy MCP implementations (`MCPServer`, `MCPServerBase`, custom WebSocket s
 
 ```python
 # my_mcp_server.py
-from kailash.mcp_server.server import MCPServerBase
+from kailash_mcp.server import MCPServerBase
 
 
 class MyProjectServer(MCPServerBase):
@@ -99,8 +99,8 @@ def register_tools(server: Any, project_root: Path, namespace: str) -> None:
 
 ```python
 # server.py
-from kailash.mcp_server import MCPServer
-from kailash.mcp_server.auth import APIKeyAuth
+from kailash_mcp import MCPServer
+from kailash_mcp.auth import APIKeyAuth
 
 auth = APIKeyAuth({"user1": "secret-key"})
 server = MCPServer(
@@ -239,7 +239,7 @@ Update test fixtures to use `create_platform_server()`:
 
 ```python
 # Before
-from kailash.mcp_server import MCPServer
+from kailash_mcp import MCPServer
 server = MCPServer("test")
 
 # After

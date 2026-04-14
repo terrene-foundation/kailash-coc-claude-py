@@ -84,6 +84,7 @@ BUILD repos track the same `upstream.build_version` as templates — they receiv
   "description": "My application built on Kailash SDK",
   "upstream": {
     "template": "kailash-coc-claude-py",
+    "template_repo": "terrene-foundation/kailash-coc-claude-py",
     "template_version": "1.0.0",
     "synced_at": "2026-03-15T10:00:00Z"
   }
@@ -91,6 +92,8 @@ BUILD repos track the same `upstream.build_version` as templates — they receiv
 ```
 
 Downstream projects track the USE template version, not the source directly.
+
+`template_repo` is the GitHub slug used by the template resolver (`scripts/resolve-template.js`) to shallow-clone the template when no local clone exists. Known templates (`kailash-coc-claude-py`, `kailash-coc-claude-rs`, `kailash-coc-claude-rb`, `kailash-coc-claude-prism`) are auto-resolved from the `template` name; custom templates MUST set `template_repo` explicitly.
 
 ## Version Checking (session-start hook)
 

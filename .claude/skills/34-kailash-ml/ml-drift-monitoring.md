@@ -23,10 +23,10 @@ The reference distribution is the baseline against which all future data is comp
 import polars as pl
 
 reference_df = pl.read_csv("training_data.csv")
-await monitor.set_reference("churn_model_v1", reference_df)
+await monitor.set_reference_data("churn_model_v1", reference_df)
 
 # Reference is stored and versioned — can be updated when model is retrained
-await monitor.set_reference("churn_model_v2", new_training_df)
+await monitor.set_reference_data("churn_model_v2", new_training_df)
 ```
 
 ## Check Drift

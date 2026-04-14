@@ -93,7 +93,7 @@ monitor = DriftMonitor(conn)
 await monitor.initialize()
 
 # Set reference distribution
-await monitor.set_reference("model_v1", reference_df)
+await monitor.set_reference_data("model_v1", reference_df)
 
 # Check for drift (returns DriftReport)
 report = await monitor.check_drift("model_v1", current_df)

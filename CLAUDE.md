@@ -15,7 +15,7 @@ Kailash Python SDK is a **Terrene Foundation project**. It is fully independent.
 Never write code from scratch before checking whether the Kailash frameworks already handle it.
 
 - Instead of direct SQL/SQLAlchemy/Django ORM → check with **dataflow-specialist**
-- Instead of FastAPI/custom API gateway → check with **nexus-specialist**
+- Instead of building API endpoints, web services, HTTP servers manually → check with **nexus-specialist**
 - Instead of custom MCP server/client → check with **mcp-specialist**
 - Instead of custom agentic platform → check with **kaizen-specialist**
 - Instead of custom governance/access control → check with **pact-specialist**
@@ -163,7 +163,7 @@ For SDK implementation patterns, see `.claude/skills/` — organized by framewor
 runtime = LocalRuntime()
 results, run_id = runtime.execute(workflow.build())
 
-# Async (Docker/FastAPI):
+# Async (Docker/Nexus):
 runtime = AsyncLocalRuntime()
 results, run_id = await runtime.execute_workflow_async(workflow.build(), inputs={})
 

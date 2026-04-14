@@ -142,15 +142,15 @@ Execution tools (Tier 4) run in isolated subprocesses for safety:
 - Output capture
 - No access to the MCP server's memory space
 
-## Source Modules
+## Source Code
 
-- `kailash.mcp.platform_server` -- Server factory, contributor loading, namespace validation
-- `kailash.mcp.contrib` -- SecurityTier, is_tier_enabled, protocol definition
-- `kailash.mcp.contrib.core` -- Core SDK contributor
-- `kailash.mcp.contrib.dataflow` -- DataFlow contributor
-- `kailash.mcp.contrib.nexus` -- Nexus contributor
-- `kailash.mcp.contrib.kaizen` -- Kaizen contributor (AST agent scanning)
-- `kailash.mcp.contrib.trust` -- Trust contributor
-- `kailash.mcp.contrib.pact` -- PACT contributor
-- `kailash.mcp.contrib.platform` -- Platform contributor
+- `src/kailash/mcp/platform_server.py` -- Server factory, contributor loading, namespace validation
+- `src/kailash/mcp/contrib/__init__.py` -- SecurityTier, is_tier_enabled, protocol definition
+- `src/kailash/mcp/contrib/core.py` -- Core SDK contributor
+- `src/kailash/mcp/contrib/dataflow.py` -- DataFlow contributor
+- `src/kailash/mcp/contrib/nexus.py` -- Nexus contributor
+- `src/kailash/mcp/contrib/kaizen.py` -- Kaizen contributor (AST agent scanning)
+- `src/kailash/mcp/contrib/trust.py` -- Trust contributor
+- `src/kailash/mcp/contrib/pact.py` -- PACT contributor
+- `src/kailash/mcp/contrib/platform.py` -- Platform contributor
 - `tests/unit/mcp/test_platform_server.py` -- Unit tests

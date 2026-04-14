@@ -4,7 +4,11 @@ How to create each component type for any domain.
 
 ## Agents
 
-**Location**: `.claude/agents/` (shared) or `.claude/agents/project/` (project-specific). Project-specific agents in `project/` are preserved across `/sync`.
+**Location** depends on repo type:
+
+- **BUILD repos** (kailash-py, kailash-rs, kailash-prism): `.claude/agents/frameworks/`, `.claude/agents/analysis/`, `.claude/agents/quality/`, etc. (canonical locations). `/codify` in a BUILD repo writes to these canonical locations and creates an upstream proposal for loom/.
+- **Downstream USE repos** (consumer project repos that `pip install kailash`): `.claude/agents/project/` for project-specific agents. `/codify` stays local — no upstream proposal.
+- **loom/**: `.claude/agents/` with subdirectories (`analysis/`, `frameworks/`, `implementation/`, `quality/`, `release/`, `testing/`, `frontend/`). No `project/` subdirectory — loom/ is the authority, not a project.
 
 **Purpose**: Specialized sub-processes with deep domain knowledge and procedural directives.
 
@@ -56,7 +60,10 @@ When to hand off to other agents.
 
 ## Skills
 
-**Location**: `.claude/skills/<number>-<name>/` with `SKILL.md` entry point (shared, updated by `/sync`), or `.claude/skills/project/<name>/` for project-specific skills (preserved across `/sync`).
+**Location** depends on repo type:
+
+- **BUILD repos** and **loom/**: `.claude/skills/<number>-<name>/` with `SKILL.md` entry point (canonical numbered skill directories, e.g., `skills/01-core-sdk/`, `skills/02-dataflow/`). `/codify` updates these in place.
+- **Downstream USE repos**: `.claude/skills/project/<name>/` for project-specific skills. `/codify` stays local.
 
 **Purpose**: Distilled domain knowledge that agents reference. The institutional handbook.
 

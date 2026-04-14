@@ -92,4 +92,4 @@ if expected_version is not None and backend != "memory":
 
 ## Origin
 
-PR #430 red team review (2026-04-12) surfaced the silent-degradation pattern in the CacheNode set path. Fixed in commits bd411c44 and 62d64ac7. Tests in `tests/regression/test_cache_cas_tenant.py`.
+PR #430 red team review (2026-04-12) surfaced the silent-degradation pattern in `src/kailash/nodes/cache/cache.py::CacheNode._set`. Fixed in commits bd411c44 and 62d64ac7. Tests in `tests/regression/test_cache_cas_tenant.py`.
