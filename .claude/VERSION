@@ -1,14 +1,14 @@
 {
-  "version": "3.4.9",
+  "version": "3.5.0",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
-  "released": "2026-04-14",
+  "released": "2026-04-15",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "2.8.5",
+    "version": "2.8.7",
     "build_version": "2.8.6",
-    "synced_at": "2026-04-15T00:00:00Z",
+    "synced_at": "2026-04-15T05:00:00Z",
     "sdk_packages": {
       "kailash": "2.8.6",
       "kailash-dataflow": "2.0.8",
@@ -23,6 +23,17 @@
     }
   },
   "changelog": [
+    {
+      "version": "3.5.0",
+      "date": "2026-04-15",
+      "summary": "Python 3.14 support + catch up loom 2.8.7 cross-SDK globals (Delegating Primitives testing rule + impossibility-surface skill).",
+      "changes": [
+        "PYPROJECT: Programming Language :: Python :: 3.14 classifier added \u2014 kailash-py SDK now tested and supported on Python 3.14.",
+        "RULE: rules/testing.md \u2014 add 'Delegating Primitives Need Direct Coverage' section (BP-046 from kailash-rs ServiceClient codify, language-agnostic primitive pair pattern).",
+        "SKILL: skills/12-testing-strategies/impossibility-surface.md \u2014 NEW global skill (BP-047). Justification framework for happy-path test gaps that a documented lower-layer security control makes physically unreachable. Strict scope_note prevents misuse as 'I haven't written it yet' excuse.",
+        "VERSION: minor bump 3.4.9 \u2192 3.5.0 to trigger downstream session-start update detection. upstream.version 2.8.5 \u2192 2.8.7 to reflect both 2.8.6 (Aegis reversal \u2014 rs-only, no py content) and 2.8.7 (codify completion) loom releases."
+      ]
+    },
     {
       "version": "3.4.9",
       "date": "2026-04-14",
