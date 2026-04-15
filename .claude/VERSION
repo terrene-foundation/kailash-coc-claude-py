@@ -1,14 +1,14 @@
 {
-  "version": "3.5.0",
+  "version": "3.5.1",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
   "released": "2026-04-15",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "2.8.7",
+    "version": "2.8.8",
     "build_version": "2.8.6",
-    "synced_at": "2026-04-15T05:00:00Z",
+    "synced_at": "2026-04-15T05:30:00Z",
     "sdk_packages": {
       "kailash": "2.8.6",
       "kailash-dataflow": "2.0.8",
@@ -23,6 +23,15 @@
     }
   },
   "changelog": [
+    {
+      "version": "3.5.1",
+      "date": "2026-04-15",
+      "summary": "Sync loom 2.8.8 \u2014 Python version bump procedure skill (PR #474 codify, classified global).",
+      "changes": [
+        "NEW SKILL: skills/10-deployment-git/python-version-bump.md \u2014 canonical procedure for adding support for a new Python version. The manual procedure used for today's Python 3.14 classifier additions is now documented.",
+        "UPDATE: skills/10-deployment-git/SKILL.md \u2014 index entry for python-version-bump."
+      ]
+    },
     {
       "version": "3.5.0",
       "date": "2026-04-15",
