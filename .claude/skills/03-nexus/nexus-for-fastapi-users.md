@@ -9,6 +9,40 @@ tags: [nexus, translation, onboarding, routes, handlers, api]
 
 Nexus is workflow-first: register once, get API + CLI + MCP. This guide translates common route-first patterns into Nexus equivalents.
 
+## Zero-Rewrite Migration: `app.include_router()`
+
+Nexus accepts a stock `fastapi.APIRouter` and mounts every route on it under an optional prefix. Existing routers migrate as-is — no decorator rewrites, no handler reshaping, no touching downstream Pydantic models or `Depends()` graphs. This is the first step of any migration; everything below is for routes you choose to rewrite as Nexus handlers so they also gain CLI + MCP channels.
+
+```python
+from fastapi import APIRouter
+from nexus import Nexus
+
+# Existing router — unchanged
+user_router = APIRouter()
+
+@user_router.get("/{user_id}")
+async def get_user(user_id: str):
+    return {"user_id": user_id}
+
+@user_router.post("")
+async def create_user(user: UserModel):
+    ...
+
+# Mount on Nexus
+app = Nexus()
+app.include_router(user_router, prefix="/api/users", tags=["Users"])
+app.start()
+# Result: GET /api/users/{user_id}, POST /api/users — same as FastAPI
+```
+
+- `include_router()` accepts `prefix`, `tags`, `dependencies`, and any additional kwargs forwarded to FastAPI's own `include_router`.
+- Returns `self`, so calls chain: `app.include_router(r1).include_router(r2, prefix="/v2")`.
+- Safe to call before OR after `app.start()` — routers added pre-start are queued and installed during gateway init; routers added post-start are mounted immediately.
+- Passing a non-`APIRouter` raises `TypeError` at the call site, not at request time.
+- A `prefix` that overlaps an existing Nexus route emits a WARN log (non-blocking) so conflicts surface during startup instead of on the first 404.
+
+**When to stop with `include_router` and rewrite as a Nexus handler:** when the route needs to run on CLI or MCP channels in addition to HTTP. Routers mounted via `include_router` stay HTTP-only; Nexus handlers (below) expose the same logic on all three channels from a single registration.
+
 ## Route Definition
 
 ```python
