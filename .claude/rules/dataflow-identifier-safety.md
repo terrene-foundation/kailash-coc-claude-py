@@ -141,6 +141,49 @@ for table in tables_to_drop:
 
 Origin: Red team review of PR #430 (2026-04-12) surfaced this in `src/kailash/nodes/admin/schema_manager.py::_drop_existing_schema` and `_get_table_row_counts` — hardcoded lists without validation. Fixed in commit 803e10e0.
 
+### 6. Primitive-Vs-Orchestrator Layer Distinction For Destructive Operations
+
+Per-DDL primitive callers (rule §4 above: `force_drop=True` + `DropRefusedError`) and multi-DDL orchestrator callers (e.g. `MigrationManager.apply_downgrade`, `ColumnRemovalManager`, `RollbackManager`) MUST use distinct flag names AND distinct refused-exception types. The two MUST NOT be subclasses of each other — they represent different audit trails and downstream callers MUST be able to `try/except` one without catching the other.
+
+```python
+# DO — primitive layer: per-DDL DROP
+async def drop_model(self, model_name: str, *, force_drop: bool = False) -> None:
+    if not force_drop:
+        raise DropRefusedError(f"drop_model('{model_name}') refused — pass force_drop=True")
+    ...
+
+# DO — orchestrator layer: multi-DDL downgrade sequence
+async def apply_downgrade(
+    self, target_revision: str, *, force_downgrade: bool = False
+) -> None:
+    if not force_downgrade:
+        raise DowngradeRefusedError(
+            f"apply_downgrade('{target_revision}') refused — pass force_downgrade=True "
+            f"to acknowledge irreversible multi-step DDL"
+        )
+    ...
+
+# DO NOT — conflate the two flags / errors inside one helper
+async def confirm_destructive(self, *, force: bool = False) -> None:
+    if not force:
+        raise DestructiveRefusedError(...)
+# ↑ caller can't tell whether they're refusing one DROP or a downgrade
+#   sequence; audit log can't distinguish primitive vs orchestrator
+#   reject events.
+```
+
+**Per-method disposition:** "1 DDL DROP = primitive (`force_drop` + `DropRefusedError`); multi-DDL sequence = orchestrator (`force_downgrade` / `force_remove_columns` / `force_rollback` + their respective `*RefusedError`)." Existing primitive call sites: `VisualMigrationBuilder`, `NotNullHandler`. Existing orchestrator call sites: `ColumnRemovalManager`, `RollbackManager`, `AutoMigrationSystem`.
+
+**BLOCKED rationalizations:**
+
+- "Both ultimately drop tables, so one helper is fine"
+- "We can subclass DowngradeRefusedError from DropRefusedError"
+- "The caller's try/except can use isinstance() to distinguish"
+
+**Why:** A multi-DDL orchestrator invokes the primitive layer N times. If the orchestrator catches a shared `DropRefusedError`, the wrong layer claims responsibility for the refusal — the audit trail records "downgrade refused" when in fact one of the inner primitives refused first. Distinct error types preserve the layer attribution that incident-response queries depend on.
+
+Origin: kailash-py gh #510 + PR #517 (2026-04-19) — conflating primitive-vs-orchestrator inside #508's `drop_confirmation.py` required splitting in #517. Cross-SDK parity with kailash-rs codify (2026-04-19).
+
 ## MUST NOT
 
 - Use `f"..."` or `%` formatting to interpolate a dynamic identifier into DDL

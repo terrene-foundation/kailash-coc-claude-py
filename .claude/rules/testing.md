@@ -261,6 +261,51 @@ tests/
 └── e2e/           # Tier 3: Real everything
 ```
 
+## Test-Skip Triage Decision Tree
+
+Every test that is skipped, xfailed, or deleted MUST be classified into exactly one of the three tiers below. Silent skips, unbounded `@pytest.mark.skip` (or `#[ignore]` in Rust), or empty test bodies pretending to be tests are BLOCKED.
+
+| Tier | When | Action |
+|---|---|---|
+| **ACCEPTABLE** | Missing dep / infra unavailable / platform constraint | Keep skip; reason MUST name the constraint (`@pytest.mark.skipif(not REDIS_AVAILABLE, reason="redis required")`) |
+| **BORDERLINE** | Real library limitation; documenting a known-failing edge case | Convert to `@pytest.mark.xfail(strict=False, reason="...")` — preserves test body, flips green when fixed upstream |
+| **BLOCKED** | "TODO", "needs refactoring", "flaky", "times out", empty body | DELETE the test (and any abandoned fixtures it owned); if the underlying bug matters, file an issue |
+
+```python
+# DO — ACCEPTABLE: infra-conditional skip
+@pytest.mark.skipif(
+    os.environ.get("POSTGRES_TEST_URL") is None,
+    reason="requires POSTGRES_TEST_URL env var",
+)
+def test_real_postgres_round_trip(): ...
+
+# DO — BORDERLINE: convert to xfail with full reason
+@pytest.mark.xfail(
+    strict=False,
+    reason="PG ON CONFLICT does not support multi-column DO UPDATE on partial index",
+)
+def test_partial_index_upsert_conflict(): ...
+
+# DO NOT — BLOCKED: TODO-style silent skip
+@pytest.mark.skip(reason="TODO")
+def test_something(): ...
+
+# DO NOT — BLOCKED: empty body pretending to be a test
+def test_migration_works():
+    pass  # implementation pending
+```
+
+**BLOCKED rationalizations:**
+
+- "It's only one skipped test"
+- "I'll fix the test when I have time"
+- "The test was passing before but now flakes — let me skip it for now"
+- "TODO comments in the skip reason are documentation"
+
+**Why:** Silent skips and empty test bodies inflate the green-test count without exercising any code. The next session reads "5950 tests pass" and concludes the suite is healthy when the actually-tested surface has shrunk. Deletion is the only honest disposition for a test that does not run; xfail is the only honest disposition for a test that documents a real limitation. See `skills/test-skip-discipline/SKILL.md` for the full triage protocol.
+
+Origin: kailash-py gh #512 / PR #518 (2026-04-19) — applied this triage to convert 1 test to xfail (real PG ON CONFLICT limitation), delete 2 TODO-style tests, and delete 6 abandoned test files (`test_migration_path_tester`, `test_model_registry`, `test_edge_dataflow_unit`, `test_dataflow_bug_011_012_unit`, `test_migration_trigger_system`, `test_dataflow_postgresql_parameter_conversion`).
+
 ## Coverage Requirements
 
 | Code Type                            | Minimum |

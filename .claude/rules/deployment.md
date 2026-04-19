@@ -144,3 +144,37 @@ git push origin v2.8.6 dataflow-v2.0.8 kaizen-v2.7.4 nexus-v2.0.2 mcp-v0.2.4
 **Why:** GitHub Actions' `push.tags` webhook delivery has undocumented rate-limiting when multiple tags arrive in a single push event. Batch pushes of 3+ tags fail to trigger the workflow for most (or all) of the tags. The failure is silent — the tags are created successfully, but `publish-pypi.yml` runs never appear in the Actions tab. Recovery requires manual `workflow_dispatch` per package, which is error-prone (must remember every package) and leaves a paper-trail asymmetry. Source: 2026-04-14 release where `git push origin v2.8.6 dataflow-v2.0.8 kaizen-v2.7.4 nexus-v2.0.2 mcp-v0.2.4` triggered zero workflow runs.
 
 Origin: PR #469 (2026-04-14) — validated empirically when the single-tag push of nexus-v2.0.3 auto-triggered correctly while the prior 5-tag batch push triggered zero runs.
+
+## MUST: TestPyPI Trusted-Publisher Registration Is Per-Package
+
+Every package published via PyPI OIDC trusted-publishing MUST be registered as a pending publisher on BOTH `pypi.org` AND `test.pypi.org` separately. TestPyPI registration does NOT carry over from PyPI — they are independent indexes with independent publisher configs.
+
+```yaml
+# DO — register the package on test.pypi.org BEFORE the first
+# workflow_dispatch run with publish_to=testpypi:
+# https://test.pypi.org/manage/account/publishing/
+#
+# Required field values MUST match exactly:
+#   PyPI Project Name:  kailash-ml
+#   Owner:              terrene-foundation
+#   Repository:         kailash-py
+#   Workflow filename:  publish-pypi.yml
+#   Environment name:   testpypi
+
+# DO NOT — assume PyPI registration carries over
+# pypi.org publisher config exists for kailash-ml ✓
+# test.pypi.org publisher config does NOT exist ✗
+# → workflow_dispatch publish_to=testpypi fails:
+#   400 "Non-user identities cannot create new projects"
+```
+
+**BLOCKED rationalizations:**
+
+- "We registered on PyPI, TestPyPI should work"
+- "TestPyPI is just a mirror"
+- "We can register after the first failed run"
+- "The CI error message will explain it"
+
+**Why:** Tag-triggered publishes (`push` of `v*` / `<pkg>-v*`) flow direct to PyPI only and never touch TestPyPI. The TestPyPI path requires `workflow_dispatch` with `publish_to=testpypi`, which requires the project to be pre-registered on test.pypi.org as a pending publisher. Without that one-time UI step, the upload returns `400 "Non-user identities cannot create new projects"` — a confusing error message that costs a release-cycle round-trip. Registration is a one-time UI step per package; document it in the repo's release runbook so the next package release does not re-discover it.
+
+Origin: kailash-py 2026-04-19 release — kailash-ml PyPI publish succeeded via tag push, TestPyPI workflow_dispatch failed with 400 because `kailash_ml` was not pre-registered on test.pypi.org.

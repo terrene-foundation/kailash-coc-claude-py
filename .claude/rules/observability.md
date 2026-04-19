@@ -276,6 +276,48 @@ logger.warning(
 
 Origin: Red team review of PR #430 (2026-04-12) flagged `packages/kailash-dataflow/src/dataflow/classification/policy.py::ClassificationPolicy.classify` emitting field names at WARN. Downgraded to DEBUG in commit 62d64ac7.
 
+### 9. Never Pass Reserved Logger Attribute Names Via Structured-Field Kwargs
+
+Structured loggers reserve attribute names that the logging framework itself owns (the source module, the source filename, the level number, the thread name, etc.). Passing one of those names as a structured field kwarg raises a typed error in some configurations and silently overwrites the framework attribute in others — both fail modes corrupt log triage.
+
+Python `logging.LogRecord` reserves: `msg`, `args`, `module`, `exc_info`, `exc_text`, `stack_info`, `pathname`, `filename`, `name`, `levelname`, `levelno`, `lineno`, `funcName`, `created`, `msecs`, `relativeCreated`, `thread`, `threadName`, `processName`, `process`. Passing any via `extra={}` raises `KeyError: "Attempt to overwrite 'X' in LogRecord"` when mixed with certain logging configurations. Rust `tracing` has the same hazard for fields that collide with span metadata (`target`, `level`, `name`, `module_path`, `file`, `line`).
+
+```python
+# DO — domain-prefixed field name
+logger.info(
+    "estimator.loaded",
+    extra={"estimator_module": module_name, "estimator_class": class_name},
+)
+
+# DO NOT — collides with LogRecord.module
+logger.info(
+    "estimator.loaded",
+    extra={"module": module_name, "class": class_name},
+)
+# → KeyError: "Attempt to overwrite 'module' in LogRecord"
+# Non-deterministic: may pass when run in isolation, fail when mixed
+# with framework-configured logging (kaizen, structlog, etc.)
+```
+
+```rust
+// DO — domain-prefixed field name (Rust tracing)
+tracing::info!(estimator_module = %m, estimator_class = %c, "estimator.loaded");
+
+// DO NOT — collides with span's module_path
+tracing::info!(module = %m, "estimator.loaded");
+```
+
+**BLOCKED rationalizations:**
+
+- "It worked when I ran the test in isolation"
+- "The CI passes, so the collision doesn't matter here"
+- "Other modules use `module` as a field name too"
+- "The framework warning is non-fatal"
+
+**Why:** Non-deterministic test failures (passes when isolated, fails when mixed with framework-configured logging) are the worst class of test signal — they teach the operator that the test runner is unreliable, not that the code has a real bug. Domain prefixing (`estimator_module`, `query_module`, `agent_module`) is a one-token-cost permanent fix; the alternative is a recurring incident every time a new logging configuration ships.
+
+Origin: kailash-py PR #506 shipped this bug; caught by round-2 redteam; fixed in #509 hotfix (commit 717516f5). Cross-language equivalent applies to Rust `tracing` field collisions and any structured logger that reserves framework attributes.
+
 ## MUST NOT
 
 - **No log-and-continue on caught exceptions without action.** If you catch an exception, log it AND either retry, fall back, or re-raise. `logger.error(...); pass` is BLOCKED — same class as `except: pass` in `rules/zero-tolerance.md` Rule 3. **Exception:** hooks and cleanup paths where failure is expected — log at WARN and continue, same carve-out as `zero-tolerance.md` Rule 3.

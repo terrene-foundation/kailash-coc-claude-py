@@ -62,11 +62,92 @@ def test_trust_executor_returns_redacted_plan():
 
 **Why:** Unit tests prove the orphan implements its API. Integration tests prove the framework actually calls the orphan.
 
+#### 2a. Crypto-Pair Round-Trip MUST Be Tested Through The Facade
+
+Crypto wrappers that expose paired operations (`encrypt` / `decrypt`, `sign` / `verify`, `seal` / `unseal`, `wrap_key` / `unwrap_key`) have the same "framework never round-trips" failure mode as manager classes. If `encrypt()` is tested in isolation and `decrypt()` is tested in isolation, the pair can drift — `encrypt` uses AES-256-GCM while `decrypt` uses AES-256-CBC, or `sign` uses SHA-256 while `verify` uses SHA-1 — and both unit tests still pass because each test mocks the other half.
+
+Every crypto pair exposed on a framework facade MUST have at least one Tier 2 integration test that round-trips through the facade: call `encrypt()`, take its output, feed it to `decrypt()`, assert the decrypted value equals the original plaintext.
+
+```python
+# DO — round-trip test through the facade
+@pytest.mark.integration
+async def test_crypto_service_encrypt_decrypt_round_trip(test_suite):
+    db = DataFlow(test_suite.config.url)
+    plaintext = b"sensitive payload"
+    encrypted = db.crypto.encrypt(plaintext)
+    assert encrypted != plaintext  # sanity: something changed
+    decrypted = db.crypto.decrypt(encrypted)
+    assert decrypted == plaintext  # round-trip holds
+
+@pytest.mark.integration
+async def test_crypto_service_sign_verify_round_trip(test_suite):
+    db = DataFlow(test_suite.config.url)
+    message = b"audit row #42"
+    signature = db.crypto.sign(message)
+    assert db.crypto.verify(message, signature) is True
+    assert db.crypto.verify(b"tampered", signature) is False
+
+# DO NOT — two separate unit tests that mock each other's half
+def test_encrypt_produces_ciphertext():
+    crypto = CryptoService(algo="AES-256-GCM")
+    assert crypto.encrypt(b"x") != b"x"
+
+def test_decrypt_reverses_ciphertext():
+    crypto = CryptoService(algo="AES-256-CBC")  # drift — GCM vs CBC
+    ciphertext = b"\x00" * 32  # hand-crafted, not produced by encrypt()
+    crypto.decrypt(ciphertext)  # passes because the test invented the ciphertext
+# ↑ both tests pass forever; the pair never round-trips in production
+```
+
+**Why:** Crypto pairs are the manager-pattern at a smaller scale — each half is a dependency of the other, but the dependency is invisible to isolated tests. The failure modes are identical to the Phase 5.11 orphan: each side works in isolation, the pair never round-trips in production, the security contract is silently broken. Tier 2 round-trip tests are the only structural defense; no amount of Tier 1 coverage catches "encrypt uses GCM, decrypt uses CBC."
+
 ### 3. Removed = Deleted, Not Deprecated
 
 If a manager is found to be an orphan and the team decides not to wire it, it MUST be deleted from the public surface in the same PR — not marked deprecated, not left behind a feature flag, not commented out. Orphans-with-warnings still mislead downstream consumers about the framework's contract.
 
 **Why:** Deprecation banners are easy to miss; consumers continue importing the symbol and silently shipping insecure code. Deletion is the only signal that survives a `pip install kailash --upgrade`.
+
+### 4. API Removal MUST Sweep Tests In The Same PR
+
+Any PR that removes a public symbol (module, class, function, attribute) MUST delete or port the tests that import it, in the same commit. Test files that reference the removed symbol become orphans — they fail at `pytest --collect-only` with `ModuleNotFoundError` / `ImportError`, which blocks every subsequent test run.
+
+```python
+# DO — remove the API and its tests in one commit
+# git show <sha>:
+# D  src/pkg/legacy_module.py
+# D  tests/integration/test_legacy_module.py
+# D  tests/e2e/test_legacy_module_e2e.py
+
+# DO NOT — remove the API, leave the tests
+# git show <sha>:
+# D  src/pkg/legacy_module.py
+# (test files still import pkg.legacy_module, collection fails on next run)
+```
+
+**BLOCKED rationalizations:**
+
+- "The tests will be cleaned up in a follow-up PR"
+- "CI doesn't run those tests anyway"
+- "The tests are obsolete; they don't need to move"
+- "Integration tier is separate scope"
+- "`pytest --collect-only` isn't part of CI"
+
+**Why:** Test files that fail at collection block the ENTIRE suite from running, not just themselves. One orphan test import takes down the 100 tests collected after it. Evidence: kailash-py commits `d3e7e0ef` + `5edc941f` deleted 9 orphan test files left behind by the DataFlow 2.0 refactor (`53dab715`) — integration collection had been failing since that refactor landed, but nobody noticed because the collection error was buried in the middle of a log.
+
+### 5. Collect-Only Is A Merge Gate
+
+`pytest --collect-only` across every test directory MUST return exit 0 before any PR merges. A collection error is a blocker in the same class as a test failure, regardless of which test file contains the error.
+
+```bash
+# DO — gate in CI, pre-commit, or /redteam
+.venv/bin/python -m pytest --collect-only tests/ packages/*/tests/
+# exit 0 required
+
+# DO NOT — "we only run unit tests in CI, integration is manual"
+# (unit tests pass, integration collection is silently red for months)
+```
+
+**Why:** Collection failures are invisible in "unit-only CI" setups yet become merge-blocking the moment someone runs the full suite locally. The only way to keep the full suite runnable is to gate every PR on collect-only-green.
 
 ## MUST NOT
 
@@ -89,6 +170,7 @@ When auditing for orphans, run this protocol against every class exposed on the 
 1. **Surface scan** — list every property, method, and attribute on the framework's top-level class that returns a `*Manager` / `*Executor` / `*Store` / `*Registry` / `*Engine` / `*Service`.
 2. **Hot-path grep** — for each candidate, grep the framework's source (NOT tests, NOT downstream consumers) for calls into the class's methods. Zero matches in the hot path = orphan.
 3. **Tier 2 grep** — for each non-orphan, grep `tests/integration/` and `tests/e2e/` for the class name. Zero matches = unverified wiring.
-4. **Disposition** — every orphan and every unverified wiring MUST be either fixed (wire + test) or deleted (remove from public surface).
+4. **Collect-only sweep** — run `.venv/bin/python -m pytest --collect-only tests/ packages/*/tests/`. Every `ERROR <path>` / `ModuleNotFoundError` / `ImportError` at collection is a test-orphan. Disposition: delete the orphan test file (if the API is gone) or port its imports (if the API moved).
+5. **Disposition** — every orphan and every unverified wiring MUST be either fixed (wire + test) or deleted (remove from public surface).
 
 This protocol runs as part of `/redteam` and `/codify`.

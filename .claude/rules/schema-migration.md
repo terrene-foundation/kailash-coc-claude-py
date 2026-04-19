@@ -78,6 +78,36 @@ def downgrade(conn):
 
 **Why:** Migrations are deployed, and deployed code rolls back. Without `downgrade()`, a failed deploy cannot return to a known-good schema and the system is stuck mid-migration with neither old nor new code able to run.
 
+### 3a. Destructive `downgrade()` MUST Require `force_drop=True`
+
+Any `downgrade()` that executes DROP TABLE, DROP COLUMN, DROP INDEX, DROP SCHEMA, or an equivalent destructive DDL MUST accept a keyword-only `force_drop: bool = False` parameter AND refuse to run when `force_drop` is False. The default MUST be refusal; callers acknowledge data loss by passing `force_drop=True` explicitly. This mirrors `rules/dataflow-identifier-safety.md` § 4 DROP-refusal rule for runtime DDL.
+
+```python
+# DO — explicit confirmation required for destructive downgrade
+def downgrade(conn, *, force_drop: bool = False):
+    if not force_drop:
+        raise DropRefusedError(
+            "downgrade() refused — pass force_drop=True to acknowledge that "
+            "rolling back this migration will DROP TABLE archived_events, "
+            "destroying every row irreversibly"
+        )
+    conn.execute("DROP TABLE archived_events")
+
+# DO NOT — destructive downgrade with no gate
+def downgrade(conn):
+    conn.execute("DROP TABLE archived_events")  # one CI retry deletes production history
+```
+
+**BLOCKED rationalizations:**
+
+- "downgrade() is only called in recovery, no flag needed"
+- "The integration test needs to call downgrade() often — force_drop would clutter every test"
+- "The caller knows what they're doing, the flag is redundant"
+- "Alembic / Django / sqlx doesn't require this, so we shouldn't either"
+- "The CI pipeline already has a confirmation step"
+
+**Why:** `downgrade()` runs in exactly the worst moments — failed deploys, hotfix rollbacks, CI retries on a broken pipeline. The session that invokes `downgrade()` is under time pressure and already one mistake deep. A `force_drop=True` flag is the last structural gate between a typo and unrecoverable data loss. Tests that "need" the flag set it explicitly (`downgrade(conn, force_drop=True)`) — that is the documented contract, not clutter.
+
 ### 4. Migration Files Are Append-Only
 
 Once a migration file is committed to a shared branch, it MUST NOT be edited. Mistakes are corrected by adding a new migration that reverses or supersedes the prior one.

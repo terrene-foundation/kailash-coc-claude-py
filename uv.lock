@@ -2407,7 +2407,7 @@ wheels = [
 
 [[package]]
 name = "kailash"
-version = "2.8.6"
+version = "2.8.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -2446,9 +2446,9 @@ dependencies = [
     { name = "sqlalchemy" },
     { name = "uvicorn", extra = ["standard"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6e/7a/65a89bee56eb5edc64814f9f2c4f0faa818fa93dba4f545726025c0c50ed/kailash-2.8.6.tar.gz", hash = "sha256:08424f3e16a8b34e3032ae6787383388908726403d5ce7c320def0629aa0d364", size = 2402324, upload-time = "2026-04-14T14:00:08.714Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cb/6c/0cf5000c8d7a7a1e64a32a202fc9a7c3411ebb43eea432f7b3d7a8cd2d60/kailash-2.8.7.tar.gz", hash = "sha256:fc0a8d09e22849339249e3dc4e9951823c95ab9595c770e72dfefc28726142a8", size = 2409001, upload-time = "2026-04-19T06:32:49.093Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/48/41/ca1b0c4a878e32cbad7ad963da79444d09b0aa139dce040d295b72145e34/kailash-2.8.6-py3-none-any.whl", hash = "sha256:b5360acdc790c6407df4de0fcc559e49a1c50ac16f208a3768283e4640deff74", size = 2784845, upload-time = "2026-04-14T14:00:06.663Z" },
+    { url = "https://files.pythonhosted.org/packages/1d/30/8dcf786d812a03e5d4bafb7dd66bfbd132d7bf78e2172306553499ae3f1e/kailash-2.8.7-py3-none-any.whl", hash = "sha256:21c10569ff85c39f2fbe78ff9ff98fed4f32cf06ff57001760009512481c3fd1", size = 2791902, upload-time = "2026-04-19T06:32:47.034Z" },
 ]
 
 [[package]]
@@ -2483,7 +2483,7 @@ all = [
 
 [[package]]
 name = "kailash-dataflow"
-version = "2.0.8"
+version = "2.0.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiomysql" },
@@ -2509,12 +2509,12 @@ dependencies = [
     { name = "uvicorn", extra = ["standard"] },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b6/4f/ee1caa6fc2f1d285bc4dc4ab24c7cd0aafb7404197a7bb59085e7ccfbd38/kailash_dataflow-2.0.8-py3-none-any.whl", hash = "sha256:25fa5a1d37224945b2c6c3ec33d7b0f56e975d8909b3ad09a54ed97e33bb78e3", size = 1189203, upload-time = "2026-04-14T14:00:05.134Z" },
+    { url = "https://files.pythonhosted.org/packages/38/7d/408d9b8c4d7656ca319e1c23a6602c5d286c30cd551e6bbe36662ad1f2b5/kailash_dataflow-2.0.10-py3-none-any.whl", hash = "sha256:df891fbdd9f7face083c73f0359a1702bb78c540f58b3ed880a1769a09b11bec", size = 1197924, upload-time = "2026-04-19T06:32:46.548Z" },
 ]
 
 [[package]]
 name = "kailash-kaizen"
-version = "2.7.4"
+version = "2.7.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -2529,6 +2529,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "gitpython" },
     { name = "google-genai" },
+    { name = "httpx" },
     { name = "kailash" },
     { name = "kailash-mcp" },
     { name = "numpy" },
@@ -2547,12 +2548,12 @@ dependencies = [
     { name = "uvicorn", extra = ["standard"] },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/79/5d/1c16a8429cabefdc4fd3c663ff361a370fc7d1aa0cad3162eef61fbfa047/kailash_kaizen-2.7.4-py3-none-any.whl", hash = "sha256:5b7934eb0943a11a17967f8e09083fafd3c17c1eddd7a8a13afd0af320c9ddbf", size = 1352091, upload-time = "2026-04-14T14:00:19.877Z" },
+    { url = "https://files.pythonhosted.org/packages/39/02/a062073179e0bf30dbf9cff427189820a594b2645248fcbdd4829cc09e53/kailash_kaizen-2.7.5-py3-none-any.whl", hash = "sha256:d49ef1945de5bac4a6bbd038e1ffed9db36bfda30872aa6ef38aad86d40b44ec", size = 1452916, upload-time = "2026-04-19T06:32:44.989Z" },
 ]
 
 [[package]]
 name = "kailash-mcp"
-version = "0.2.4"
+version = "0.2.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "kailash" },
@@ -2560,18 +2561,19 @@ dependencies = [
     { name = "pydantic" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8f/41/eb2a1d034867fb82ab26c400c2b2ba9ac655e5767ae46854eef92438cb51/kailash_mcp-0.2.4-py3-none-any.whl", hash = "sha256:0970f23f9480d810baa34863a062ec3b5ff6f990927a92544256c6dc04a5eb62", size = 178236, upload-time = "2026-04-14T14:20:43.416Z" },
+    { url = "https://files.pythonhosted.org/packages/f6/43/c5118a43522ffb86d36284150f01fe9796452771762e85daea221ff89d09/kailash_mcp-0.2.5-py3-none-any.whl", hash = "sha256:af0473f31928f45f8a0ec4aeeaa3e73a81e14bb0c6978715a1bd2070234fbf8f", size = 179401, upload-time = "2026-04-19T06:33:06.589Z" },
 ]
 
 [[package]]
 name = "kailash-ml"
-version = "0.9.0"
+version = "0.10.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "kailash" },
     { name = "kailash-dataflow" },
     { name = "kailash-nexus" },
     { name = "lightgbm" },
+    { name = "lightning" },
     { name = "numpy" },
     { name = "onnxmltools" },
     { name = "onnxruntime" },
@@ -2581,14 +2583,16 @@ dependencies = [
     { name = "scikit-learn" },
     { name = "scipy" },
     { name = "skl2onnx" },
+    { name = "torch" },
+    { name = "xgboost" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c4/49/80525b98e1a15d1fe3b8997d74910c394e62aa1ec2950c5dd15df2552ec3/kailash_ml-0.9.0-py3-none-any.whl", hash = "sha256:a1d406e62b288cd81c7ebfa3af57be0871a163e7b6b342053897405f8c3fa9bc", size = 185497, upload-time = "2026-04-12T10:09:34.401Z" },
+    { url = "https://files.pythonhosted.org/packages/7a/3b/e34fb655fc8307ebd63e3bb862b92302218eb50516803f43d953d7bbef14/kailash_ml-0.10.0-py3-none-any.whl", hash = "sha256:a2281a4c94781483f66f2347515e12622ccee830e4740340136f484888a3af86", size = 224421, upload-time = "2026-04-19T06:32:54.665Z" },
 ]
 
 [[package]]
 name = "kailash-nexus"
-version = "2.0.3"
+version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fastapi" },
@@ -2599,7 +2603,7 @@ dependencies = [
     { name = "websockets" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/40/689d160b2780695b41f33bb2945060cb7a225ffd7dedc80001fb47416368/kailash_nexus-2.0.3-py3-none-any.whl", hash = "sha256:3335703a18cacb3c7ede04311b7965e70a33b9e1893ca5fb2b049018c9a694ce", size = 203431, upload-time = "2026-04-14T14:34:26.423Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/a9/e4a83bff94eb87b1717841fd0801677729ef6ee84179641656ffcc46658d/kailash_nexus-2.1.0-py3-none-any.whl", hash = "sha256:236165d814ace9a096592a0078a8d488bf138d9c59ec2c225970590a8dc005b3", size = 229268, upload-time = "2026-04-19T06:32:59.488Z" },
 ]
 
 [[package]]
@@ -2733,6 +2737,39 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/64/41/4fbde2c3d29e25ee7c41d87df2f2e5eda65b431ee154d4d462c31041846c/lightgbm-4.6.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:4d68712bbd2b57a0b14390cbf9376c1d5ed773fa2e71e099cac588703b590336", size = 3454567, upload-time = "2025-02-15T04:02:56.443Z" },
     { url = "https://files.pythonhosted.org/packages/42/86/dabda8fbcb1b00bcfb0003c3776e8ade1aa7b413dff0a2c08f457dace22f/lightgbm-4.6.0-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:cb19b5afea55b5b61cbb2131095f50538bd608a00655f23ad5d25ae3e3bf1c8d", size = 3569831, upload-time = "2025-02-15T04:02:58.925Z" },
     { url = "https://files.pythonhosted.org/packages/5e/23/f8b28ca248bb629b9e08f877dd2965d1994e1674a03d67cd10c5246da248/lightgbm-4.6.0-py3-none-win_amd64.whl", hash = "sha256:37089ee95664b6550a7189d887dbf098e3eadab03537e411f52c63c121e3ba4b", size = 1451509, upload-time = "2025-02-15T04:03:01.515Z" },
+]
+
+[[package]]
+name = "lightning"
+version = "2.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fsspec", extra = ["http"] },
+    { name = "lightning-utilities" },
+    { name = "packaging" },
+    { name = "pytorch-lightning" },
+    { name = "pyyaml" },
+    { name = "torch" },
+    { name = "torchmetrics" },
+    { name = "tqdm" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/15/ad/a1c91a795521be252209d45fb080f28a4f1e7244d3b37121fcc6e3e43034/lightning-2.6.1.tar.gz", hash = "sha256:859104b98c61add6fe60d0c623abf749baf25f2950a66ebdfb4bd18aa7decba9", size = 663175, upload-time = "2026-01-30T14:59:13.92Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4a/6d/42640e15a8c34b57dc7ea922152440c0c6692214a08d5282b6e3eb46ddf4/lightning-2.6.1-py3-none-any.whl", hash = "sha256:30e1adac23004c713663928541bd72ecb1371b7abc9aff9f46b7fd2644988d30", size = 853631, upload-time = "2026-01-30T14:59:11.687Z" },
+]
+
+[[package]]
+name = "lightning-utilities"
+version = "0.15.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f1/45/7fa8f56b17dc0f0a41ec70dd307ecd6787254483549843bef4c30ab5adce/lightning_utilities-0.15.3.tar.gz", hash = "sha256:792ae0204c79f6859721ac7f386c237a33b0ed06ba775009cb894e010a842033", size = 33553, upload-time = "2026-02-22T14:48:53.348Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/25/f4/ead6e0e37209b07c9baa3e984ccdb0348ca370b77cea3aaea8ddbb097e00/lightning_utilities-0.15.3-py3-none-any.whl", hash = "sha256:6c55f1bee70084a1cbeaa41ada96e4b3a0fea5909e844dd335bd80f5a73c5f91", size = 31906, upload-time = "2026-02-22T14:48:52.488Z" },
 ]
 
 [[package]]
@@ -3473,14 +3510,14 @@ requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=23.0" },
     { name = "detect-secrets", marker = "extra == 'dev'", specifier = ">=1.5.0" },
     { name = "isort", marker = "extra == 'dev'", specifier = ">=5.12.0" },
-    { name = "kailash", specifier = ">=2.8.6" },
+    { name = "kailash", specifier = ">=2.8.7" },
     { name = "kailash-align", marker = "extra == 'align'", specifier = ">=0.3.1" },
     { name = "kailash-align", extras = ["all"], marker = "extra == 'all'", specifier = ">=0.3.1" },
-    { name = "kailash-dataflow", specifier = ">=2.0.8" },
-    { name = "kailash-kaizen", specifier = ">=2.7.4" },
-    { name = "kailash-mcp", specifier = ">=0.2.4" },
-    { name = "kailash-ml", specifier = ">=0.9.0" },
-    { name = "kailash-nexus", specifier = ">=2.0.3" },
+    { name = "kailash-dataflow", specifier = ">=2.0.10" },
+    { name = "kailash-kaizen", specifier = ">=2.7.5" },
+    { name = "kailash-mcp", specifier = ">=0.2.5" },
+    { name = "kailash-ml", specifier = ">=0.10.0" },
+    { name = "kailash-nexus", specifier = ">=2.1.0" },
     { name = "kailash-pact", specifier = ">=0.8.1" },
     { name = "kaizen-agents", specifier = ">=0.9.2" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0" },
@@ -3865,6 +3902,7 @@ name = "nvidia-nccl-cu12"
 version = "2.27.5"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
+    { url = "https://files.pythonhosted.org/packages/bb/1c/857979db0ef194ca5e21478a0612bcdbbe59458d7694361882279947b349/nvidia_nccl_cu12-2.27.5-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:31432ad4d1fb1004eb0c56203dc9bc2178a1ba69d1d9e02d64a6938ab5e40e7a", size = 322400625, upload-time = "2025-06-26T04:11:04.496Z" },
     { url = "https://files.pythonhosted.org/packages/6e/89/f7a07dc961b60645dbbf42e80f2bc85ade7feb9a491b11a1e973aa00071f/nvidia_nccl_cu12-2.27.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:ad730cf15cb5d25fe849c6e6ca9eb5b76db16a80f13f425ac68d8e2e55624457", size = 322348229, upload-time = "2025-06-26T04:11:28.385Z" },
 ]
 
@@ -5512,6 +5550,25 @@ wheels = [
 ]
 
 [[package]]
+name = "pytorch-lightning"
+version = "2.6.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fsspec", extra = ["http"] },
+    { name = "lightning-utilities" },
+    { name = "packaging" },
+    { name = "pyyaml" },
+    { name = "torch" },
+    { name = "torchmetrics" },
+    { name = "tqdm" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8b/ac/ebd5f6f58691cbd4f73836e43e1727f3814311b960c41f88e259606ca2b2/pytorch_lightning-2.6.1.tar.gz", hash = "sha256:ba08f8901cf226fcca473046ad9346f414e99117762dc869c76e650d5b3d7bdc", size = 665563, upload-time = "2026-01-30T14:59:11.636Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0e/93/c8c361bf0a2fe50f828f32def460e8b8a14b93955d3fd302b1a9b63b19e4/pytorch_lightning-2.6.1-py3-none-any.whl", hash = "sha256:1f8118567ec829e3055f16cf1aa320883a86a47c836951bfd9dcfa34ec7ffd59", size = 857273, upload-time = "2026-01-30T14:59:10.141Z" },
+]
+
+[[package]]
 name = "pytz"
 version = "2026.1.post1"
 source = { registry = "https://pypi.org/simple" }
@@ -6933,6 +6990,21 @@ wheels = [
 ]
 
 [[package]]
+name = "torchmetrics"
+version = "1.9.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "lightning-utilities" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "torch" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/81/34/39b8b749333db56c0585d7a11fa62a283c087bb1dfc897d69fb8cedbefb1/torchmetrics-1.9.0.tar.gz", hash = "sha256:a488609948600df52d3db4fcdab02e62aab2a85ef34da67037dc3e65b8512faa", size = 581765, upload-time = "2026-03-09T17:41:22.443Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c3/a2/c7f6ebf546f8f644edf0f999aa98ece106986a77a7b922316bf6414ff825/torchmetrics-1.9.0-py3-none-any.whl", hash = "sha256:bfdcbff3dd1d96b3374bb2496eb39f23c4b28b8a845b6a18c313688e0d2d9ca1", size = 983384, upload-time = "2026-03-09T17:41:19.756Z" },
+]
+
+[[package]]
 name = "torchvision"
 version = "0.25.0"
 source = { registry = "https://pypi.org/simple" }
@@ -7514,6 +7586,24 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/82/dd/e5176e4b241c9f528402cebb238a36785a628179d7d8b71091154b3e4c9e/wrapt-2.1.2-cp314-cp314t-win_amd64.whl", hash = "sha256:08ffa54146a7559f5b8df4b289b46d963a8e74ed16ba3687f99896101a3990c5", size = 63969, upload-time = "2026-03-06T02:54:39Z" },
     { url = "https://files.pythonhosted.org/packages/5c/99/79f17046cf67e4a95b9987ea129632ba8bcec0bc81f3fb3d19bdb0bd60cd/wrapt-2.1.2-cp314-cp314t-win_arm64.whl", hash = "sha256:72aaa9d0d8e4ed0e2e98019cea47a21f823c9dd4b43c7b77bba6679ffcca6a00", size = 60554, upload-time = "2026-03-06T02:53:14.132Z" },
     { url = "https://files.pythonhosted.org/packages/1a/c7/8528ac2dfa2c1e6708f647df7ae144ead13f0a31146f43c7264b4942bf12/wrapt-2.1.2-py3-none-any.whl", hash = "sha256:b8fd6fa2b2c4e7621808f8c62e8317f4aae56e59721ad933bac5239d913cf0e8", size = 43993, upload-time = "2026-03-06T02:53:12.905Z" },
+]
+
+[[package]]
+name = "xgboost"
+version = "3.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "nvidia-nccl-cu12", marker = "sys_platform == 'linux'" },
+    { name = "scipy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/91/bb/1eb0242409d22db725d7a88088e6cfd6556829fb0736f9ff69aa9f1e9455/xgboost-3.2.0.tar.gz", hash = "sha256:99b0e9a2a64896cdaf509c5e46372d336c692406646d20f2af505003c0c5d70d", size = 1263936, upload-time = "2026-02-10T11:03:05.542Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2d/49/6e4cdd877c24adf56cb3586bc96d93d4dcd780b5ea1efb32e1ee0de08bae/xgboost-3.2.0-py3-none-macosx_10_15_x86_64.whl", hash = "sha256:2f661966d3e322536d9c448090a870fcba1e32ee5760c10b7c46bac7a342079a", size = 2507014, upload-time = "2026-02-10T10:50:57.44Z" },
+    { url = "https://files.pythonhosted.org/packages/93/f1/c09ef1add609453aa3ba5bafcd0d1c1a805c1263c0b60138ec968f8ec296/xgboost-3.2.0-py3-none-macosx_12_0_arm64.whl", hash = "sha256:eabbd40d474b8dbf6cb3536325f9150b9e6f0db32d18de9914fb3227d0bef5b7", size = 2328527, upload-time = "2026-02-10T10:51:17.502Z" },
+    { url = "https://files.pythonhosted.org/packages/96/9f/d9914a7b8df842832850b1a18e5f47aaa071c217cdd1da2ae9deb291018b/xgboost-3.2.0-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:852eabc6d3b3702a59bf78dbfdcd1cb9c4d3a3b6e5ed1f8781d8b9512354fdd2", size = 131100954, upload-time = "2026-02-10T11:02:42.704Z" },
+    { url = "https://files.pythonhosted.org/packages/79/98/679de17c2caa4fd3b0b4386ecf7377301702cb0afb22930a07c142fcb1d8/xgboost-3.2.0-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:99b4a6bbcb47212fec5cf5fbe12347215f073c08967431b0122cfbd1ee70312c", size = 131748579, upload-time = "2026-02-10T10:54:40.424Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/3d/1661dd114a914a67e3f7ab66fa1382e7599c2a8c340f314ad30a3e2b4d08/xgboost-3.2.0-py3-none-win_amd64.whl", hash = "sha256:0d169736fd836fc13646c7ab787167b3a8110351c2c6bc770c755ee1618f0442", size = 101681668, upload-time = "2026-02-10T10:59:31.202Z" },
 ]
 
 [[package]]

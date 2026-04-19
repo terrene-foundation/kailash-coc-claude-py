@@ -171,7 +171,107 @@ def get_cache_client():
 
 This exception aligns with `infrastructure-sql.md` Rule 8 (lazy driver imports). The principle: optional dependencies are fine; silent degradation is not.
 
-### Verification step
+## Declared = Gated Consistently — Optional Dependencies + Feature Gates
+
+When a package declares an optional dependency behind a feature (Rust `[features]`, Python `[project.optional-dependencies]`, npm `peerDependencies`, Ruby bundler groups), every module that imports from that optional dep MUST be gated with the SAME feature name, AND every downstream feature that imports symbols FROM that module MUST transitively require the same feature.
+
+The failure mode is invisible under default features (where the feature is always on) and only surfaces when a narrow feature subset is built — `cargo doc --no-default-features`, `pip install pkg` without an extra, `npm install --omit=optional`. By that time the gap is a full matrix rebuild away. The two-point fix (module gate + downstream feature imply) is the only structural defense.
+
+### MUST: Module Gate Matches Optional-Dep Gate
+
+Every module that does `use optional_dep::` (Rust) / `import optional_pkg` at module-scope (Python) MUST be declared with the matching feature / extra gate.
+
+```rust
+// DO — Rust: module gate matches dep gate
+// Cargo.toml: kaizen-agents = { optional = true }
+//             [features] orchestration = ["dep:kaizen-agents"]
+#[cfg(feature = "orchestration")]
+pub mod kaizen;   // kaizen/*.rs uses `kaizen_agents::`
+
+// DO NOT — Rust: module ungated while its imports require the feature
+pub mod kaizen;   // `use kaizen_agents::...` inside fails under --no-default-features
+```
+
+```python
+# DO — Python: module-scope imports gated at the package-extras boundary
+# pyproject.toml: [project.optional-dependencies]
+#                 redis = ["redis>=5.0"]
+# src/kailash/cache/redis_backend.py — only imported by code-paths that check for the extra
+try:
+    import redis
+except ImportError:
+    redis = None
+
+def get_redis_client(url: str):
+    if redis is None:
+        raise ImportError("redis backend requires the [redis] extra: pip install kailash[redis]")
+    return redis.Redis.from_url(url)
+
+# DO NOT — Python: module-scope import of an optional extra at package __init__
+# src/kailash/__init__.py
+import redis   # ImportError on `pip install kailash` without [redis]; package unimportable
+```
+
+**BLOCKED rationalizations:**
+
+- "The default feature is always on in production, so the narrow build never happens"
+- "`cargo doc --no-default-features` is a CI concern, not a code concern"
+- "The extra is 'required-recommended', everyone installs it"
+- "We'll add the gate when someone reports it"
+
+**Why:** The optional-dep contract promises that a narrow build works. A single ungated module voids that contract silently — CI catches it the day someone runs `--no-default-features` and finds 7 unrelated-looking compile errors. Evidence: kailash-rs#417 (2026-04-19) — 3 bindings, 7 compile errors on `--no-default-features`, fixed by gating the modules to match the deps.
+
+### MUST: Downstream Feature Transitively Enables Required Feature
+
+When a downstream feature imports symbols from a module gated by `feature = "X"`, the downstream feature MUST declare `"X"` in its dependency list. Leaving it off makes `--features downstream` unbuildable under `--no-default-features`.
+
+```toml
+# DO — Rust: downstream feature enables the transitively-required feature
+[features]
+orchestration = ["dep:kaizen-agents"]
+kailash_kaizen_llm_deployment = ["orchestration", "kailash-kaizen/..."]
+
+# DO NOT — Rust: leaves --features kailash_kaizen_llm_deployment unbuildable
+# on --no-default-features
+[features]
+kailash_kaizen_llm_deployment = ["kailash-kaizen/..."]
+```
+
+```toml
+# DO — Python: downstream extra implies upstream extras
+[project.optional-dependencies]
+redis  = ["redis>=5.0"]
+cache  = ["kailash[redis]"]            # cache imports from the redis-gated module → depend on [redis]
+full   = ["kailash[redis,cache]"]
+
+# DO NOT — Python: downstream extra skips the implied extra
+cache  = ["orjson>=3.0"]                # cache imports redis_backend but doesn't require [redis]
+```
+
+**Why:** A downstream feature that imports from a gated module but doesn't imply the gate ships a permanently broken feature combination. Consumers who enable only the narrow feature hit the same compile errors the default build hides.
+
+### Audit
+
+Mechanical grep at `/redteam` and `/codify` time:
+
+```bash
+# Rust — bindings / crates that `use <optional_dep>::` without a matching #[cfg]
+rg 'use (kaizen_agents|kailash_align_serving|kailash_ml)::' crates/ bindings/ -l \
+  | xargs grep -L '#\[cfg(feature'
+
+# Python — module-scope imports of declared optional extras
+# (top-level import of an optional_extra package in a non-optional module is BLOCKED)
+for extra_pkg in redis psycopg2 asyncpg prometheus_client; do
+  rg "^import $extra_pkg\b|^from $extra_pkg " src/ packages/ \
+    --glob '!**/optional/**' --glob '!**/backends/**' -l
+done
+```
+
+Any match is a HIGH finding.
+
+Origin: kailash-rs#417 (2026-04-19) — 3 bindings, 7 `--no-default-features` compile errors. Fix commit `d04c098a`. Journal: `workspaces/binding-parity/journal/0038-DISCOVERY-binding-feature-gate-consistency.md`.
+
+## Verification Step (All Dependencies)
 
 Before `/redteam` and `/deploy`, run the project's dependency resolver as a verification step:
 

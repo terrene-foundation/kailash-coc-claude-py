@@ -24,11 +24,26 @@ Single-tenant models keep the simpler form:
 # DO — tenant in the key
 key = f"dataflow:v1:{tenant_id}:{model}:{op}:{params_hash}"
 
+# DO — tenant STAYS in the key even when the secondary key is a per-tenant-unique UUID
+# (Anti-optimization: future secondary-key change could collide; the tenant dimension
+# is defense-in-depth against that future refactor.)
+key = f"dataflow:v1:{tenant_id}:Document:{uuid}"  # keep tenant_id even though uuid is unique
+
 # DO NOT — tenant absent
 key = f"dataflow:v1:{model}:{op}:{params_hash}"  # leaks across tenants
+
+# DO NOT — drop tenant "because the UUID is already unique"
+key = f"dataflow:v1:Document:{uuid}"  # saves 36 bytes, adds a CVE-class hazard
 ```
 
-**Why:** Two tenants with overlapping primary keys (UUID collisions are rare but document IDs, user IDs, slugs, and natural keys are not) will read each other's cached records when the cache key doesn't distinguish them.
+**BLOCKED rationalizations:**
+
+- "The UUID is already unique across tenants, so tenant_id is redundant"
+- "We can save 36 bytes per key by dropping tenant_id from UUID-keyed entries"
+- "UUIDv7 / UUIDv4 collision probability is negligible"
+- "The migration from UUID to natural key is unlikely"
+
+**Why:** Two tenants with overlapping primary keys (UUID collisions are rare but document IDs, user IDs, slugs, and natural keys are not) will read each other's cached records when the cache key doesn't distinguish them. The UUID-is-unique optimization destroys the defense against a future schema change that replaces the UUID with a tenant-local identifier (slug, sequence, email). The optimization saves bytes today and costs a data leak the day the secondary key changes — keeping `tenant_id` in the key is a 36-byte hedge against a CVE-class refactor.
 
 ### 2. Multi-Tenant Strict Mode — Missing Tenant_id Is a Typed Error
 
