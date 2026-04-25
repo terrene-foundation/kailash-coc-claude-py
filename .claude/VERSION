@@ -1,27 +1,100 @@
 {
-  "version": "3.5.15",
+  "version": "3.5.19",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
-  "released": "2026-04-21",
+  "released": "2026-04-25",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "2.8.26",
-    "build_version": "2.8.12",
-    "synced_at": "2026-04-21T14:35:00Z",
+    "version": "2.8.30",
+    "build_version": "2.10.0",
+    "synced_at": "2026-04-25T11:00:00Z",
     "sdk_packages": {
-      "kailash": "2.8.12",
-      "kailash-dataflow": "2.0.12",
-      "kailash-nexus": "2.1.1",
-      "kailash-kaizen": "2.10.1",
-      "kailash-pact": "0.9.0",
-      "kailash-mcp": "0.2.8",
-      "kailash-ml": "0.17.0",
-      "kailash-align": "0.4.0",
-      "kaizen-agents": "0.9.3"
+      "kailash": "2.10.0",
+      "kailash-dataflow": "2.1.2",
+      "kailash-nexus": "2.3.0",
+      "kailash-kaizen": "2.13.1",
+      "kailash-pact": "0.10.0",
+      "kailash-mcp": "0.2.9",
+      "kailash-ml": "1.1.1",
+      "kailash-align": "0.6.0",
+      "kaizen-agents": "0.9.4"
     }
   },
   "changelog": [
+    {
+      "version": "3.5.19",
+      "date": "2026-04-25",
+      "summary": "Sync loom 2.8.30 — kailash-py /codify proposal 2026-04-25 (kailash-kaizen 2.13.0→2.13.1 hotfix postmortem). 2 entries, both classified GLOBAL: (1) NEW MUST sub-rule 'MUST: __init__.py Module-Scope Imports Honor The Manifest' inserted into rules/dependencies.md (HIGH severity — kaizen 2.13.1 hotfix root cause: 4 unconditional kaizen_agents.* imports in kaizen/orchestration/__init__.py raised ModuleNotFoundError on every clean PyPI install because kaizen-agents is not a declared dep; structural defense via try/except ImportError + else-branch alias install); (2) NEW 'Latent failures count' clause extending rules/build-repo-release-discipline.md Rule 2 (MEDIUM — when post-release clean-venv check fails, hotfix scope is the broken pattern not just the most-recent PR diff; 3 of 4 broken imports were latent in main since refactor #75). SDK pin bumps to PyPI-live tips post-2026-04-25 hotfix: kailash 2.9.1→2.10.0, kailash-nexus 2.2.0→2.3.0, kailash-kaizen 2.12.2→2.13.1. Other packages held at PyPI-resolvable per variants/py/rules/deployment.md (kailash-dataflow 2.2.0 BUILD-only).",
+      "changes": [
+        "GLOBAL rules/dependencies.md +33 lines (156→189). New MUST sub-rule between 'Treat dependency resolution errors as blocking failures' and 'BLOCKED Anti-Patterns'. 5 BLOCKED rationalizations. Distinct from existing redis=None silent-fallback anti-pattern: optional-proxy aliases have NO later use site that could break, so try/except ImportError + else-branch is the structural-correct form. Cross-references build-repo-release-discipline.md Rule 2.",
+        "GLOBAL rules/build-repo-release-discipline.md +2 lines (165→167). Added 'Latent failures count' paragraph inside Rule 2 + amended Why line. References dependencies.md sub-rule as the structural defense.",
+        "SDK PIN: kailash 2.9.1→2.10.0 (minor catch-up; PyPI-live).",
+        "SDK PIN: kailash-nexus 2.2.0→2.3.0 (minor; PyPI-live — WS unicast + stream concerns).",
+        "SDK PIN: kailash-kaizen 2.12.2→2.13.1 (minor+hotfix; PyPI-live — orchestration plan-suspension/MCP-transports/budget-callback + 2.13.1 hotfix for the dependencies.md MUST origin).",
+        "TEMPLATE pyproject.toml: 3 SDK pins bumped to match. uv sync ✓.",
+        "CROSS-SDK QUEUED for kailash-rs: identical failure mode (workspace path-deps without Cargo.toml dep + clean cargo install) and identical clean-install gate semantics. Both rules' bodies are language-agnostic; rs sync cycle absorbs as global with no overlay needed."
+      ]
+    },
+    {
+      "version": "3.5.18",
+      "date": "2026-04-25",
+      "summary": "Sync loom 2.8.29 — frontmatter regression sweep + Validator 14 (emission-time rule-frontmatter enforcement) + SDK pin sweep to PyPI-resolvable tips. 9 rule files had frontmatter restored or added per rule-authoring.md Rule 7: 4 baseline rules (agents, orphan-detection, security, zero-tolerance) had frontmatter stripped by 2.8.27 rule-extraction cycle; 8 path-scoped rules (agent-reasoning, cross-sdk-inspection, dependencies, observability, patterns, python-environment, specs-authority, testing) had `paths:` only with no `priority:`/`scope:`; worktree-isolation.md was demoted from baseline to path-scoped by 2.8.27 regression. All 48 rule files now pass Rule 7 audit. SDK pins bumped to PyPI tips post-2026-04-24 release wave: kailash 2.8.12→2.9.1, kailash-dataflow 2.0.12→2.1.2, kailash-nexus 2.1.1→2.2.0, kailash-kaizen 2.11.0→2.12.2, kailash-pact 0.9.0→0.10.0, kailash-mcp 0.2.8→0.2.9, kailash-ml 0.17.0→1.1.1 (major: M1 foundations shipped), kailash-align 0.4.0→0.6.0, kaizen-agents 0.9.3→0.9.4.",
+      "changes": [
+        "FRONTMATTER RESTORATION (4 baseline rules): agents.md, orphan-detection.md, security.md, zero-tolerance.md — frontmatter stripped by 2.8.27 extraction cycle, reinstated at canonical values (agents/security/zero-tolerance = priority:0/scope:baseline; orphan-detection = priority:10/scope:path-scoped).",
+        "FRONTMATTER BACKFILL (8 path-scoped rules): agent-reasoning.md, cross-sdk-inspection.md, dependencies.md, observability.md, patterns.md, python-environment.md, specs-authority.md, testing.md — added priority:10/scope:path-scoped. Paths lists unchanged. All 48 rule files now pass rule-authoring.md Rule 7 pair-consistency audit.",
+        "REGRESSION FIX (worktree-isolation.md): 2.8.27 cycle replaced priority:0/scope:baseline with paths-only, silently demoting a CRIT baseline rule. Restored to priority:0/scope:baseline per canonical state. Mirror-applied from loom global.",
+        "NEW validator in loom emit.mjs — Validator 14 enforces rule-authoring.md Rule 7 at emission-time. Emit.mjs now BLOCKS on rules missing frontmatter instead of silently dropping them. This closes the silent-drop gap that allowed the 2.8.27 regression to pass through /sync undetected.",
+        "SDK PIN: kailash 2.8.12→2.9.1 (minor+patch catch-up; M1 foundations release wave 2026-04-23).",
+        "SDK PIN: kailash-dataflow 2.0.12→2.1.2 (minor+patch).",
+        "SDK PIN: kailash-nexus 2.1.1→2.2.0 (minor).",
+        "SDK PIN: kailash-kaizen 2.11.0→2.12.2 (minor+patch).",
+        "SDK PIN: kailash-pact 0.9.0→0.10.0 (minor — ML bridge + Py3.11+ Lock factory fix shipped).",
+        "SDK PIN: kailash-mcp 0.2.8→0.2.9 (patch).",
+        "SDK PIN: kailash-ml 0.17.0→1.1.1 (MAJOR — ML 1.0 foundations shipped; km.* top-level surface + 7 Phase-1 Trainable adapters + TrainingResult.trainable handoff + async pair consistency).",
+        "SDK PIN: kailash-align 0.6.0 (minor — alignment-diagnostics via MLFP upstream + CodeQL cleanup).",
+        "SDK PIN: kaizen-agents 0.9.3→0.9.4 (patch).",
+        "uv sync: all 9 pins resolved cleanly against PyPI tips.",
+        "HOOKS: 15 registered settings.json hook paths verified on disk via $CLAUDE_PROJECT_DIR expansion.",
+        "VERSION: template 3.5.17→3.5.18; upstream.version 2.8.28→2.8.29 (loom); upstream.build_version 2.8.12→2.9.1 (kailash-py root)."
+      ]
+    },
+    {
+      "version": "3.5.17",
+      "date": "2026-04-24",
+      "summary": "Sync loom 2.8.28 — 5 rule extensions from kailash-py proposal entries 21-25 (release-cycle + CodeQL round-2 codify). No SDK pin deltas; no new files. Rules updated: patterns.md (PEP 562 callable-module coexistence), python-environment.md (Py3.11+ threading.Lock factory gotcha), orphan-detection.md (Rule 6b TYPE_CHECKING for lazy __getattr__ exports), zero-tolerance.md (Rule 1b scanner-deferral with tracking-issue + runtime-safety proof), deployment.md (bi-directional sibling-package CI at bridge boundaries). 5 rules, ~170 LOC added; 0 files created/removed.",
+      "changes": [
+        "NEW § rules/patterns.md 'Callable Module + Subpackage Coexistence (MUST — PEP 562)' (+36 lines). When pkg exports callable pkg.foo AND pkg/foo/ subpackage exists, subpackage __init__.py MUST install _CallableModule(ModuleType) via sys.modules[__name__].__class__. Evidence: km.dashboard shadowed by kailash_ml/dashboard/ after Py3.14 test-collection reorder; fix commit 8914de3b.",
+        "NEW MUST Rule 5 rules/python-environment.md 'Python 3.11+ Lock Factory Gotcha' (+25 lines). threading.Lock/RLock are factories (not classes) in Py3.11+; isinstance raises TypeError. Fix: module-scope `_LOCK_TYPES = (type(threading.Lock()), type(threading.RLock()))`. Evidence: pact/ml/__init__.py:412 blocked 5 PACT ML bridge tests; fix 5655dd59.",
+        "NEW Rule 6b rules/orphan-detection.md 'TYPE_CHECKING Block For Lazy __getattr__ Exports' (+33 lines). Lazy __getattr__ exports for heavy optional deps (torch, vllm) MUST still expose symbols to CodeQL/pyright/mypy/Sphinx via TYPE_CHECKING. Evidence: commit 7943b3a1 closed 17 CodeQL py/undefined-export findings in kailash_align/__init__.py.",
+        "NEW Rule 1b rules/zero-tolerance.md 'Scanner Deferral Requires Tracking Issue + Runtime-Safety Proof' (+39 lines). Extends Rule 1a with 4-condition legitimate-deferral path (runtime-safety proof + tracking issue + release PR link + release-specialist agreement). Evidence: PR #611 — 17 py/unsafe-cyclic-import deferred via issue #612.",
+        "NEW § variants/py/rules/deployment.md 'Bi-Directional At Bridge Boundaries (MUST)' (+37 lines). At cross-package bridges (kailash-ml ↔ kailash-align, etc.), BOTH sibling CI jobs MUST install BOTH packages editable. Evidence: PR #611 CI cascade — align→ml at e7c5a33b; ml→align at c59c30da.",
+        "NO SDK pin deltas. All BUILD packages still pre-release; PyPI tips unchanged."
+      ]
+    },
+    {
+      "version": "3.5.16",
+      "date": "2026-04-23",
+      "summary": "Sync loom 2.8.27 — broad content refresh across rules/commands/agents/skills following upstream BUILD codify activity (210 modified, 17 new, 433 unchanged). New global extras: guides/rule-extracts/* (10 files, rule-extract companions for dense rules); new skills 10-deployment-git/multi-package-release-wave.md, 34-kailash-ml/m1-release-wave.md, 04-kaizen/kaizen-wrapper-composition + key-concepts + provider-config-v25, 18-security-patterns/dataflow-rls-posture + rls-security-definer-preauth-carveout. SDK pin bump: kailash-kaizen 2.10.1→2.11.0 (now on PyPI). All other BUILD-local versions (kailash 2.9.0, dataflow 2.1.0, nexus 2.2.0, kaizen 2.12.0, pact 0.10.0, ml 1.1.0, align 0.6.0) held per rules/deployment.md Optional Dependencies Pin to PyPI-Resolvable Versions.",
+      "changes": [
+        "SDK PIN: kailash-kaizen 2.10.1→2.11.0 (Wave release; now on PyPI).",
+        "MODIFIED (global, 210 files): rules/ — substantive updates to agent-reasoning, agents, dependencies, deployment, git, observability, orphan-detection, patterns, python-environment, security, specs-authority, testing, worktree-isolation, zero-tolerance, ci-runners (§8 tag-gated release job dry-run proxy mirror from rs).",
+        "MODIFIED (global): commands/ — cc-audit, cli-audit, release, codify, db, test, ai refreshed.",
+        "MODIFIED (global): agents/ — analyst, build-fix, pattern-expert, release-specialist, gold-standards-validator, security-reviewer, todo-manager, open-source-strategist, flutter-specialist updated.",
+        "MODIFIED (variant-py): agents/frameworks/align-specialist, dataflow-specialist, kaizen-specialist, ml-specialist, nexus-specialist, pact-specialist refreshed.",
+        "NEW (global): guides/rule-extracts/* (10 files: agent-reasoning, agents, dependencies, observability, python-environment, security, specs-authority, testing, worktree-isolation, zero-tolerance) — rule-extract companion documents hosting extended examples, BLOCKED-rationalization lists, and post-mortem rationale extracted from dense rule files per rule-authoring.md Loud/Linguistic/Layered discipline.",
+        "NEW (global skill): skills/10-deployment-git/multi-package-release-wave.md — wave-pattern release orchestration for monorepo multi-package releases.",
+        "NEW (global skill): skills/34-kailash-ml/m1-release-wave.md — ML M1-wave release playbook.",
+        "NEW (global skill): skills/04-kaizen/kaizen-wrapper-composition.md — wrapper-composition patterns for kaizen agents.",
+        "NEW (global skill): skills/04-kaizen/kaizen-key-concepts.md — kaizen v2.5+ conceptual primer.",
+        "NEW (global skill): skills/04-kaizen/kaizen-provider-config-v25.md — provider-config semantics for kaizen 2.5+.",
+        "NEW (global skill): skills/18-security-patterns/dataflow-rls-posture.md — DataFlow row-level-security posture reference.",
+        "NEW (global skill): skills/18-security-patterns/rls-security-definer-preauth-carveout.md — SECURITY DEFINER + pre-auth carve-out pattern for RLS.",
+        "uv sync ✓ (321 packages; kailash-kaizen 2.10.1→2.11.0 applied cleanly, no warnings).",
+        "HOOKS: all 12 registered settings.json hooks verified resolvable via $CLAUDE_PROJECT_DIR expansion.",
+        "VERSION: template 3.5.15→3.5.16; upstream.version 2.8.26→2.8.27 (loom); upstream.build_version 2.8.12 unchanged."
+      ]
+    },
     {
       "version": "3.5.15",
       "date": "2026-04-21",

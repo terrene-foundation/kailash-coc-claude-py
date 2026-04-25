@@ -1,18 +1,4 @@
----
-priority: 10
-scope: path-scoped
-paths:
-  - "deploy/**"
-  - ".github/**"
-  - "pyproject.toml"
-  - "CHANGELOG.md"
----
-
-# SDK Release Rules
-
-
 <!-- slot:neutral-body -->
-
 
 ## Before Any Release
 
@@ -217,5 +203,42 @@ When a new public module lands in `src/kailash/` (or any core SDK module tree) a
 **Why:** The sub-package's declared `kailash>=X.Y.Z` dependency resolves against PyPI, where the NEW module is not yet published. The build step succeeds (installs stable kailash from PyPI) but test collection fails because tests import the new module that exists only in the local editable source tree. Every `uv pip install -e "packages/..."` block in every sibling-package CI workflow MUST be preceded by `uv pip install -e "."`. No exceptions — even workflows that happen to pass today silently "work" because they do not import the new module yet. The comment in the CI step explaining the ordering is mandatory institutional knowledge: future contributors must understand that the leading root install is NOT redundant with the sub-package's declared kailash dep.
 
 Origin: kailash-py Session 2026-04-20 (issue #567 Session 3b) — PR #570 landed `kailash.diagnostics.protocols` in `src/kailash/` (not yet on PyPI). PR #577 extended the editable-root prepend to Base/DL/RL/Unit/Inter-Package CI jobs across `test-kailash-ml.yml` + `test-kailash-align.yml`, unblocking PRs #574/#575/#576 which all failed at collection with `ModuleNotFoundError: No module named 'kailash.diagnostics'`.
+
+### Bi-Directional At Bridge Boundaries (MUST)
+
+The rule above covers the one-way case (sub-package imports from root core). At cross-package BRIDGE boundaries — where two sub-packages import each other's modules (e.g. `kailash-ml` ↔ `kailash-align` RL bridge; `kailash-dataflow` ↔ `kailash-ml` fabric bridge) — BOTH sibling CI jobs MUST install BOTH packages editable. The uni-directional form is insufficient at bridges.
+
+```yaml
+# DO — BOTH directions install BOTH packages at bridge boundaries
+# .github/workflows/test-kailash-ml.yml (bridge: ml tests import kailash_align)
+- run: |
+    uv venv .venv
+    uv pip install -e "." --python .venv/bin/python
+    uv pip install -e "packages/kailash-align[dev]" --python .venv/bin/python   # reciprocal
+    uv pip install -e "packages/kailash-ml[dev]" --python .venv/bin/python
+# .github/workflows/test-kailash-align.yml (bridge: align tests import kailash_ml.rl.align_adapter)
+- run: |
+    uv venv .venv
+    uv pip install -e "." --python .venv/bin/python
+    uv pip install -e "packages/kailash-ml[dev]" --python .venv/bin/python      # reciprocal
+    uv pip install -e "packages/kailash-align[dev]" --python .venv/bin/python
+
+# DO NOT — install only one direction; the other fails on the next test run that imports across
+- run: |
+    uv pip install -e "packages/kailash-ml[dev]"   # ml tests import kailash_align
+    # → ModuleNotFoundError: No module named 'kailash_align'
+```
+
+**BLOCKED rationalizations:**
+
+- "The bridge module is in one direction only" (false — bridges are dual by nature)
+- "We'll add the reverse install when tests fail on it" (cascades: one direction surfaces, the other waits until next PR)
+- "Editable installs are dev-only, CI can rely on PyPI for the sibling"
+- "The sibling's declared version is enough"
+- "We can lazy-import across the bridge to avoid the editable"
+
+**Why:** Bridge modules are by definition dual-import — each side's tests exercise paths that import the other package's modules. A one-way editable install surfaces only one direction's `ModuleNotFoundError`; the other direction surfaces in the NEXT PR that runs the opposite test suite, cascading fixes across two release cycles. Pre-declaring BOTH reciprocal installs in BOTH CI workflows catches it at the FIRST collection pass. Evidence: PR #611 release cycle — align→ml reciprocal install landed at commit `e7c5a33b`; the ml→align direction surfaced as the next collection failure at commit `c59c30da`. Both directions needed identical discipline.
+
+Origin: kailash-py PR #611 release cycle (2026-04-23) — ML↔Align bridge CI cascade.
 
 <!-- /slot:neutral-body -->

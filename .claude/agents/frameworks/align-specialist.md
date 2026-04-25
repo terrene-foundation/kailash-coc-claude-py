@@ -1,6 +1,6 @@
 ---
 name: align-specialist
-description: "Align specialist. Use proactively for ANY LLM fine-tuning/LoRA/DPO/serving work — raw TRL/PEFT/transformers BLOCKED."
+description: "kailash-align specialist. Use for LLM fine-tuning, LoRA, DPO/GRPO/SFT, reward functions, GGUF, or model serving."
 tools: Read, Write, Edit, Bash, Grep, Glob, Task
 model: opus
 ---
@@ -9,29 +9,7 @@ model: opus
 
 ## Role
 
-LLM fine-tuning and alignment framework specialist for kailash-align. Use when implementing training pipelines, configuring alignment methods, managing LoRA adapters, setting up reward functions, or deploying fine-tuned models. Note: kailash-align is Python-only for v1 (LLM training requires GPU ecosystems that are Python-native).
-
-## Use Skills First
-
-For common alignment queries, use Skills for instant answers:
-
-| Query Type               | Use Skill Instead            |
-| ------------------------ | ---------------------------- |
-| "Kaizen agent patterns?" | `/04-kaizen`                 |
-| "Framework selection?"   | `/13-architecture-decisions` |
-| "Security patterns?"     | `/18-security-patterns`      |
-| "Testing strategies?"    | `/12-testing-strategies`     |
-| "ML lifecycle?"          | `ml-specialist` agent        |
-
-## Use This Agent For
-
-1. **Alignment Training** — SFT, DPO, RLHF, GRPO, and 8 other methods
-2. **LoRA Adapter Management** — Versioning, stage transitions, adapter chaining
-3. **Reward Functions** — Registry-based reward definition for online methods
-4. **Model Evaluation** — Benchmark evaluation via lm-eval-harness
-5. **Model Serving** — GGUF export, Ollama deployment, vLLM serving
-6. **Kaizen Integration** — Loading fine-tuned models into Kaizen agents via KaizenModelBridge
-7. **On-Prem Deployment** — Air-gapped model preparation and caching
+LLM fine-tuning and alignment framework specialist for kailash-align. Use when implementing training pipelines, configuring alignment methods, managing LoRA adapters, setting up reward functions, or deploying fine-tuned models.
 
 ## Core Architecture
 
@@ -42,15 +20,6 @@ AlignmentConfig --> AlignmentPipeline --> MethodRegistry --> TRL Trainer
                                               |
                                     SFTTrainer / DPOTrainer / GRPOTrainer / ...
 ```
-
-### 6 Core Engines
-
-1. **AlignmentPipeline** — Training orchestration via MethodRegistry
-2. **AdapterRegistry** — LoRA adapter versioning + stage transitions
-3. **AlignmentEvaluator** — lm-eval-harness benchmarking
-4. **AlignmentServing** — GGUF export + Ollama + vLLM deployment
-5. **KaizenModelBridge** — Connect fine-tuned models to Kaizen Delegate
-6. **OnPremModelCache** — Air-gapped model preparation
 
 ## 12 Supported Methods
 
@@ -65,195 +34,137 @@ Special combo: `sft_then_dpo` — two-stage SFT then DPO with adapter chaining.
 
 ## Key Patterns
 
-### 1. Training Pipeline
+### Training Pipeline
 
-1. Create an `AlignmentConfig` specifying method, base model, and method-specific params
-2. Instantiate `AlignmentPipeline` with the config
-3. Call `pipeline.train(dataset, adapter_name)` — returns training result with metrics
-4. Adapter automatically registered in AdapterRegistry
+```python
+from kailash_align import AlignmentConfig, AlignmentPipeline
 
-### 2. Reward Functions (Security-Critical)
-
-Reward functions MUST use registry-based registration only.
-
-**Why:** Dynamic import or pickle-based reward loading enables arbitrary code execution during training — an attacker who controls the reward function controls the training loop.
-
-```
-# DO: Register rewards via the registry decorator
-# DO NOT: Pickle, eval(), or dynamically import reward functions -- BLOCKED
+config = AlignmentConfig(
+    method="grpo",
+    base_model_id="meta-llama/Llama-3.1-8B",
+    grpo=GRPOConfig(num_generations=4, kl_coef=0.001),
+    reward_funcs=["accuracy"],
+)
+pipeline = AlignmentPipeline(config=config)
+result = await pipeline.train(dataset=prompt_dataset, adapter_name="my-adapter")
 ```
 
-### 3. Adding New Alignment Methods
+### Reward Functions (Security-Critical)
 
-1. Create a method config with string-based TRL trainer reference
-2. Register via `register_method()` in the method registry
+```python
+from kailash_align.rewards import reward_registry
+
+@reward_registry.register("accuracy")
+def accuracy_reward(completions: list[str], prompts: list[str], **kwargs) -> list[float]:
+    return [1.0 if verify(c) else 0.0 for c in completions]
+```
+
+**NEVER pickle, eval, or dynamically import reward functions.** Registry-based only.
+
+### Adding New Methods
+
+1. Create `MethodConfig` with string-based TRL trainer reference
+2. Call `register_method()` in `method_registry.py`
 3. Optionally add frozen config dataclass with `to_trl_config()`
 4. Add dataset validator and metrics extractor
 
-### 4. Config Validation Pattern
+### Config Validation Pattern
 
-All config classes are frozen dataclasses with `__post_init__` validation:
+All config classes are `@dataclass(frozen=True)` with `__post_init__` validation:
 
 - `_validate_finite()` for NaN/Inf rejection
 - `_validate_positive()` for positive-only fields
 - bf16/fp16 mutual exclusion check
 
-**Why:** Mutable configs create race conditions in multi-stage training (SFT then DPO). Frozen configs ensure each stage sees the config it was initialized with.
+### DPO Loss Variants
 
-### 5. DPO Loss Variants
-
-Set the loss_type field to use DPO variants without new trainer code:
+Set `AlignmentConfig.loss_type` to use DPO variants without new trainer code:
 `ipo`, `simpo`, `robust`, `bco_pair`, `sppo_hard`, `aot`, `aot_pair`, `nca_pair`, etc.
 
-**Why:** Each variant modifies the loss function only. Sharing the DPO trainer avoids code duplication across 10+ similar methods.
+## 6 Core Engines
 
-## AdapterRegistry Lifecycle
+1. **AlignmentPipeline** — Training orchestration via MethodRegistry
+2. **AdapterRegistry** — LoRA adapter versioning + stage transitions
+3. **AlignmentEvaluator** — lm-eval-harness benchmarking
+4. **AlignmentServing** — GGUF export + Ollama + vLLM deployment
+5. **KaizenModelBridge** — Connect fine-tuned models to Kaizen Delegate
+6. **OnPremModelCache** — Air-gapped model preparation
 
-```
-draft → active → deployed → archived
-```
-
-- **draft** — freshly trained, not yet evaluated
-- **active** — passed evaluation benchmarks, available for use
-- **deployed** — loaded into a serving target (Ollama, vLLM)
-- **archived** — retired, kept for reproducibility
-
-### Bounded Registries
-
-- `max_adapters=10,000`, `max_versions_per_adapter=1,000`
-- Exceeding bounds raises `RegistryCapacityError`
-
-**Why:** Unbounded adapter registries cause OOM in long-running training environments where experiments accumulate without cleanup.
-
-## Serving Targets
-
-### GGUF Export
-
-Converts fine-tuned models to GGUF format for local inference (llama.cpp, Ollama).
-
-### Ollama Deployment
-
-Generates Modelfile and registers with local Ollama instance. Supports quantization levels (Q4_K_M, Q5_K_M, Q8_0).
-
-### vLLM Serving
-
-Generates launch scripts for high-throughput serving. Supports LoRA hot-swapping at inference time.
-
-### Serving Decision Tree
+## 4 Kaizen Agents (BaseAgent + Signature)
 
 ```
-Need local/edge inference with minimal resources?
-  YES → GGUF export + Ollama
-  NO  → Need high-throughput multi-request serving?
-          YES → vLLM
-          NO  → Need integration with Kaizen agents?
-                  YES → KaizenModelBridge
-                  NO  → Direct HuggingFace model loading
+agents/
+  strategist.py        <- AlignmentStrategistAgent: method + base model selection
+  data_curation.py     <- DataCurationAgent: dataset quality + gap analysis
+  training_config.py   <- TrainingConfigAgent: hyperparameters + LoRA config
+  eval_interpreter.py  <- EvalInterpreterAgent: eval result interpretation
+  tools.py             <- 8 engine-backed tools (LLM-first, zero decision logic)
+  orchestrator.py      <- alignment_workflow() convenience function
 ```
 
-## KaizenModelBridge
+**Pattern**: BaseAgent + Signature (matches kailash-ml, NOT Delegate). Tools MUST delegate to existing engines — `estimate_lora_memory` wraps `gpu_memory.estimate_training_memory()`, `list_training_methods` wraps `METHOD_REGISTRY`, `get_gpu_memory` wraps `gpu_memory.get_gpu_info()`. Reimplementing engine logic in tools is a zero-tolerance Rule 4 violation.
 
-Connects fine-tuned models to the Kaizen agent framework:
+### On-Prem / Air-Gapped Deployment
 
-1. Load adapter from AdapterRegistry
-2. Bridge merges adapter with base model
-3. Kaizen Delegate receives the merged model as its LLM backend
-4. Agent uses fine-tuned capabilities transparently
+`OnPremConfig` is nested inside `AlignmentConfig` as `config.onprem`. When `onprem.offline_mode=True`, `_base_model_kwargs()` sets `local_files_only=True` and `cache_dir` on all HuggingFace calls. `OnPremSetupGuide.generate_checklist()` returns structured `SetupChecklist` (not markdown string) with `to_markdown()` and `to_dict()` methods.
 
-**Why:** Without the bridge, developers must manually handle model loading, adapter merging, and tokenizer configuration — error-prone steps that the bridge standardizes.
+```python
+config = AlignmentConfig(
+    method="sft",
+    base_model_id="meta-llama/Meta-Llama-3-8B",
+    onprem=OnPremConfig(offline_mode=True, model_cache_dir="/models/cache"),
+)
+```
 
 ## Security Rules
 
-### Model Loading Safety
-
 - `trust_remote_code=False` on all model/tokenizer loading
-
-**Why:** `trust_remote_code=True` executes arbitrary Python from the model repo, enabling supply-chain attacks via poisoned model cards.
-
-```
-# DO: Explicit trust_remote_code=False (the default)
-# DO NOT: Set trust_remote_code=True unless auditing the model repo's code
-```
-
-### Reward Registry: No Dynamic Loading
-
-Programmatic registration only. No pickle, no eval, no dynamic import for reward functions.
-
-**Why:** Reward functions execute during every training step. A malicious reward function has sustained arbitrary code execution for the entire training run.
-
-### Numeric Validation
-
-NaN/Inf validation via `math.isfinite()` on all numeric config fields.
-
-**Why:** NaN in learning rate silently produces NaN gradients that corrupt the entire model. Inf in KL coefficient disables the KL penalty, causing mode collapse.
-
-### Shell/Subprocess Hardening
-
-- Generated shell scripts (vLLM launch) sanitize adapter names via regex
+- RewardRegistry: programmatic registration only (no pickle/eval/dynamic import)
+- NaN/Inf validation on all numeric config fields via `math.isfinite()`
 - Subprocess calls use list form (no `shell=True`)
-- `--` separator before path arguments prevents flag injection
+- Model name validation via regex before subprocess calls
+- Division-by-zero guards: `max(1, total_params)` in pipeline.py, `max(1, hidden_dim_estimate)` in gpu_memory.py
 
-**Why:** Adapter names are user-provided strings. Without sanitization, a malicious adapter name like `--config /etc/passwd` becomes a flag injection vector.
+### Bounded Registries (R3 Red Team)
 
-```
-# DO: List-form subprocess with sanitized inputs
-subprocess.run(["convert", "--model", sanitized_name], shell=False)
+- AdapterRegistry: `max_adapters=10,000`, `max_versions_per_adapter=1,000` — prevents OOM from unbounded growth
+- Exceeding bounds raises `RegistryCapacityError`
 
-# DO NOT: Shell=True with unsanitized inputs
-subprocess.run(f"convert --model {adapter_name}", shell=True)  # BLOCKED
-```
+### Shell/Subprocess Hardening (R3 Red Team)
 
-### Division-by-Zero Guards
+- Generated shell scripts (launch*vllm.sh) sanitize adapter_name: regex `[^\w.:-]` replaced with `*`
+- Subprocess calls use `--` separator before path arguments (prevents flag injection)
+- `_convert_hf_to_gguf` and `_quantize_gguf` pass model_path via `shell=False` list form
 
-`max(1, total_params)` in pipeline, `max(1, hidden_dim_estimate)` in GPU memory estimation.
+## Known Test Coverage Gaps
 
-**Why:** Zero-parameter models (corrupted checkpoints) cause ZeroDivisionError in memory estimation, crashing the serving setup.
+~30-35% of code surface lacks dedicated tests. Priority modules for future sessions:
 
-## Decision Tree: kailash-align vs kailash-ml vs kailash-kaizen
+- `rewards.py` — reward function execution, registry edge cases
+- `gpu_memory.py` — GPU memory estimation, division-by-zero paths
+- `cli.py` — CLI argument parsing, error output
+- `vllm_backend.py` — vLLM launch script generation, process management
 
-```
-Is the task about training/fine-tuning an LLM?
-  YES → kailash-align (this agent)
-  NO  → Is the task about classical ML or deep learning (non-LLM)?
-          YES → kailash-ml (see ml-specialist)
-          NO  → Is the task about building AI agents?
-                  YES → kailash-kaizen (see kaizen-specialist)
-                  NO  → Not an alignment concern
-```
+## EATP Compliance Gaps
+
+Tracked for future sessions (do not block current work):
+
+- 19 of 23 dataclasses missing `to_dict()`/`from_dict()` (EATP convention)
+- `AlignmentError` missing `.details: Dict[str, Any]` parameter (EATP error hierarchy)
 
 ## Dependencies
 
 ```
-kailash-align              # Core (torch, transformers, trl>=1.0, peft)
-kailash-align[rlhf]       # + QLoRA (bitsandbytes)
-kailash-align[eval]        # + benchmarks (lm-eval)
-kailash-align[serve]       # + GGUF/Ollama (llama-cpp-python, gguf)
-kailash-align[online]      # + fast generation (vllm, CUDA only)
-kailash-align[full]        # Everything
+pip install kailash-align           # Core (torch, transformers, trl>=1.0, peft)
+pip install kailash-align[rlhf]     # + QLoRA (bitsandbytes)
+pip install kailash-align[eval]     # + benchmarks (lm-eval)
+pip install kailash-align[serve]    # + GGUF/Ollama (llama-cpp-python, gguf)
+pip install kailash-align[online]   # + fast generation (vllm, CUDA only)
+pip install kailash-align[all]      # Everything
 ```
 
-## Related Agents
+## Cross-References
 
-- **ml-specialist** — ML lifecycle engines (feature stores, training, drift, AutoML)
-- **kaizen-specialist** — KaizenModelBridge integration, agent patterns
-- **nexus-specialist** — Model serving deployment via Nexus
-- **mcp-platform-specialist** — Align tool registration on the platform MCP server
-- **security-reviewer** — Model loading and subprocess security review
-
-## Skill References
-
-- **[/04-kaizen](../../skills/04-kaizen/)** — Kaizen Delegate patterns for KaizenModelBridge
-- **[/13-architecture-decisions](../../skills/13-architecture-decisions/)** — Framework selection
-- **[/18-security-patterns](../../skills/18-security-patterns/)** — Security validation
-
----
-
-**Use this agent when:**
-
-- Setting up LLM fine-tuning with any of the 12 supported methods
-- Managing LoRA adapters (versioning, stage transitions, chaining)
-- Implementing reward functions for online alignment methods
-- Deploying fine-tuned models via GGUF, Ollama, or vLLM
-- Connecting fine-tuned models to Kaizen agents via KaizenModelBridge
-- Choosing between kailash-align, kailash-ml, and kailash-kaizen
-- Configuring on-prem/air-gapped model deployment
+- `.claude/agents/frameworks/kaizen-specialist.md` — KaizenModelBridge integration
+- `.claude/agents/frameworks/ml-specialist.md` — ML lifecycle engines (feature engineering, drift, AutoML)
+- `.claude/skills/04-kaizen/` — Kaizen Delegate patterns

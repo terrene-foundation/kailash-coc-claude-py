@@ -1,18 +1,22 @@
 ---
 name: error-troubleshooting
-description: "Common error patterns and troubleshooting guides for Kailash SDK including Nexus blocking issues, connection parameter errors, runtime execution errors, cycle convergence problems, missing .build() calls, parameter validation errors, and DataFlow template syntax errors. Use when encountering errors, debugging issues, or asking about 'error', 'troubleshooting', 'debugging', 'not working', 'hangs', 'timeout', 'validation error', 'connection error', 'runtime error', 'cycle not converging', 'missing build', or 'template syntax'."
+description: "Kailash errors: Nexus hangs, connection errors, runtime errors, cycles, missing .build(), validation, template syntax."
 ---
 
 # Kailash Error Troubleshooting
 
 Common error patterns and solutions for Kailash SDK.
 
+## When to Use
+
+Use when encountering errors, debugging issues, or asking about error, troubleshooting, debugging, not working, hangs, timeout, validation error, connection error, runtime error, cycle not converging, missing build, or template syntax. Covers Nexus blocking issues, connection parameter errors, runtime execution errors, cycle convergence problems, missing `.build()` calls, parameter validation errors, and DataFlow template syntax errors.
+
 ## Sub-File Index
 
 ### Critical Errors
 
 - **[error-nexus-blocking](error-nexus-blocking.md)** - Nexus hangs or blocks
-  - Symptom: API hangs forever | Cause: LocalRuntime in Docker/async | Fix: Use AsyncLocalRuntime
+  - Symptom: API hangs forever | Cause: LocalRuntime in Docker/FastAPI | Fix: Use AsyncLocalRuntime
 - **[error-missing-build](error-missing-build.md)** - Forgot `.build()`
   - Symptom: `TypeError: execute() expects Workflow, got WorkflowBuilder` | Fix: `runtime.execute(workflow.build())`
 
@@ -64,7 +68,7 @@ Common error patterns and solutions for Kailash SDK.
 ## Error Prevention Checklist
 
 - Called `.build()` on WorkflowBuilder?
-- Using `AsyncLocalRuntime` for Docker/async?
+- Using `AsyncLocalRuntime` for Docker/FastAPI?
 - All connections use 4 parameters?
 - All required node parameters provided?
 - Cyclic workflows have convergence checks?
@@ -149,7 +153,7 @@ file a todo against the pre-commit configuration. See
 `rules/git.md` "Pre-Commit Hook Workarounds" for the full rule.
 Silent `--no-verify` retries are BLOCKED.
 
-**Frequency:** Recurring across sessions; the stash
+**Frequency:** Recurring across sessions in kailash-py; the stash
 interaction is non-deterministic and depends on which files have
 unstaged changes at commit time.
 

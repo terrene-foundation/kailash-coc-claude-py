@@ -170,8 +170,7 @@ user_name = users_list[0]["name"]  # Works
 ## Documentation References
 
 ### Primary Sources
-
-- **DataFlow Specialist**: `dataflow-specialist` agent
+- **DataFlow Specialist**: [`.claude/agents/frameworks/dataflow-specialist.md`](../../dataflow-specialist.md#L991-L1001)
 
 ### Related Documentation
 
@@ -224,11 +223,11 @@ print(f"Total inventory value: ${total_value}")
 
 ## Troubleshooting
 
-| Issue                                           | Cause                     | Solution                                 |
-| ----------------------------------------------- | ------------------------- | ---------------------------------------- |
-| `KeyError: 'id'`                                | Missing 'result' wrapper  | Access `results["node"]["result"]["id"]` |
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| `KeyError: 'id'` | Missing 'result' wrapper | Access `results["node"]["result"]["id"]` |
 | `TypeError: 'dict' object is not subscriptable` | Treating metadata as list | Use `results["node"]["result"]` for list |
-| `KeyError: 'result'`                            | Node failed               | Check `results["node"]["status"]` first  |
+| `KeyError: 'result'` | Node failed | Check `results["node"]["status"]` first |
 
 ## Quick Tips
 

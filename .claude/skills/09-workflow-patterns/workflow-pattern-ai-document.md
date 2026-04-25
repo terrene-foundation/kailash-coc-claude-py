@@ -11,7 +11,7 @@ AI-powered document analysis, extraction, and classification workflows.
 > Category: `workflow-patterns`
 > Priority: `MEDIUM`
 > SDK Version: `0.9.25+`
-> Related Skills: [`workflow-pattern-rag`](workflow-pattern-rag.md), [`nodes-ai-reference`](../08-nodes-reference/nodes-ai-reference.md)
+> Related Skills: [`workflow-pattern-rag`](workflow-pattern-rag.md), [`04-kaizen`](../../04-kaizen/SKILL.md)
 
 ## Pattern: Invoice Processing with AI
 
@@ -29,7 +29,7 @@ workflow.add_node("DocumentProcessorNode", "read_invoice", {
 # 2. OCR extraction
 workflow.add_node("LLMNode", "extract_fields", {
     "provider": "openai",
-    "model": "gpt-4-vision",
+    "model": os.environ["LLM_MODEL"],
     "prompt": "Extract: invoice_number, date, amount, vendor from this invoice",
     "image": "{{read_invoice.content}}"
 })
@@ -60,6 +60,5 @@ with LocalRuntime() as runtime:
 ```
 
 ## Documentation
-
 
 <!-- Trigger Keywords: AI document, document AI, OCR workflow, intelligent document processing, invoice extraction -->

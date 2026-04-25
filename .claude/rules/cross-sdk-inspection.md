@@ -1,4 +1,6 @@
 ---
+priority: 10
+scope: path-scoped
 paths:
   - "**/src/**"
   - "**/tests/**"
@@ -28,7 +30,7 @@ When an issue is found or fixed in ONE BUILD repo, you MUST inspect the OTHER BU
 
 - Does the Rust SDK have the same bug?
 - Does the Rust SDK need the equivalent feature?
-- File a GitHub issue on `esperie-enterprise/kailash-rs` if relevant.
+- File a GitHub issue on `esperie/kailash-rs` if relevant.
 
 ### 2. Cross-Reference in Issues
 
@@ -52,42 +54,49 @@ Per EATP SDK conventions (D6: independent implementation, matching semantics):
 
 ### 3a. Structural API-Divergence Disposition
 
-When the sibling SDK reports a bug at an API surface that this SDK does not expose (e.g. kailash-rs#424 `execute_raw(sql, params)` vs kailash-py `execute_raw(sql)`), the disposition MUST include BOTH of the following in the same PR:
+When the sibling SDK reports a bug at an API surface this SDK does NOT expose (e.g., the Rust `execute_raw(sql, params)` bug class requires a `params` arg that the Python `execute_raw(sql)` doesn't have), the disposition MUST include BOTH:
 
-1. A **Tier 2 test through the sibling-binding path** that exercises the real surface this SDK uses (e.g. Python Express `bulk_create` with shrinking-arity test matrix) to prove the issue does not reproduce here.
-2. A **structural-invariant test locking the signature** — a test that asserts the current signature arity / kwarg shape / return type, so a future refactor toward the sibling SDK's shape fails loudly at test time rather than silently reopening the divergence.
+1. **A Tier 2 test through the sibling path that DOES bind parameters** — the bug class may still manifest at a different API surface in this SDK (e.g., Express `bulk_create`, `update`, `upsert`). The test mirrors the sibling SDK's repro scenario through the equivalent parameter-binding path in this SDK.
+2. **A structural invariant test that pins the signature** — asserts the API signature that prevents the bug class from existing at this surface (e.g., `execute_raw` takes only `sql` as a positional arg, no `params`). If a future refactor grows the signature to match the sibling SDK's shape, the invariant test fails loudly and forces a re-audit.
 
 ```python
-# DO — close the issue with both tests landed in the same PR
-@pytest.mark.integration
-async def test_execute_raw_sibling_binding_does_not_reproduce(db):
-    # Exercises the real Express bulk_create path that kailash-rs#424 hit
-    for batch_size in (1, 10, 100, 1000):
-        rows = [{"id": i, "x": i} for i in range(batch_size)]
-        await db.express.bulk_create("Row", rows)
+# DO — both tests; one exercises the sibling path, one locks the signature
+@pytest.mark.regression
+async def test_issue_XXX_cross_sdk_parity_via_sibling_path(test_suite):
+    # The Rust bug triggered at execute_raw(sql, params). Python execute_raw
+    # has no params. The parameter-binding path in Python is Express.bulk_create.
+    db = DataFlow(test_suite.config.url)
+    # ... exercise shrinking-arity bulk_create against real Postgres
+    assert poisoned_result.get("success") is True
 
-def test_execute_raw_signature_invariant():
-    """Lock the arity: Python's execute_raw takes (sql) only, not (sql, params)."""
+@pytest.mark.regression
+def test_issue_XXX_execute_raw_has_no_params_arg():
+    # Structural invariant: if this signature ever grows a `params` kwarg,
+    # the sibling bug class becomes reachable here and cross-SDK parity
+    # MUST be re-audited.
     import inspect
-    sig = inspect.signature(AsyncSQLDatabaseNode.execute_raw)
-    positional = [p for p in sig.parameters.values() if p.kind != inspect.Parameter.VAR_KEYWORD]
-    assert len(positional) == 2, "execute_raw(self, sql) — do not add params positional"
+    from dataflow.core.pool_lightweight import LightweightPool
+    sig = inspect.signature(LightweightPool.execute_raw)
+    non_self = [p.name for n, p in sig.parameters.items() if n != "self"]
+    assert non_self == ["sql"], f"signature drifted: {sig}"
 
-# DO NOT — close the sibling issue with a "not applicable" comment only
-# gh issue close kailash-py#525 --comment "Python doesn't expose execute_raw(sql, params); closing"
-# ↑ no test guards against a future refactor silently adding params; the divergence reopens invisibly
+# DO NOT — close the cross-SDK issue with only a hand-waving comment
+gh issue close XXX --comment "N/A — Python execute_raw has no params arg"
+# ↑ no test, no invariant; a future refactor silently reopens the bug class
+#   and the original sibling-report loses its correlation
 ```
 
 **BLOCKED rationalizations:**
 
-- "Python doesn't have this API, so nothing to test"
-- "The sibling tested it, we don't need to"
-- "A structural test is over-engineering for a one-line divergence"
-- "We'll add the guard when someone tries to reshape the API"
+- "The signatures are obviously different, no test needed"
+- "Our implementation can't have that bug"
+- "The structural invariant is enforced by the type system"
+- "Cross-SDK is belt-and-suspenders; one test is enough"
+- "We'll add the invariant test when the signature changes"
 
-**Why:** "Not applicable" closes the ticket but leaves zero structural defense against a future refactor that drifts toward the sibling shape; the binding-path Tier 2 test proves the bug doesn't reproduce today, and the signature-invariant test proves it cannot reproduce tomorrow by a silent API change. Together they convert "closed without test" (the prior failure mode) into two grep-able assertions that survive every refactor.
+**Why:** "Our signature doesn't have the arg" is true today and false the day someone ports a convenience method from the sibling SDK. The structural invariant test is the only mechanism that makes the signature _itself_ part of the contract — the moment the signature grows toward the sibling shape, the test fails and the agent reading the failure has a direct pointer back to the cross-SDK bug class. The sibling-path Tier 2 test proves the bug class does not manifest through the surface it COULD manifest through; without it, "different API" conceals a parallel bug the other SDK's API shape hid. Evidence: issue #525 (cross-SDK of kailash-rs#424) — Python `execute_raw(sql)` structurally cannot hit the Rust binding-layer UTF-8 corruption; disposition landed both an Express `bulk_create` sibling-path test AND a signature invariant test locking `LightweightPool.execute_raw(sql)` at PR #528.
 
-Origin: kailash-py issue #525 / PR #528 (2026-04-19) — closed a structural cross-SDK divergence ticket with two tests (binding-path + signature invariant) rather than a "not applicable" comment.
+Origin: Issue #525 / PR #528 (2026-04-19) — kailash-rs#424 parity check.
 
 ### 4. Inspection Checklist
 
@@ -100,54 +109,6 @@ When closing any issue, verify:
 
 **Why:** Closing without cross-SDK verification is the primary cause of feature drift — the checklist is the last gate before an issue is forgotten.
 
-### 5. Cross-SDK Symbol Citations MUST Be Grep-Verified
-
-When a template, skill, rule, or guide authored in one BUILD repo cites a concrete symbol from the sibling SDK (an import path, class name, method name, error type, env var name, or file path), the citation MUST be verified against the sibling SDK's working tree BEFORE the commit lands. If the symbol cannot be confirmed to exist, cite the abstract pattern instead — never invent the literal API.
-
-Evidence of verification MUST appear in the commit body in the following format:
-
-```
-Verified against kailash-py:
-- DialectManager.get_dialect → packages/kailash-dataflow/src/dataflow/adapters/dialect.py:446
-- InvalidIdentifierError → packages/kailash-dataflow/src/dataflow/adapters/exceptions.py
-```
-
-```python
-# DO — cite a verified Python symbol from a kailash-py-targeted skill
-# (grep confirmed: DialectManager.get_dialect exists at the cited path)
-from dataflow.adapters.dialect import DialectManager
-from dataflow.adapters.exceptions import InvalidIdentifierError
-
-dialect = DialectManager.get_dialect("postgresql")
-```
-
-```rust
-// DO — cite a verified Rust symbol from a kailash-rs-targeted artifact
-// (grep confirmed: BlockingFinalizerProtector exists at the cited path)
-use kailash_core::runtime::BlockingFinalizerProtector;
-```
-
-```markdown
-# DO NOT — cite a symbol whose existence in the sibling SDK was not grep-checked
-
-A kailash-py rule references `BlockingFinalizerProtector` from kailash-rs as a
-recommended pattern — but a grep against the kailash-rs working tree returns
-zero matches. The cited symbol does not exist; the rule recommends a phantom API.
-```
-
-**BLOCKED rationalizations:**
-
-- "The API looks like it should exist"
-- "The name is standard Python / standard Rust"
-- "The skill describes intent, not literal API"
-- "We'll verify later"
-- "The sibling SDK is on the roadmap to add this"
-- "The example is illustrative, not load-bearing"
-
-**Why:** Cross-SDK citations that are not grep-verified produce phantom APIs that downstream consumers wire into their code, only to discover at runtime that the cited symbol never existed. The bug-fix-side cross-SDK rule (MUST Rules 1–4 above) covers issue inspection; this rule covers the more common template / skill / rule authorship path, where invented APIs are even harder to detect because they look plausible. Single-grep verification at authorship time costs seconds and prevents the multi-session debugging cost that "I'll verify later" guarantees.
-
-Origin: kailash-rs codify cycle (2026-04-19) — multiple cross-SDK API miscitations in skill authorship surfaced as HIGH red-team findings; precedent in earlier `kailash-coc-claude-rs#52` (Bedrock preset cited before SDK shipped).
-
 ## Examples
 
 ```
@@ -156,7 +117,7 @@ Origin: kailash-rs codify cycle (2026-04-19) — multiple cross-SDK API miscitat
 gh issue create --repo terrene-foundation/kailash-py \
   --title "feat(kaizen): per-request API key override" \
   --label "cross-sdk" \
-  --body "Cross-SDK alignment with esperie-enterprise/kailash-rs#52"
+  --body "Cross-SDK alignment with esperie/kailash-rs#52"
 ```
 
 ## Automation

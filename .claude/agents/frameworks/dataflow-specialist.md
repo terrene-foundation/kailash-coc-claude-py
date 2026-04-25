@@ -15,34 +15,9 @@ Zero-config database framework specialist for Kailash DataFlow. Use proactively 
 - Multi-tenant architecture design
 - Performance optimization beyond basic queries
 - Custom integrations with external systems
+- Data Fabric Engine (`db.source()`, `@db.product()`, `db.start()`)
 
-## Skills Quick Reference
-
-Route common questions directly — saves reading SKILL.md:
-
-### Quick Start
-
-- "DataFlow setup?" → [dataflow-quickstart](../../skills/02-dataflow/dataflow-quickstart.md)
-- "Basic CRUD?" → [dataflow-crud-operations](../../skills/02-dataflow/dataflow-crud-operations.md)
-- "Model definition?" → [dataflow-models](../../skills/02-dataflow/dataflow-models.md)
-
-### Common Operations
-
-- "Query patterns?" → [dataflow-queries](../../skills/02-dataflow/dataflow-queries.md)
-- "Aggregation (GROUP BY, COUNT/SUM)?" → [dataflow-aggregation](../../skills/02-dataflow/dataflow-aggregation.md)
-- "Bulk operations?" → [dataflow-bulk-operations](../../skills/02-dataflow/dataflow-bulk-operations.md)
-- "Transactions?" → [dataflow-transactions](../../skills/02-dataflow/dataflow-transactions.md)
-- "Fast CRUD? db.express?" → [dataflow-express](../../skills/02-dataflow/dataflow-express.md) (~23x faster)
-
-### Advanced
-
-- "Pool config? Auto-scaling?" → [dataflow-connection-config](../../skills/02-dataflow/dataflow-connection-config.md)
-- "Enterprise migrations?" → [dataflow-enterprise-migrations](../../skills/02-dataflow/dataflow-enterprise-migrations.md)
-- "Nexus integration?" → [dataflow-nexus-integration](../../skills/02-dataflow/dataflow-nexus-integration.md)
-- "Troubleshooting?" → [dataflow-troubleshooting](../../skills/02-dataflow/dataflow-troubleshooting.md)
-- "SQLite concurrency?" → [dataflow-sqlite-concurrency](../../skills/02-dataflow/dataflow-sqlite-concurrency.md)
-
-**Use skills directly** for basic CRUD, simple queries, model setup. Use this agent for enterprise migrations, multi-tenant design, performance optimization, or custom integrations.
+**Use skills instead** for basic CRUD, simple queries, model setup, or Nexus integration -- see `skills/02-dataflow/SKILL.md`.
 
 ## Layer Preference (Engine-First)
 
@@ -50,20 +25,51 @@ Route common questions directly — saves reading SKILL.md:
 | -------------------- | --------- | --------------------------------------------------------- |
 | Simple CRUD          | Engine    | `db.express.create()`, `db.express.list()` (~23x faster)  |
 | Enterprise features  | Engine    | `DataFlowEngine.builder()` with validation/classification |
+| External data        | Engine    | `db.source()`, `@db.product()`, `db.start()`              |
 | Multi-step workflows | Primitive | `WorkflowBuilder` + generated nodes                       |
 | Custom transactions  | Primitive | `TransactionScopeNode` + `WorkflowBuilder`                |
 
 **Default to `db.express`** for single-record operations. Use `WorkflowBuilder` only for multi-step workflows.
 
+## Install & Setup
+
+```bash
+pip install kailash-dataflow
+```
+
+```python
+from kailash.dataflow import DataFlow
+
+# Development (SQLite)
+db = DataFlow("sqlite:///dev.db")
+
+# Production (PostgreSQL)
+db = DataFlow("postgresql://user:pass@host/db", auto_migrate=True)
+
+# With Nexus
+from kailash.nexus import Nexus
+app = Nexus(api_port=8000, auto_discovery=False)  # Deferred schema operations
+```
+
 ## Critical Gotchas
 
-1. **Never manually set `created_at`/`updated_at`** — DataFlow manages timestamps automatically (causes DF-104)
-2. **Primary key must be named `id`** — DataFlow requires exactly `id`
+1. **Never manually set `created_at`/`updated_at`** -- DataFlow manages timestamps automatically (causes DF-104)
+2. **Primary key must be named `id`** -- DataFlow requires exactly `id`
 3. **CreateNode uses flat fields, UpdateNode uses nested `filter`+`fields`**
 4. **Template syntax is `${}` not `{{}}`**
-5. **`auto_migrate=True`** works correctly in Docker/Nexus — no event loop issues
+5. **`auto_migrate=True`** works correctly in Docker/async -- no event loop issues
 6. **Deprecated params removed**: `enable_model_persistence`, `skip_registry`, `skip_migration`, `existing_schema_mode`
-7. **Higher-level engines must delegate to primitives** — engines like DataFabricEngine must call `express.list()` etc., not reimplement query building (skips input validation)
+
+```python
+# CreateNode: FLAT fields
+workflow.add_node("UserCreateNode", "create", {"id": "u1", "name": "Alice"})
+
+# UpdateNode: NESTED filter + fields
+workflow.add_node("UserUpdateNode", "update", {
+    "filter": {"id": "u1"},
+    "fields": {"name": "Alice Updated"}
+})
+```
 
 ## Key Rules
 
@@ -73,6 +79,7 @@ Route common questions directly — saves reading SKILL.md:
 - Use bulk operations for >100 records
 - Use connections for dynamic values
 - Test with real infrastructure (3-tier strategy)
+- Risk assessment for HIGH/CRITICAL migrations
 
 ### Never
 
@@ -88,6 +95,7 @@ Route common questions directly — saves reading SKILL.md:
 - **11 nodes per model** (v0.8.0+): CRUD (4) + Query (2) + Upsert + Bulk (4)
 - **ExpressDataFlow**: ~23x faster CRUD via `db.express`
 - **Trust-aware**: Signed audit records, trust-aware queries and multi-tenancy
+- **Data Fabric Engine**: External source integration, derived products, auto-generated endpoints
 
 ## Related Agents
 
@@ -97,6 +105,6 @@ Route common questions directly — saves reading SKILL.md:
 
 ## Full Documentation
 
-- `.claude/skills/02-dataflow/SKILL.md` — Complete DataFlow skill index
-- `.claude/skills/02-dataflow/dataflow-advanced-patterns.md` — Advanced patterns
-- `.claude/skills/03-nexus/nexus-dataflow-integration.md` — Nexus integration
+- `.claude/skills/02-dataflow/SKILL.md` -- Complete DataFlow skill index
+- `.claude/skills/02-dataflow/dataflow-advanced-patterns.md` -- Advanced patterns
+- `.claude/skills/03-nexus/nexus-dataflow-integration.md` -- Nexus integration

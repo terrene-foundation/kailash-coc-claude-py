@@ -80,18 +80,18 @@ class Session:
 
 ### Supported Python Types
 
-| Python Type | SQL Type       | Notes                          |
-| ----------- | -------------- | ------------------------------ |
-| `str`       | VARCHAR/TEXT   | Use TEXT for unlimited content |
-| `int`       | INTEGER/BIGINT | Auto-detect size               |
-| `float`     | FLOAT/DOUBLE   | Precision configurable         |
-| `bool`      | BOOLEAN        | INTEGER in SQLite              |
-| `datetime`  | TIMESTAMP      | Auto timezone handling         |
-| `date`      | DATE           | Date only                      |
-| `Decimal`   | DECIMAL        | Precise numbers (currency)     |
-| `dict`      | JSON/JSONB     | Structured data                |
-| `List[T]`   | JSON/JSONB     | Array data                     |
-| `UUID`      | UUID           | Unique identifiers             |
+| Python Type | SQL Type | Notes |
+|------------|----------|-------|
+| `str` | VARCHAR/TEXT | Use TEXT for unlimited content |
+| `int` | INTEGER/BIGINT | Auto-detect size |
+| `float` | FLOAT/DOUBLE | Precision configurable |
+| `bool` | BOOLEAN | INTEGER in SQLite |
+| `datetime` | TIMESTAMP | Auto timezone handling |
+| `date` | DATE | Date only |
+| `Decimal` | DECIMAL | Precise numbers (currency) |
+| `dict` | JSON/JSONB | Structured data |
+| `List[T]` | JSON/JSONB | Array data |
+| `UUID` | UUID | Unique identifiers |
 
 ### Model Configuration (`__dataflow__`)
 
@@ -208,7 +208,6 @@ class Article:
 ## When to Escalate to Subagent
 
 Use `dataflow-specialist` subagent when:
-
 - Designing complex multi-table relationships
 - Implementing advanced indexing strategies
 - Setting up multi-tenant isolation
@@ -223,8 +222,7 @@ Use `dataflow-specialist` subagent when:
 ### Related Documentation
 
 ### Specialist Reference
-
-- **DataFlow Specialist**: `dataflow-specialist` agent (frameworks)
+- **DataFlow Specialist**: [`.claude/agents/frameworks/dataflow-specialist.md`](../../dataflow-specialist.md)
 
 ## Examples
 
@@ -335,13 +333,13 @@ workflow.add_node("SsoSessionReadNode", "read_session_alt", {
 
 ## Troubleshooting
 
-| Issue                                                       | Cause                              | Solution                                                        |
-| ----------------------------------------------------------- | ---------------------------------- | --------------------------------------------------------------- |
-| `AttributeError: 'User' object has no attribute...`         | Missing type hint                  | Add type hint to field: `name: str`                             |
-| `ValueError: String ID cannot be converted to int`          | Model defined with wrong ID type   | Use `id: str` for string IDs                                    |
-| `DataError: value too long for type character varying(255)` | Text field size limitation         | DataFlow now uses TEXT type automatically for unlimited content |
-| `Model not found in registry`                               | Model defined after initialization | Define models before using in workflows                         |
-| `TypeError: Field() missing required positional argument`   | Incorrect Field syntax             | Use `Field(...)` not `field(...)`                               |
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| `AttributeError: 'User' object has no attribute...` | Missing type hint | Add type hint to field: `name: str` |
+| `ValueError: String ID cannot be converted to int` | Model defined with wrong ID type | Use `id: str` for string IDs |
+| `DataError: value too long for type character varying(255)` | Text field size limitation | DataFlow now uses TEXT type automatically for unlimited content |
+| `Model not found in registry` | Model defined after initialization | Define models before using in workflows |
+| `TypeError: Field() missing required positional argument` | Incorrect Field syntax | Use `Field(...)` not `field(...)` |
 
 ## Quick Tips
 

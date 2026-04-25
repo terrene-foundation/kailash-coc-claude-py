@@ -15,8 +15,7 @@ paths:
 
 # Dependency Rules
 
-
-<!-- slot:neutral-body -->
+See `.claude/guides/rule-extracts/dependencies.md` for full-API replacement protocol, extended BLOCKED patterns, and phantom-transitive resolution protocol.
 
 ## Latest Versions Always
 
@@ -54,17 +53,7 @@ dependencies = ["trl>=0.12"]
 
 If a dependency is unmaintained (no release in 12+ months, unresolved critical issues, archived repo) or constrains your architecture, re-implement it with full API parity. Do not work around a broken or stale package — own the code.
 
-This applies equally to small utilities and large frameworks. If the reference package does X, your replacement MUST do X with identical behavior at the API surface.
-
-**Why:** Unmaintained packages accumulate CVEs, break with new Python/Rust versions, and force the entire ecosystem to work around their bugs. Owning the implementation eliminates the external risk and gives you full control over the API surface, performance, and release cadence.
-
-Process:
-
-1. Identify the full API surface of the reference package that you (or your users) depend on
-2. Re-implement with full parity — every public function, class, and behavior
-3. Test against the reference package's own test suite where available
-4. Provide a drop-in migration path (same import names or thin adapter)
-5. Remove the old dependency
+**Why:** Unmaintained packages accumulate CVEs, break with new Python/Rust versions, and force the entire ecosystem to work around their bugs. Owning the implementation eliminates the external risk. See guide for the 5-step full-replacement protocol.
 
 ## Minimum Version Floors Are Fine
 
@@ -104,223 +93,98 @@ Every `import X` / `from X import Y` / `use X` / `require('X')` in production co
 
 ### MUST: Add manifest entry in the same commit as the import
 
-When you add an import, you add the dependency in the same commit. There is no "I'll add it to requirements later".
-
 ```python
 # DO — import + manifest entry in the same commit
 # pyproject.toml: dependencies = [..., "redis>=5.0"]
 import redis
 
 # DO NOT — import exists, manifest entry does not
-import redis  # works locally because something else installed it; breaks in fresh venv
+import redis  # works locally; breaks in fresh venv
 ```
 
-**Why:** Missing manifest entries are invisible on the developer's machine (where the package was installed transitively or manually) and only fail on fresh installs, CI, or production deploy. Every "works locally, breaks in CI" incident traces back to this.
+**Why:** Missing manifest entries are invisible on the developer's machine (transitive / manual install) and only fail on fresh installs, CI, or production deploy. Every "works locally, breaks in CI" incident traces back to this.
 
 ### MUST: Treat dependency resolution errors as blocking failures
 
-The following errors are the SAME class as pre-existing failures in `zero-tolerance.md` Rule 1 — they MUST be fixed immediately, not suppressed:
+`ModuleNotFoundError` / `ImportError` (Python), `cannot find crate` / `unresolved import` (Rust), `Cannot find module` (JS/TS), peer dependency warnings, `pip check` failures — ALL are the SAME class as pre-existing failures in `zero-tolerance.md` Rule 1 and MUST be fixed immediately, not suppressed.
 
-- `ModuleNotFoundError` / `ImportError` (Python)
-- `cannot find crate` / `unresolved import` (Rust)
-- `Cannot find module` / `Module not found` (JS/TS)
-- Peer dependency warnings during `npm install` / `yarn install`
-- `pip check` failures reporting unmet or conflicting requirements
+### MUST: `__init__.py` Module-Scope Imports Honor The Manifest
+
+Every unconditional `import X` / `from X import Y` at module scope in any package's `__init__.py` MUST resolve to a package declared in that package's own `pyproject.toml::dependencies`. Imports of co-installed but optional sibling packages (defensive proxy aliases, legacy `mock.patch` shims, integration surfaces that activate only when the sibling is present) MUST be wrapped in `try/except ImportError` AND any alias side-effects (`sys.modules.setdefault`, re-exports, attribute assignments) MUST live in the `else` branch.
+
+```python
+# DO — optional proxy aliases are guarded; clean install still imports
+try:
+    import kaizen_agents.patterns.patterns as _pp
+    import kaizen_agents.patterns.patterns.blackboard as _bb
+except ImportError:
+    pass
+else:
+    sys.modules.setdefault("kaizen.orchestration.patterns", _pp)
+    sys.modules.setdefault("kaizen.orchestration.patterns.blackboard", _bb)
+
+# DO NOT — unconditional import of a non-declared sibling
+import kaizen_agents.patterns.patterns as _pp  # ModuleNotFoundError on clean install
+sys.modules.setdefault("kaizen.orchestration.patterns", _pp)
+```
+
+**BLOCKED rationalizations:**
+
+- "Everyone in dev has the sibling editable-installed"
+- "The proxy is defensive; a clean install will never hit it"
+- "We declared kaizen-agents as an extra, that's enough"
+- "The next CI run will catch it"
+- "It's been in main for months without breaking"
+
+**Why:** Editable installs in dev environments hide cross-package import dependency gaps that surface only on a clean PyPI install. An unconditional module-scope import of a NON-declared sibling raises `ModuleNotFoundError` at the FIRST `import <package>`, blocking every downstream consumer. The `try/except ImportError: pass` pattern is the OPPOSITE of the silent-fallback anti-pattern below — it has no later-use site that could break, and the `else`-branch alias-installation guarantees that when the sibling IS present, the proxy works exactly as before.
+
+This rule is the structural defense that pairs with `build-repo-release-discipline.md` Rule 2 (clean-venv installability is the done gate). Rule 2 catches the failure; this rule prevents it.
+
+Origin: kailash-kaizen 2.13.1 hotfix (commit `9002c002`, 2026-04-25). Four unconditional `kaizen_agents.patterns.*` imports in `kaizen/orchestration/__init__.py` (predating the structural-split refactor #75) raised `ModuleNotFoundError` on every clean `pip install kailash-kaizen` because `kaizen-agents` is not a declared dep. Caught by post-2.13.0 clean-venv check; fixed via `try/except ImportError`.
 
 ### BLOCKED Anti-Patterns
 
 ```python
-# Python — BLOCKED: dodging declaration with a silent fallback
+# BLOCKED: silent fallback to None
 try:
     import redis
 except ImportError:
-    redis = None  # silently degrades; production path never works
+    redis = None  # degrades silently; production path never works
 
-# Python — BLOCKED: hiding a missing module from the type checker
+# BLOCKED: hiding a missing module
 import redis  # type: ignore[import]
 ```
 
-```typescript
-// TypeScript — BLOCKED: suppressing module resolution
-// @ts-ignore
-import { something } from "missing-package";
-```
+**Why:** Each pattern converts a loud, fixable failure into a silent, cascading one. The `try/except ImportError` pattern pushes failures to deep runtime `AttributeError`s that only surface in production. See guide for optional-extras exception (loud failure at call site is permitted).
 
-**Why:** Each of these patterns converts a loud, fixable failure ("package not declared") into a silent, cascading one ("feature doesn't work and nobody knows why"). The `try/except ImportError` pattern is particularly dangerous because it makes the import "succeed" with `None`, pushing the failure to a runtime `AttributeError` deep in a code path that only runs in production.
+### Verification step
 
-### Exception: Optional Extras with Loud Failure
-
-`try/except ImportError` IS allowed for packages declared as optional extras (`[project.optional-dependencies]`) IF the fallback raises a descriptive error at the call site naming the missing extra. Silent degradation to `None` is still BLOCKED.
-
-```python
-# DO — optional extra with loud, actionable failure
-try:
-    import redis
-except ImportError:
-    redis = None
-
-def get_cache_client():
-    if redis is None:
-        raise ImportError("redis backend requires the [redis] extra: pip install kailash[redis]")
-    return redis.Redis(...)
-
-# DO NOT — silent None propagation
-try:
-    import redis
-except ImportError:
-    redis = None
-
-def get_cache_client():
-    return redis.Redis(...) if redis else None  # downstream gets None, fails with AttributeError
-```
-
-This exception aligns with `infrastructure-sql.md` Rule 8 (lazy driver imports). The principle: optional dependencies are fine; silent degradation is not.
-
-## Declared = Gated Consistently — Optional Dependencies + Feature Gates
-
-When a package declares an optional dependency behind a feature (Rust `[features]`, Python `[project.optional-dependencies]`, npm `peerDependencies`, Ruby bundler groups), every module that imports from that optional dep MUST be gated with the SAME feature name, AND every downstream feature that imports symbols FROM that module MUST transitively require the same feature.
-
-The failure mode is invisible under default features (where the feature is always on) and only surfaces when a narrow feature subset is built — `cargo doc --no-default-features`, `pip install pkg` without an extra, `npm install --omit=optional`. By that time the gap is a full matrix rebuild away. The two-point fix (module gate + downstream feature imply) is the only structural defense.
-
-### MUST: Module Gate Matches Optional-Dep Gate
-
-Every module that does `use optional_dep::` (Rust) / `import optional_pkg` at module-scope (Python) MUST be declared with the matching feature / extra gate.
-
-```rust
-// DO — Rust: module gate matches dep gate
-// Cargo.toml: kaizen-agents = { optional = true }
-//             [features] orchestration = ["dep:kaizen-agents"]
-#[cfg(feature = "orchestration")]
-pub mod kaizen;   // kaizen/*.rs uses `kaizen_agents::`
-
-// DO NOT — Rust: module ungated while its imports require the feature
-pub mod kaizen;   // `use kaizen_agents::...` inside fails under --no-default-features
-```
-
-```python
-# DO — Python: module-scope imports gated at the package-extras boundary
-# pyproject.toml: [project.optional-dependencies]
-#                 redis = ["redis>=5.0"]
-# src/kailash/cache/redis_backend.py — only imported by code-paths that check for the extra
-try:
-    import redis
-except ImportError:
-    redis = None
-
-def get_redis_client(url: str):
-    if redis is None:
-        raise ImportError("redis backend requires the [redis] extra: pip install kailash[redis]")
-    return redis.Redis.from_url(url)
-
-# DO NOT — Python: module-scope import of an optional extra at package __init__
-# src/kailash/__init__.py
-import redis   # ImportError on `pip install kailash` without [redis]; package unimportable
-```
-
-**BLOCKED rationalizations:**
-
-- "The default feature is always on in production, so the narrow build never happens"
-- "`cargo doc --no-default-features` is a CI concern, not a code concern"
-- "The extra is 'required-recommended', everyone installs it"
-- "We'll add the gate when someone reports it"
-
-**Why:** The optional-dep contract promises that a narrow build works. A single ungated module voids that contract silently — CI catches it the day someone runs `--no-default-features` and finds 7 unrelated-looking compile errors. Evidence: kailash-rs#417 (2026-04-19) — 3 bindings, 7 compile errors on `--no-default-features`, fixed by gating the modules to match the deps.
-
-### MUST: Downstream Feature Transitively Enables Required Feature
-
-When a downstream feature imports symbols from a module gated by `feature = "X"`, the downstream feature MUST declare `"X"` in its dependency list. Leaving it off makes `--features downstream` unbuildable under `--no-default-features`.
-
-```toml
-# DO — Rust: downstream feature enables the transitively-required feature
-[features]
-orchestration = ["dep:kaizen-agents"]
-kailash_kaizen_llm_deployment = ["orchestration", "kailash-kaizen/..."]
-
-# DO NOT — Rust: leaves --features kailash_kaizen_llm_deployment unbuildable
-# on --no-default-features
-[features]
-kailash_kaizen_llm_deployment = ["kailash-kaizen/..."]
-```
-
-```toml
-# DO — Python: downstream extra implies upstream extras
-[project.optional-dependencies]
-redis  = ["redis>=5.0"]
-cache  = ["kailash[redis]"]            # cache imports from the redis-gated module → depend on [redis]
-full   = ["kailash[redis,cache]"]
-
-# DO NOT — Python: downstream extra skips the implied extra
-cache  = ["orjson>=3.0"]                # cache imports redis_backend but doesn't require [redis]
-```
-
-**Why:** A downstream feature that imports from a gated module but doesn't imply the gate ships a permanently broken feature combination. Consumers who enable only the narrow feature hit the same compile errors the default build hides.
-
-### Audit
-
-Mechanical grep at `/redteam` and `/codify` time:
+Before `/redteam` and `/deploy`, run the project's dependency resolver:
 
 ```bash
-# Rust — bindings / crates that `use <optional_dep>::` without a matching #[cfg]
-rg 'use (kaizen_agents|kailash_align_serving|kailash_ml)::' crates/ bindings/ -l \
-  | xargs grep -L '#\[cfg(feature'
-
-# Python — module-scope imports of declared optional extras
-# (top-level import of an optional_extra package in a non-optional module is BLOCKED)
-for extra_pkg in redis psycopg2 asyncpg prometheus_client; do
-  rg "^import $extra_pkg\b|^from $extra_pkg " src/ packages/ \
-    --glob '!**/optional/**' --glob '!**/backends/**' -l
-done
-```
-
-Any match is a HIGH finding.
-
-Origin: kailash-rs#417 (2026-04-19) — 3 bindings, 7 `--no-default-features` compile errors. Fix commit `d04c098a`. Journal: `workspaces/binding-parity/journal/0038-DISCOVERY-binding-feature-gate-consistency.md`.
-
-## Verification Step (All Dependencies)
-
-Before `/redteam` and `/deploy`, run the project's dependency resolver as a verification step:
-
-```bash
-# Python — pip check catches unmet/conflicting requirements
-pip check
-
-# Node
-npm ls --all 2>&1 | grep -iE "missing|warn|err"
-
-# Rust
-cargo check --quiet
+pip check             # Python
+npm ls --all 2>&1     # Node
+cargo check --quiet   # Rust
 ```
 
 Any unmet, missing, or conflicting dependency BLOCKS the gate.
 
-## Phantom Transitive Deps — Resolve Via Lockfile Upgrade, Not Local Caps
+### Phantom Transitive Deps — Resolve Via `uv lock --upgrade`, Not Local Caps
 
-When `pip check` / `cargo tree -d` / `npm ls` reports a conflict whose root is an unused transitive dependency, the fix MUST be to let the solver drop the orphan (`uv lock --upgrade-package X` + `uv sync`, `cargo update -p X`, `npm update X`). Adding a local cap / pin on a package this project does not directly import is BLOCKED.
+When `pip check` reports a conflict whose root cause is a transitive package that no source file actually imports, the fix MUST be `uv lock --upgrade-package <phantom> <constrained_siblings>` followed by `uv sync` — which drops the unused dep and re-solves. Adding a local `<N` cap on a package this project does not directly import is BLOCKED.
 
 ```bash
-# DO — Python: let uv drop the orphan transitive
-uv lock --upgrade-package google-generativeai   # solver re-resolves; orphan drops
-uv sync                                         # lockfile + venv converge
-pip check                                       # clean
+# DO — diagnose the phantom (no imports → drop it), upgrade, re-solve
+$ grep -rln 'import google\.generativeai' src/ packages/  # empty
+$ uv lock --upgrade-package google-generativeai --upgrade-package protobuf
+$ uv sync && uv pip check  # clean
 
-# DO — Rust: cargo update drops the orphan
-cargo update -p some-transitive-crate
-
-# DO NOT — pin the orphan in the manifest
-# pyproject.toml:
-# dependencies = [..., "protobuf>=4.0,<5.0"]  # we don't import protobuf; this is speculative
+# DO NOT — pin the transitive locally in pyproject.toml
+# dependencies = [..., "protobuf>=5.26,<6.0"]  # capping an un-imported package
 ```
 
-**BLOCKED rationalizations:**
+**BLOCKED rationalizations:** "A local cap is faster than chasing the transitive tree" / "Pinning protobuf keeps the tree stable" / "We'll drop the cap once upstream catches up" / "`uv lock --upgrade` is risky, could break other deps".
 
-- "The lockfile solver might not find a clean resolution"
-- "A local cap is faster than re-resolving the lockfile"
-- "We'll remove the cap later"
-- "The transitive is 'required-recommended' even though we don't import it"
-- "Capping is safer than trusting the upstream compat range"
+**Why:** A local cap on an un-imported package is purely speculative — no code could break if it upgrades, and the cap just blocks every downstream user from getting patches. Phantom-transitive conflicts almost always resolve by dropping the phantom. When upstream legitimately holds the constraint, the solver will report that — the signal to upgrade THAT package, not to local-cap.
 
-**Why:** A phantom transitive dep — one installed by the lockfile but zero-imports in the project — that holds a secondary package at an old cap is a solver trap: every upgrade of the actually-imported deps is blocked by the phantom's constraint. Pinning at the manifest level locks the trap in permanently; the only fix that keeps the solver free is `uv lock --upgrade-package` / `cargo update -p` / `npm update` which lets the resolver drop the phantom when it's no longer required by any imported package. Manifest-level caps on unimported packages also silently violate `§ No Caps on Transitive Dependencies` above.
-
-Origin: kailash-py PR #530 (2026-04-19) — `google-generativeai 0.8.6` was installed by the lockfile with zero imports in the project, holding `protobuf` at an old cap that blocked the `kailash-align 0.3.2` release. Fix: `uv lock --upgrade-package google-generativeai` dropped it cleanly, protobuf upgraded, release unblocked.
-
-<!-- /slot:neutral-body -->
+Origin: PR #530 (2026-04-19) — phantom `google-generativeai` held protobuf solver at an old cap. See guide for full evidence.

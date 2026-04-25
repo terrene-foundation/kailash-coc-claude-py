@@ -1,6 +1,6 @@
 ---
 name: 29-pact
-description: "PACT governance — MANDATORY for ALL governance, RBAC, policy, access control, and audit work. D/T/R accountability, operating envelopes, knowledge clearance, MCP tool policy, governed agents. Use proactively when work touches RBAC, roles, permissions, access enforcement, audit trails, governed agents, policy decisions, or 'just a quick authz check'. Custom policy code, hand-rolled RBAC, ad-hoc audit logging BLOCKED."
+description: "PACT governance framework -- D/T/R accountability grammar, operating envelopes, knowledge clearance, and verification gradient for AI agent organizations. Use when asking about 'governance', 'D/T/R', 'operating envelope', 'knowledge clearance', 'verification gradient', 'GovernanceEngine', 'PactGovernedAgent', 'access enforcement', 'organizational governance', 'PACT', 'governed agent', 'clearance', 'bridges', 'KSP', 'monotonic tightening', 'MCP governance', 'McpGovernanceEnforcer', 'McpGovernanceMiddleware', 'McpAuditTrail', 'McpToolPolicy', 'MCP tool policy', 'default-deny MCP', or 'governed MCP tools'."
 ---
 
 # PACT Governance Skills
@@ -27,13 +27,12 @@ pip install kailash-kaizen>=2.0.0 # For governed Kaizen agents
 | [pact-governed-agents](pact-governed-agents.md)           | PactGovernedAgent, @governed_tool                                                                     |
 | [pact-kaizen-integration](pact-kaizen-integration.md)     | Wrapping Kaizen agents with governance                                                                |
 | [pact-mcp-governance](pact-mcp-governance.md)             | MCP tool governance: enforce, audit, middleware                                                       |
-| [pact-enforcement-modes](pact-enforcement-modes.md)       | ENFORCE/SHADOW/DISABLED modes, HELD verdict handling, envelope adapter                                |
 | [pact-conformance-features](pact-conformance-features.md) | N1-N6: KnowledgeFilter, EnvelopeCache, PlanSuspension, AuditTiers, ObservationSink, cross-SDK vectors |
 
 ## Key Types
 
 ```python
-from kailash.trust.pact import GovernanceEngine, GovernanceVerdict
+from pact.governance import GovernanceEngine, GovernanceVerdict
 from kailash.trust.pact.config import (
     ConstraintEnvelopeConfig, OrgDefinition,
     TrustPostureLevel, VerificationLevel,
@@ -43,7 +42,7 @@ from kailash.trust.pact.agent import PactGovernedAgent
 from kailash.trust.pact.audit import AuditChain
 
 # MCP governance
-from kailash.trust.pact.mcp import (
+from pact.mcp import (
     McpGovernanceEnforcer, McpGovernanceMiddleware, McpAuditTrail,
     McpToolPolicy, McpGovernanceConfig, McpActionContext,
 )

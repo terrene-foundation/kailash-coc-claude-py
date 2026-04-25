@@ -5,7 +5,6 @@ scope: baseline
 
 # Git Workflow Rules
 
-
 <!-- slot:neutral-body -->
 
 ## Conventional Commits
@@ -35,14 +34,18 @@ All protected repos require PRs to main. Direct push is rejected by GitHub.
 
 **Why:** Direct pushes bypass CI checks and code review, allowing broken or unreviewed code to reach the release branch.
 
-| Repository                                    | Branch | Protection          |
-| --------------------------------------------- | ------ | ------------------- |
-| `terrene-foundation/kailash-py`               | `main` | Full (admin bypass) |
-| `terrene-foundation/kailash-coc-claude-py`    | `main` | Full (admin bypass) |
-| `terrene-foundation/kailash-coc-claude-rs`    | `main` | Full (admin bypass) |
-| `esperie/kailash-rs`                          | `main` | Full (admin bypass) |
-| `terrene-foundation/kailash-prism`            | `main` | Full (admin bypass) |
-| `terrene-foundation/kailash-coc-claude-prism` | `main` | Full (admin bypass) |
+| Repository                                    | Branch | Protection                                         |
+| --------------------------------------------- | ------ | -------------------------------------------------- |
+| `terrene-foundation/kailash-py`               | `main` | Full (admin bypass)                                |
+| `terrene-foundation/kailash-coc-claude-py`    | `main` | Full (admin bypass) — legacy (archival 2026-10-22) |
+| `terrene-foundation/kailash-coc-claude-rs`    | `main` | Full (admin bypass) — legacy (archival 2026-10-22) |
+| `terrene-foundation/kailash-coc-py`           | `main` | Full (admin bypass)                                |
+| `terrene-foundation/kailash-coc-rs`           | `main` | Full (admin bypass)                                |
+| `esperie/kailash-rs`                          | `main` | Full (admin bypass)                                |
+| `terrene-foundation/kailash-prism`            | `main` | Full (admin bypass)                                |
+| `terrene-foundation/kailash-coc-claude-prism` | `main` | Full (admin bypass)                                |
+
+**New multi-CLI USE repos (`kailash-coc-py`, `kailash-coc-rs`)**: created 2026-04-23 as net-new repos (not rename) per migration r3 directive. Flipped to public + branch protection applied 2026-04-23 (1 approving review required, force-push + deletion blocked, admin bypass retained). Posture matches legacy `kailash-coc-claude-{py,rs}` rows.
 
 **Owner workflow**: Branch → commit → push → PR → `gh pr merge <N> --admin --merge --delete-branch`
 

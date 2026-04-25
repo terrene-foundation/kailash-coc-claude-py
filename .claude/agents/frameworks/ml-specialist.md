@@ -11,181 +11,293 @@ model: opus
 
 ML lifecycle framework specialist for kailash-ml. Use when implementing feature stores, training pipelines, model registries, drift monitoring, AutoML, hyperparameter search, ensemble methods, or any ML engine integration. Also covers the 6 Kaizen agents and the RL module.
 
-## Use Skills First
-
-For common ML queries, use Skills for instant answers:
-
-| Query Type               | Use Skill Instead            |
-| ------------------------ | ---------------------------- |
-| "Framework selection?"   | `/13-architecture-decisions` |
-| "Kaizen agent patterns?" | `/04-kaizen`                 |
-| "Testing ML pipelines?"  | `/12-testing-strategies`     |
-| "Node reference?"        | `/08-nodes-reference`        |
-| "Security patterns?"     | `/18-security-patterns`      |
-
-## Use This Agent For
-
-1. **Feature Store** — Ingestion, point-in-time queries, feature schemas
-2. **Model Registry** — Lifecycle management (staging, shadow, production, archived)
-3. **Training Pipeline** — Model training with schema-driven feature selection
-4. **Drift Monitoring** — KS/chi2/PSI/Jensen-Shannon statistical tests
-5. **AutoML** — Agent-infused pipeline with LLM guardrails
-6. **Hyperparameter Search** — Grid, random, Bayesian, successive halving
-7. **RL Module** — Reinforcement learning with environment and policy registries
-8. **Cross-Language Serving** — ONNX export for language-agnostic model deployment
-
 ## Architecture
 
 ```
 kailash-ml
   engines/
-    _shared             <- NUMERIC_DTYPES, ALLOWED_MODEL_PREFIXES, validate_model_class()
-    _feature_sql        <- ALL raw SQL (zero SQL in engine files)
-    _guardrails         <- AgentGuardrailMixin (cost budget, audit trail, approval gate)
-    feature_store       <- [P0] polars-native, ConnectionManager-backed
-    model_registry      <- [P0] staging->shadow->production->archived lifecycle
-    training_pipeline   <- [P0] sklearn/lightgbm/Lightning, FeatureSchema-driven
-    inference_server    <- [P0] REST via kailash-nexus, caching, batch
-    drift_monitor       <- [P0] KS/chi2/PSI/jensen_shannon, scheduled monitoring
-    experiment_tracker  <- [P0] MLflow-compatible run tracking
-    hyperparameter_search <- [P1] grid/random/bayesian/successive_halving
-    automl_engine       <- [P1] agent-infused, LLM guardrails, cost tracking
-    ensemble            <- [P1] blend/stack/bag/boost
-    preprocessing       <- [P1] auto-setup from FeatureSchema
-    data_explorer       <- [P2] profiling, visualization
-    feature_engineer    <- [P2] auto-generation, selection, ranking
-    model_visualizer    <- [P2] experimental
+    _shared.py          <- NUMERIC_DTYPES, ALLOWED_MODEL_PREFIXES, validate_model_class()
+    _feature_sql.py     <- ALL raw SQL (zero SQL in feature_store.py)
+    _guardrails.py      <- AgentGuardrailMixin (cost budget, audit trail, approval gate)
+    feature_store.py    <- [P0] polars-native, ConnectionManager-backed
+    model_registry.py   <- [P0] staging->shadow->production->archived lifecycle
+    training_pipeline.py <- [P0] sklearn/lightgbm/Lightning, FeatureSchema-driven
+    inference_server.py <- [P0] REST via kailash-nexus, caching, batch
+    drift_monitor.py    <- [P0] KS/chi2/PSI/jensen_shannon, scheduled monitoring
+    experiment_tracker.py <- [P0] MLflow-compatible run tracking
+    hyperparameter_search.py <- [P1] grid/random/bayesian/successive_halving
+    automl_engine.py    <- [P1] agent-infused, LLM guardrails, cost tracking
+    ensemble.py         <- [P1] blend/stack/bag/boost
+    preprocessing.py    <- [P1] auto-setup, normalize, impute, SMOTE, multicollinearity
+    model_explainer.py  <- [P1] SHAP global/local/dependence, plotly (requires [explain])
+    data_explorer.py    <- [P1] async profiling, alerts, HTML reports, ydata-profiling parity
+    _data_explorer_report.py <- HTML report generator (self-contained, XSS-safe)
+    feature_engineer.py <- [P2] auto-generation, selection, ranking
+    model_visualizer.py <- [P2] experimental
   agents/
-    data_scientist, feature_engineer, model_selector,
-    experiment_interpreter, drift_analyst, retraining_decision
-    tools               <- Dumb data endpoints (LLM-first)
+    data_scientist.py, feature_engineer.py, model_selector.py,
+    experiment_interpreter.py, drift_analyst.py, retraining_decision.py
+    tools.py            <- Dumb data endpoints (LLM-first)
   rl/
-    trainer             <- RLTrainer (Stable-Baselines3)
-    env_registry        <- EnvironmentRegistry (Gymnasium)
-    policy_registry     <- PolicyRegistry (algorithm configs)
-  interop               <- SOLE conversion point (polars <-> sklearn/lgb/arrow/pandas/hf)
-  bridge/               <- OnnxBridge (cross-language export)
+    trainer.py          <- RLTrainer (Stable-Baselines3)
+    env_registry.py     <- EnvironmentRegistry (Gymnasium)
+    policy_registry.py  <- PolicyRegistry (algorithm configs)
+  interop.py            <- SOLE conversion point (polars <-> sklearn/lgb/arrow/pandas/hf)
+  bridge/               <- OnnxBridge
   compat/               <- MlflowFormatReader/Writer
   dashboard/            <- MLDashboard
 ```
 
 ## Key Patterns
 
-### 1. All Engines Are Polars-Native
+### All Engines Are Polars-Native
 
-Every engine accepts and returns polars DataFrames. Conversion to numpy/pandas/LightGBM Dataset happens ONLY in the interop layer at framework boundaries.
+Every engine accepts and returns `polars.DataFrame`. Conversion to numpy/pandas/LightGBM Dataset happens ONLY in `interop.py` at framework boundaries.
 
-**Why:** A single data representation eliminates silent dtype coercion bugs that arise when converting between pandas and numpy mid-pipeline.
+```python
+# DO: Work in polars throughout
+df = pl.read_csv("data.csv")
+fs = FeatureStore(conn)
+await fs.ingest("user_features", schema, df)
 
-```
-# DO: Work in polars throughout, convert only at framework boundary
-# DO NOT: Convert to pandas early -- polars is the native format
-```
-
-### 2. FeatureStore Uses ConnectionManager, Not Express
-
-FeatureStore needs point-in-time queries with window functions. Express (DataFlow's zero-config layer) cannot express these. All SQL lives in a dedicated SQL module.
-
-**Why:** Express abstracts away SQL, but point-in-time correctness requires explicit window functions and temporal joins that no ORM can safely auto-generate.
-
-### 3. Training Pipeline Flow
-
-The training pipeline connects FeatureStore, ModelRegistry, and FeatureSchema:
-
-1. Define a `FeatureSchema` (feature names, dtypes, target field)
-2. Create a `ModelSpec` (model class, hyperparameters)
-3. Create an `EvalSpec` (metrics to compute)
-4. Call `pipeline.train(schema, model_spec, eval_spec)` — returns trained model + metrics
-5. Model automatically registered in ModelRegistry at `staging` stage
-
-### 4. Model Registry Lifecycle
-
-```
-staging → shadow → production → archived
+# DO NOT: Convert to pandas first
+df_pd = pd.read_csv("data.csv")  # Wrong -- polars is native
 ```
 
-- **staging** — freshly trained, not yet validated
-- **shadow** — receiving live traffic for comparison, not serving responses
-- **production** — serving live traffic
-- **archived** — retired, kept for audit
+### FeatureStore Uses ConnectionManager, Not Express
 
-### 5. Drift Monitoring
+FeatureStore needs point-in-time queries with window functions. Express cannot express these. All SQL is in `_feature_sql.py`.
 
-Supported statistical tests:
+```python
+from kailash.db.connection import ConnectionManager
 
-| Test           | Use Case               | Data Type   |
-| -------------- | ---------------------- | ----------- |
-| KS test        | Distribution shift     | Continuous  |
-| Chi-squared    | Category distribution  | Categorical |
-| PSI            | Population stability   | Any binned  |
-| Jensen-Shannon | Divergence measurement | Any         |
+conn = ConnectionManager("sqlite:///ml.db")
+await conn.initialize()
+fs = FeatureStore(conn, table_prefix="kml_feat_")
+await fs.initialize()
+```
 
-Set a reference dataset, then check current data against it. The monitor returns per-feature drift scores and overall recommendations.
+### Training Pipeline Flow
 
-### 6. Agent-Infused AutoML (Double Opt-In)
+```python
+from kailash_ml import TrainingPipeline, ModelRegistry
+from kailash_ml.types import FeatureSchema, FeatureField
 
-AutoML agents require BOTH an explicit flag AND the agents optional dependency installed. This prevents accidental LLM cost in non-agent workflows.
+schema = FeatureSchema(
+    name="user_churn",
+    features=[
+        FeatureField(name="age", dtype="float"),
+        FeatureField(name="tenure_months", dtype="float"),
+    ],
+    target=FeatureField(name="churned", dtype="int"),
+)
 
-**Why:** LLM calls have real monetary cost. Silent opt-in to agent features could create unexpected charges in production pipelines.
+registry = ModelRegistry(conn, artifact_store=LocalFileArtifactStore("./artifacts"))
+await registry.initialize()
+
+pipeline = TrainingPipeline(feature_store=fs, model_registry=registry)
+result = await pipeline.train(
+    schema=schema,
+    model_spec=ModelSpec(model_class="sklearn.ensemble.RandomForestClassifier"),
+    eval_spec=EvalSpec(metrics=["accuracy", "f1"]),
+)
+```
+
+### Drift Monitoring
+
+```python
+from kailash_ml import DriftMonitor
+
+monitor = DriftMonitor(conn)
+await monitor.initialize()
+await monitor.set_reference_data("model_v1", reference_df)
+report = await monitor.check_drift("model_v1", current_df)
+# report.overall_drift, report.feature_results, report.recommendations
+```
+
+### PreprocessingPipeline Cardinality Guard
+
+`setup()` has a built-in cardinality guard for one-hot encoding. High-cardinality categoricals are auto-downgraded to ordinal with a warning.
+
+```python
+from kailash_ml import PreprocessingPipeline
+
+pipeline = PreprocessingPipeline()
+result = pipeline.setup(
+    data=df,
+    target="target",
+    categorical_encoding="onehot",
+    max_cardinality=50,          # columns above threshold -> ordinal (default 50)
+    exclude_columns=["trip_id"], # skip encoding for specific columns
+)
+# Warning: "Column 'zone' has 263 unique values (> max_cardinality=50), using ordinal encoding"
+```
+
+**Mixed encoding**: When some columns are one-hot and others overflow to ordinal, `_transformers` stores both `onehot_mappings` AND `ordinal_overflow_mappings`. `_apply_fitted_encoding()` uses separate `if` blocks (not `elif`) so both can coexist. The cardinality guard only applies to `"onehot"` encoding -- `"target"` and `"ordinal"` are inherently cardinality-safe.
+
+### ModelVisualizer EDA Methods
+
+Beyond post-training diagnostics (confusion_matrix, roc_curve, etc.), ModelVisualizer has 3 EDA methods for pre-training data exploration. These accept `pl.DataFrame` (unlike the older array-based methods).
+
+```python
+from kailash_ml import ModelVisualizer
+
+viz = ModelVisualizer()
+fig = viz.histogram(df, "price", bins=50)
+fig = viz.scatter(df, x="area", y="price", color="region")
+fig = viz.box_plot(df, "price", group_by="region")
+```
+
+### ExperimentTracker Standalone Usage
+
+For standalone/prototyping, use the `create()` factory instead of manually creating a ConnectionManager:
+
+```python
+from kailash_ml import ExperimentTracker
+
+# Standalone (factory manages its own connection)
+async with await ExperimentTracker.create("sqlite:///ml.db") as tracker:
+    exp_name = await tracker.create_experiment("my-experiment")
+    async with tracker.run(exp_name, run_name="baseline") as run:
+        await run.log_metric("accuracy", 0.95)
+
+# ExperimentTracker auto-initializes -- no initialize() call needed.
+# Factory-created trackers own their connection; close() releases it.
+# External ConnectionManager trackers leave connection lifecycle to caller.
+```
+
+### DataExplorer (P1 -- Async, ydata-profiling Parity)
+
+All methods are **async**. 5 matrix computations run in parallel via `asyncio.gather()`.
+
+```python
+from kailash_ml import DataExplorer, AlertConfig
+
+explorer = DataExplorer(alert_config=AlertConfig(high_correlation_threshold=0.9))
+profile = await explorer.profile(df)
+# profile.skewness, .kurtosis, .iqr, .outlier_count, .zero_count
+# profile.spearman_matrix, .categorical_associations (Cramer's V)
+# profile.duplicate_count, .memory_bytes, .sample_head, .sample_tail
+# profile.alerts (8 types: high_nulls, constant, high_skewness, high_zeros,
+#                  high_cardinality, high_correlation, duplicates, imbalanced)
+# profile.type_summary, .inferred_type per column (boolean, id, categorical, numeric, text)
+
+html_report = await explorer.to_html(df, title="My Report")  # Self-contained HTML
+comparison = await explorer.compare(train_df, prod_df)  # Parallel profiling
+```
+
+**Correlation robustness**: Pairwise-complete observation (not `fill_null(0.0)`) for Pearson and Spearman. Centralized `_sanitize_float()` guards ALL numeric outputs -- returns `None` for non-finite values. Correlation `None` = "undefined" (constant column), distinct from `0.0` = "no correlation". HTML report renders "N/A" with tooltip. Alert threshold check guards against `None`.
+
+**Security**: XSS-safe HTML via `html.escape()` + `_safe_uid()` for plotly div IDs. No scipy dependency.
+
+### ModelExplainer (SHAP, requires `[explain]`)
+
+```python
+from kailash_ml import ModelExplainer
+
+explainer = ModelExplainer(model=fitted_model, X=train_df, feature_names=schema.feature_names)
+global_report = explainer.explain_global(max_display=10)
+# global_report["feature_importance"]: sorted feature → mean |SHAP|
+local_report = explainer.explain_local(X=test_df, index=0)
+# local_report["feature_contributions"]: per-feature SHAP for one prediction
+dep = explainer.explain_dependence(feature="tenure_months", interaction_feature="age")
+fig = explainer.to_plotly("summary")  # Also: "beeswarm", "dependence"
+```
+
+Polars-native: accepts `pl.DataFrame`, converts to numpy internally via `_polars_to_numpy()`. Boolean→Int8, Categorical→physical, Utf8 raises.
+
+### Preprocessing Enhancements
+
+```python
+result = pipeline.setup(
+    data=df, target="churned",
+    normalize=True, normalize_method="robust",   # zscore, minmax, robust, maxabs
+    imputation="knn", impute_n_neighbors=5,       # knn, iterative, or default
+    remove_multicollinearity=True, multicollinearity_threshold=0.9,
+    fix_imbalance=True, imbalance_method="smote", # smote, adasyn (requires [imbalance])
+)
+```
+
+### Model Calibration
+
+```python
+result = await pipeline.calibrate(model_name="churn_v1", method="isotonic", cv=5)
+# method: "platt" (sigmoid) or "isotonic"
+# Returns calibrated model via CalibratedClassifierCV
+```
+
+### Nested Runs & Auto-Logging
+
+```python
+# Nested runs — group trials under a parent
+async with tracker.run("hyperopt-sweep") as parent:
+    for params in param_grid:
+        async with tracker.run("trial", parent_run_id=parent.run_id) as child:
+            await child.log_params(params)
+
+# Auto-logging — TrainingPipeline logs to ExperimentTracker automatically
+pipeline = TrainingPipeline(feature_store=fs, model_registry=registry, experiment_tracker=tracker)
+# train() auto-logs metrics, params, artifacts
+```
+
+### Inference Validation
+
+InferenceServer validates input DataFrames against model feature signatures. Missing features raise `ValueError` with the specific missing column names.
+
+### Agent-Infused AutoML (Double Opt-In)
+
+Agents require both `agent=True` AND `kailash-ml[agents]` installed.
+
+```python
+from kailash_ml import AutoMLEngine
+from kailash_ml.engines.automl_engine import AutoMLConfig
+
+config = AutoMLConfig(
+    task_type="classification",
+    agent=True,           # Opt-in 1: enable agent augmentation
+    auto_approve=False,   # Human approval gate (default)
+    max_llm_cost_usd=5.0, # Cost budget
+)
+engine = AutoMLEngine(feature_store=fs, model_registry=registry, config=config)
+result = await engine.run(schema=schema, data=df)
+```
 
 ## Security Rules
 
 ### SQL Safety
 
-- A dedicated SQL module is the SOLE SQL touchpoint — zero raw SQL in engine files
-- SQL type validation via allowlist: INTEGER, REAL, TEXT, BLOB, NUMERIC only
-- Identifier validation on all interpolated identifiers
-- Table prefix validated via regex at initialization
-
-**Why:** Centralizing SQL prevents injection vectors from appearing in engine code where they are harder to audit.
+- `_feature_sql.py` is the SOLE SQL touchpoint -- zero raw SQL in engine files
+- `_validate_sql_type()` allowlist: INTEGER, REAL, TEXT, BLOB, NUMERIC only
+- `_validate_identifier()` from `kailash.db.dialect` on all interpolated identifiers
+- `_table_prefix` validated in `FeatureStore.__init__` via regex
 
 ### Model Class Allowlist
 
-`validate_model_class()` restricts dynamic imports to known prefixes: `sklearn.`, `lightgbm.`, `xgboost.`, `catboost.`, `kailash_ml.`, `torch.`, `lightning.`
+`validate_model_class()` in `_shared.py` restricts dynamic imports to:
+`sklearn.`, `lightgbm.`, `xgboost.`, `catboost.`, `kailash_ml.`, `torch.`, `lightning.`
 
-**Why:** Unrestricted model class strings enable arbitrary code execution via dynamic import.
-
-```
-# DO: Use an allowed model class prefix
-model_class = "sklearn.ensemble.RandomForestClassifier"
-
-# DO NOT: Use arbitrary module paths
-model_class = "os.system"  # BLOCKED by allowlist
-```
+**Why**: Prevents arbitrary code execution via model class strings.
 
 ### Financial Field Validation
 
-`math.isfinite()` on all budget/cost fields (AutoML cost budgets, guardrail thresholds, confidence minimums).
+`math.isfinite()` on all budget/cost fields in:
 
-**Why:** NaN bypasses all numeric comparisons; Inf defeats upper-bound checks. Both allow unlimited cost accumulation.
+- `AutoMLConfig.max_llm_cost_usd`
+- `GuardrailConfig.max_llm_cost_usd`, `GuardrailConfig.min_confidence`
+
+**Why**: NaN bypasses all numeric comparisons; Inf defeats upper-bound checks.
+
+### NaN/Inf Guards in DataExplorer
+
+All numpy-computed statistics (skewness, kurtosis, correlation values) use `math.isfinite()` before storage. Inf/NaN values fall back to `0.0`. HTML report's `_corr_color()` guards against NaN with grey fallback.
 
 ### Bounded Collections
 
-All long-running stores use bounded collections (e.g., deque with maxlen) for audit trails, cost logs, and trial history.
+All long-running stores use `deque(maxlen=N)` for audit trails, cost logs, and trial history.
 
-**Why:** Unbounded collections in long-running ML pipelines cause OOM crashes when trial counts or audit entries grow without limit.
+## Agent Integration
 
-## 5 Mandatory Agent Guardrails (AgentGuardrailMixin)
-
-Every ML agent MUST implement all five guardrails:
-
-1. **Confidence scores** — every recommendation includes confidence 0-1
-2. **Cost budget** — cumulative LLM cost capped at configurable maximum
-3. **Human approval gate** — `auto_approve=False` by default
-4. **Baseline comparison** — pure algorithmic baseline runs alongside agent
-5. **Audit trail** — all decisions logged to audit table
-
-**Why:** ML agents making unsupervised decisions about model selection, feature engineering, or retraining can cause silent model degradation. Guardrails make every agent decision auditable and reversible.
-
-```
-# DO: Enable guardrails with explicit budget
-config = AutoMLConfig(agent=True, auto_approve=False, max_llm_cost_usd=5.0)
-
-# DO NOT: Disable guardrails for convenience
-config = AutoMLConfig(agent=True, auto_approve=True, max_llm_cost_usd=float('inf'))
-```
-
-## 6 Kaizen ML Agents
+### 6 Kaizen Agents (kailash-ml[agents])
 
 | Agent                      | Purpose                        | Tools Used                                  |
 | -------------------------- | ------------------------------ | ------------------------------------------- |
@@ -196,84 +308,60 @@ config = AutoMLConfig(agent=True, auto_approve=True, max_llm_cost_usd=float('inf
 | DriftAnalystAgent          | Drift report interpretation    | get_drift_history, get_feature_distribution |
 | RetrainingDecisionAgent    | Retrain/rollback decisions     | get_prediction_accuracy, trigger_retraining |
 
-All agents follow the LLM-first rule: tools are dumb data endpoints, the LLM does ALL reasoning via Signatures.
+All agents follow LLM-first rule: `tools.py` provides dumb data endpoints, the LLM does ALL reasoning via Signatures.
 
-## Decision Tree: kailash-ml vs kailash-align vs kailash-kaizen
+### AgentGuardrailMixin (5 Mandatory Guardrails)
 
+1. **Confidence scores** -- every recommendation includes confidence 0-1
+2. **Cost budget** -- cumulative LLM cost capped at `max_llm_cost_usd`
+3. **Human approval gate** -- `auto_approve=False` by default
+4. **Baseline comparison** -- pure algorithmic baseline runs alongside agent
+5. **Audit trail** -- all decisions logged to `_kml_agent_audit_log`
+
+## RL Module (Optional Extra)
+
+Requires `pip install kailash-ml[rl]` (Stable-Baselines3, Gymnasium).
+
+```python
+from kailash_ml.rl import RLTrainer, EnvironmentRegistry, PolicyRegistry
+
+# Register environment
+env_reg = EnvironmentRegistry()
+env_reg.register("CartPole-v1")
+
+# Configure policy
+policy_reg = PolicyRegistry()
+policy_config = policy_reg.get("PPO")
+
+# Train
+trainer = RLTrainer(env_registry=env_reg, policy_registry=policy_reg)
+result = await trainer.train(env_id="CartPole-v1", algorithm="PPO", total_timesteps=100_000)
 ```
-Does the task involve LLM fine-tuning or alignment?
-  YES → kailash-align (see align-specialist)
-  NO  → Does the task involve AI agent orchestration?
-          YES → kailash-kaizen (see kaizen-specialist)
-          NO  → Does the task involve classical ML, deep learning, or RL?
-                  YES → kailash-ml (this agent)
-                  NO  → Not an ML concern
-```
-
-## MLflow Compatibility
-
-kailash-ml uses the MLflow MLmodel format for model artifacts:
-
-- **MlflowFormatReader** — loads MLflow-format artifacts into kailash-ml ModelRegistry
-- **MlflowFormatWriter** — exports kailash-ml models in MLflow-compatible format
-- Experiment tracking is MLflow-compatible (same metrics/params/artifacts schema)
-
-**Why:** MLflow MLmodel format is the de facto standard. Compatibility enables migration from existing MLflow deployments without re-training.
-
-## ONNX Cross-Language Export
-
-OnnxBridge converts trained models to ONNX format for cross-language serving:
-
-- Supports sklearn, LightGBM, XGBoost, PyTorch models
-- Enables serving from Rust, Go, or any ONNX-runtime-capable language
-- Validates input/output shapes at export time
-
-**Why:** ONNX export decouples the training language from the serving language, allowing training in Python and inference in Rust at native speed.
-
-## RL Module (Optional)
-
-Requires the RL optional dependency (Stable-Baselines3, Gymnasium).
-
-- **EnvironmentRegistry** — register and manage Gymnasium environments
-- **PolicyRegistry** — algorithm configs (PPO, A2C, DQN, SAC, TD3)
-- **RLTrainer** — training loop with checkpoint management
 
 ## Dependencies
 
 ```
-kailash-ml              # Core (polars, numpy, scipy, sklearn, lightgbm, plotly, onnx)
-kailash-ml[dl]          # + PyTorch, Lightning, transformers
-kailash-ml[dl-gpu]      # + onnxruntime-gpu
-kailash-ml[rl]          # + Stable-Baselines3, Gymnasium
-kailash-ml[agents]      # + kailash-kaizen (agent integration)
-kailash-ml[xgb]         # + XGBoost
-kailash-ml[catboost]    # + CatBoost
-kailash-ml[stats]       # + statsmodels
-kailash-ml[full]        # Everything
+pip install kailash-ml            # Core (polars, numpy, scipy, sklearn, lightgbm, plotly, onnx)
+pip install kailash-ml[dl]        # + PyTorch, Lightning, transformers
+pip install kailash-ml[dl-gpu]    # + onnxruntime-gpu
+pip install kailash-ml[rl]        # + Stable-Baselines3, Gymnasium
+pip install kailash-ml[agents]    # + kailash-kaizen (agent integration)
+pip install kailash-ml[xgb]       # + XGBoost
+pip install kailash-ml[catboost]  # + CatBoost
+pip install kailash-ml[explain]   # + SHAP (model explainability)
+pip install kailash-ml[imbalance] # + imbalanced-learn (SMOTE, ADASYN)
+pip install kailash-ml[stats]     # + statsmodels
+pip install kailash-ml[all]       # Everything
 ```
 
 ## Related Agents
 
-- **align-specialist** — LLM fine-tuning (companion package kailash-align)
-- **dataflow-specialist** — ConnectionManager dependency, database patterns
-- **kaizen-specialist** — Agent patterns for ML agent integration
-- **nexus-specialist** — InferenceServer deployment via Nexus
-- **mcp-platform-specialist** — ML tool registration on the platform MCP server
+- **align-specialist** -- LLM fine-tuning (companion package kailash-align)
+- **dataflow-specialist** -- ConnectionManager dependency, database patterns
+- **kaizen-specialist** -- Agent patterns for ML agent integration
+- **nexus-specialist** -- InferenceServer deployment via Nexus
 
-## Skill References
+## Full Documentation
 
-- **[/13-architecture-decisions](../../skills/13-architecture-decisions/)** — Framework selection guidance
-- **[/04-kaizen](../../skills/04-kaizen/)** — Kaizen agent patterns
-- **[/18-security-patterns](../../skills/18-security-patterns/)** — Security validation
-
----
-
-**Use this agent when:**
-
-- Implementing feature stores, training pipelines, or model registries
-- Setting up drift monitoring with statistical tests
-- Configuring AutoML with agent guardrails
-- Building hyperparameter search or ensemble methods
-- Exporting models via ONNX for cross-language serving
-- Integrating RL environments and policies
-- Choosing between kailash-ml, kailash-align, and kailash-kaizen
+- `pip install kailash-ml` -- Core package
+- `pip install kailash-ml[all]` -- All extras

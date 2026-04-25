@@ -92,9 +92,10 @@ class Model1:
 
 ### Primary Sources
 
+
 ### Specialist Reference
 
-- **DataFlow Specialist**: `dataflow-specialist` agent
+- **DataFlow Specialist**: [`.claude/agents/frameworks/dataflow-specialist.md`](../../dataflow-specialist.md#L86-L116)
 
 ## Quick Tips
 

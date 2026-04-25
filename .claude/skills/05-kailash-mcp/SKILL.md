@@ -1,6 +1,6 @@
 ---
 name: kailash-mcp
-description: "Kailash MCP — MANDATORY for ALL MCP server/tool/resource/transport work. Production MCP server with security tiers and platform config. Use proactively when building MCP servers, exposing internal APIs as LLM tools, registering tools, or wiring transports. Custom JSON-RPC tool servers, hand-rolled MCP transports BLOCKED."
+description: "Kailash MCP (Model Context Protocol) - production-ready MCP server implementation for AI agent integration. Use when asking about 'MCP', 'Model Context Protocol', 'MCP server', 'MCP client', 'MCP tools', 'MCP resources', 'MCP prompts', 'MCP authentication', 'MCP transports', 'stdio transport', 'SSE transport', 'HTTP transport', 'MCP testing', 'progress reporting', or 'structured tools'."
 ---
 
 # Kailash MCP - Model Context Protocol Integration
@@ -28,13 +28,12 @@ from kailash_mcp import MCPServer
 server = MCPServer(name="my-server")
 
 # Register workflow as MCP tool
-@server.tool("summarize")
-def summarize_tool(text: str) -> str:
+@server.tool()
+def summarize(text: str) -> str:
     """Summarize the given text."""
-    # Execute workflow
     workflow = create_summary_workflow()
-    results = runtime.execute(workflow.build())
-    return results["summary"]["result"]
+    results, run_id = runtime.execute(workflow.build())
+    return results["summary"]
 
 # Run server (stdio transport by default)
 server.run()
@@ -42,20 +41,10 @@ server.run()
 
 ## Reference Documentation
 
-### Platform Server (kailash-mcp)
-
-- **[mcp-platform-overview](mcp-platform-overview.md)** - Architecture: FastMCP, contributor pattern, transport modes
-- **[mcp-tool-catalog](mcp-tool-catalog.md)** - Complete list of all 26 tools by framework and security tier
-- **[mcp-contributor-pattern](mcp-contributor-pattern.md)** - How to write a new framework contributor module
-- **[mcp-security-tiers](mcp-security-tiers.md)** - T1-T4 security model, env var controls, tier escalation
-- **[mcp-claude-code-config](mcp-claude-code-config.md)** - Claude Code mcpServers setup (stdio + SSE), troubleshooting
-- **[mcp-platform-map](mcp-platform-map.md)** - platform_map() output schema, connection detection, debugging
-- **[mcp-migration-guide](mcp-migration-guide.md)** - Migrating from MCPServer/MCPServerBase to platform server
-
-### MCP Protocol Patterns
+### Getting Started
 
 - **[mcp-transports-quick](mcp-transports-quick.md)** - Transport configuration (stdio, SSE, HTTP)
-- **[mcp-structured-tools](mcp-structured-tools.md)** - Defining MCP tools with JSON Schema
+- **[mcp-structured-tools](mcp-structured-tools.md)** - Defining MCP tools
 - **[mcp-resources](mcp-resources.md)** - Exposing resources to agents
 
 ### Security & Operations
@@ -122,12 +111,13 @@ from kailash.workflow.builder import WorkflowBuilder
 
 server = MCPServer(name="workflow-server")
 
-@server.tool("process_data")
-def process_tool(input: str) -> dict:
+@server.tool()
+def process_data(input: str) -> dict:
+    """Process data through a workflow."""
     workflow = WorkflowBuilder()
     # Build workflow
-    results = runtime.execute(workflow.build())
-    return results["output"]["result"]
+    results, run_id = runtime.execute(workflow.build())
+    return results["output"]
 ```
 
 ### With Nexus (Multi-Channel with MCP)
@@ -136,8 +126,9 @@ def process_tool(input: str) -> dict:
 from nexus import Nexus
 
 # Nexus automatically creates MCP channel
-nexus = Nexus(workflows)
-nexus.run()  # Includes MCP server
+app = Nexus()
+app.register("my_workflow", workflow.build())
+app.start()  # Includes MCP server
 ```
 
 ### With DataFlow (Database Access)
@@ -149,9 +140,9 @@ from dataflow import DataFlow
 server = MCPServer(name="db-server")
 db = DataFlow(...)
 
-@server.resource("users")
+@server.resource("users://list")
 def get_users():
-    # Expose database via MCP resource
+    """Expose database via MCP resource."""
     return db.query_users()
 ```
 
@@ -159,12 +150,13 @@ def get_users():
 
 ```python
 from kailash_mcp import MCPServer
-from kaizen.base import BaseAgent
+from kaizen.core.base_agent import BaseAgent
 
 server = MCPServer(name="agent-server")
 
-@server.tool("analyze")
-def analyze_tool(text: str) -> str:
+@server.tool()
+def analyze(text: str) -> str:
+    """Analyze text using an AI agent."""
     agent = AnalysisAgent()
     return agent(text=text).result
 ```
@@ -197,15 +189,15 @@ def analyze_tool(text: str) -> str:
 
 ## Related Skills
 
-- **[01-core-sdk](../01-core-sdk/SKILL.md)** - Core workflow patterns
-- **[03-nexus](../03-nexus/SKILL.md)** - Nexus includes MCP channel
-- **[04-kaizen](../04-kaizen/SKILL.md)** - AI agents as MCP tools
-- **[02-dataflow](../02-dataflow/SKILL.md)** - Database resources
+- **[01-core-sdk](../../01-core-sdk/SKILL.md)** - Core workflow patterns
+- **[03-nexus](../nexus/SKILL.md)** - Nexus includes MCP channel
+- **[04-kaizen](../kaizen/SKILL.md)** - AI agents as MCP tools
+- **[02-dataflow](../dataflow/SKILL.md)** - Database resources
 
 ## Support
 
 For MCP-specific questions, invoke:
 
-- `mcp-platform-specialist` - Platform server, contributor plugins, security tiers, platform_map
-- `mcp-specialist` - General MCP protocol, custom servers, auth, transports
+- `mcp-specialist` - MCP server implementation
 - `testing-specialist` - MCP testing strategies
+- ``decide-framework` skill` - MCP integration architecture

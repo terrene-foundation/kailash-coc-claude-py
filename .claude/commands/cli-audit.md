@@ -39,6 +39,7 @@ This writes:
 - `/tmp/cli-audit-<ts>/codex/AGENTS.md` + `emit-report-codex.json`
 - `/tmp/cli-audit-<ts>/gemini/GEMINI.md` + `emit-report-gemini.json`
 - `/tmp/cli-audit-<ts>/codex-mcp-guard/policies.json` (V13 POLICIES table)
+- `/tmp/cli-audit-<ts>/emit-telemetry.json` — consolidated headroom summary (per-CLI bytes, tier, headroom_bytes, headroom_pct) keyed off `warn_cap_bytes` + `block_cap_bytes` loaded from `sync-manifest.yaml`. Surfaces the trend metric for Risk-0004 (baseline-cap headroom ~4%).
 
 Exit code ≠ 0 means V12 slot-round-trip failed, V13 MCP bijection failed, or the emission exceeded `block_cap_bytes`. A non-zero exit is a HARD BLOCK on this audit — fix before dispatching architects.
 
@@ -69,8 +70,19 @@ Drift in `neutral-body`, `frontmatter.priority`, or `frontmatter.scope` HARD BLO
 Combine architect findings + drift-audit result into a single report with severity taxonomy:
 
 - **CRITICAL** — V12 slot round-trip failure, V13 MCP bijection failure, `block_cap_bytes` exceeded, `neutral-body` drift, `frontmatter.priority|scope` drift, overlay introduces a slot not in global.
-- **HIGH** — V13 POLICIES bijection spurious/missing entry, per-rule budget exceeds `+30%` tolerance, `warn_cap_bytes` exceeded.
+- **HIGH** — V13 POLICIES bijection spurious/missing entry, per-rule budget exceeds `+30%` tolerance, `warn_cap_bytes` exceeded, `emit-telemetry.json` shows any per-CLI `headroom_pct < 10%` (Risk-0004 early-warning band).
 - **NOTE** — expected `examples` slot drift, per-rule budget within tolerance but trending up, orchestrator filter applied (e.g. `main` in `validate-prod-deploy.js`).
+
+### Headroom trend (baseline_emission_bytes)
+
+Read `/tmp/cli-audit-<ts>/emit-telemetry.json` and summarize per-CLI headroom in the report:
+
+```
+codex:  53,620 B / 61,440 cap → 12.73% headroom (WARN tier)
+gemini: 53,620 B / 61,440 cap → 12.73% headroom (WARN tier)
+```
+
+When any CLI's `headroom_pct` drops below 10%, flag as HIGH and recommend the v6 §A.2 remediation path (demote a CRIT rule to path-scoped, tighten a per-rule budget, or trim the ruleset). The aim is for operators to see the cap approaching long before a sync hits BLOCK.
 
 Run iteratively until zero CRITICAL and zero HIGH remain. Each iteration MUST re-derive the emission + re-dispatch the three architects (parallel) + re-run `sees`. Do NOT trust a prior turn's verdict — the audit's strength is its repeatability.
 

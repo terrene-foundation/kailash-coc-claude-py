@@ -5,156 +5,500 @@ description: "Common DataFlow mistakes and misunderstandings. Use when DataFlow 
 
 # DataFlow Common Gotchas
 
+Common misunderstandings and mistakes when using DataFlow, with solutions.
+
+> **Skill Metadata**
+> Category: `dataflow`
+> Priority: `HIGH`
+> Related Skills: [`dataflow-models`](#), [`dataflow-crud-operations`](#), [`dataflow-nexus-integration`](#)
+> Related Subagents: `dataflow-specialist` (complex troubleshooting)
+
 ## Quick Reference
 
-- **Primary key MUST be `id`** -- not `user_id`, `model_id`, anything else
-- **CreateNode = flat fields, UpdateNode = nested filter+fields** -- different patterns
-- **Never set `created_at`/`updated_at`** -- auto-managed (auto-stripped with warning)
-- **NOT an ORM** -- models are schemas, use workflow nodes not `User().save()`
-- **Use connections, NOT `${}` template syntax** -- conflicts with PostgreSQL
-- **Result access**: ListNode->`records`, CountNode->`count`, ReadNode->dict directly
+- **✅ Docker/FastAPI (current version)**: `auto_migrate=True` now works! Uses sync DDL with psycopg2/sqlite3
+- **⚠️ In-Memory SQLite**: `:memory:` databases use lazy creation (sync DDL skipped)
+- **🚨 Sync methods in async context (DF-501)**: Use `create_tables_async()` if needed
+- **🚨 Timestamp fields auto-stripped **: `created_at`/`updated_at` auto-removed with warning
+- **🔇 Logging configuration (current)**: Use `LoggingConfig` for clean logs - `db = DataFlow(..., log_config=LoggingConfig.production())`
+- **soft_delete auto-filters **: Use `include_deleted=True` to see deleted records
+- **NOT an ORM**: DataFlow is workflow-native, not like SQLAlchemy
+- **Primary Key MUST be `id`**: NOT `user_id`, `model_id`, or anything else
+- **CreateNode ≠ UpdateNode**: Different parameter patterns (flat vs nested)
+- **Template Syntax**: DON'T use `${}` - conflicts with PostgreSQL
+- **Connections**: Use connections, NOT template strings
+- **Result Access**: ListNode → `records`, CountNode → `count`, ReadNode → record dict
 - **Use Express for APIs**: `db.express.create()` is 23x faster than workflows
 
-## #1: Auto-Managed Timestamp Fields (FIXED)
+## Critical Gotchas
 
-DataFlow auto-strips `created_at`/`updated_at` with a warning. Best practice: never include them.
+### 🚨 #1 MOST COMMON: Auto-Managed Timestamp Fields (DF-104) ✅ FIXED
+
+**This WAS the #1 mistake - now auto-handled!**
+
+#### current version Behavior: Auto-Strip with Warning
+
+DataFlow now **automatically strips** `created_at` and `updated_at` fields and logs a warning:
 
 ```python
-# BEST PRACTICE
-workflow.add_node("ModelUpdateNode", "update", {
-    "filter": {"id": id},
-    "fields": data  # DataFlow sets updated_at automatically
-})
+# Current: This now WORKS (with warning) instead of failing
+async def update(self, id: str, data: dict) -> dict:
+    now = datetime.now(UTC).isoformat()
+    data["updated_at"] = now  # ⚠️ Auto-stripped with warning
+
+    workflow.add_node("ModelUpdateNode", "update", {
+        "filter": {"id": id},
+        "fields": data  # ✅ Works! updated_at is auto-stripped
+    })
 ```
 
-## #2: Sync Methods in Async Context (DF-501)
+**Warning Message**:
+
+```
+⚠️ AUTO-STRIPPED: Fields ['updated_at'] removed from update. DataFlow automatically
+manages created_at/updated_at timestamps. Remove these fields from your code to
+avoid this warning.
+```
+
+#### Best Practice (Avoid Warning)
+
+Remove timestamp fields from your code entirely:
 
 ```python
-# WRONG - RuntimeError: DF-501
+# ✅ BEST PRACTICE - No timestamp management needed
+async def update(self, id: str, data: dict) -> dict:
+    # Don't set timestamps - DataFlow handles it
+    workflow.add_node("ModelUpdateNode", "update", {
+        "filter": {"id": id},
+        "fields": data  # DataFlow sets updated_at automatically
+    })
+```
+
+#### Auto-Managed Fields
+
+- `created_at` - Set automatically on record creation (CreateNode)
+- `updated_at` - Set automatically on every modification (UpdateNode)
+
+**current version Impact**: No more DF-104 errors! Fields are auto-stripped with warning. Upgrade for smooth experience.
+
+---
+
+### 🚨 #2: Sync Methods in Async Context (DF-501) ⚠️ CRITICAL
+
+**This error occurs when using DataFlow in FastAPI, pytest-asyncio, or any async framework!**
+
+```
+RuntimeError: DF-501: Sync Method in Async Context
+
+You called create_tables() from an async context (running event loop detected).
+Use create_tables_async() instead.
+```
+
+#### The Problem
+
+```python
+# ❌ WRONG - Sync method in async context
 @app.on_event("startup")
 async def startup():
-    db.create_tables()  # Sync in async context!
+    db.create_tables()  # RuntimeError: DF-501!
 
-# CORRECT
+# ❌ WRONG - In pytest async fixture
+@pytest.fixture
+async def db_fixture():
+    db = DataFlow(":memory:")
+    db.create_tables()  # RuntimeError: DF-501!
+    yield db
+    db.close()  # Also fails!
+```
+
+#### The Fix 
+
+```python
+# ✅ CORRECT - Use async methods in async context
+@app.on_event("startup")
+async def startup():
+    await db.create_tables_async()
+
+# ✅ CORRECT - FastAPI lifespan pattern (recommended)
+from contextlib import asynccontextmanager
+
 @asynccontextmanager
-async def lifespan(app):
+async def lifespan(app: FastAPI):
     await db.create_tables_async()
     yield
     await db.close_async()
-app = Nexus(lifespan=lifespan)
+
+app = FastAPI(lifespan=lifespan)
+
+# ✅ CORRECT - pytest async fixtures
+@pytest.fixture
+async def db_fixture():
+    db = DataFlow(":memory:")
+    @db.model
+    class User:
+        id: str
+        name: str
+    await db.create_tables_async()
+    yield db
+    await db.close_async()
 ```
 
-| Sync Method       | Async Method            |
-| ----------------- | ----------------------- |
-| `create_tables()` | `create_tables_async()` |
-| `close()`         | `close_async()`         |
+#### Async Methods Available
 
-Sync methods still work in sync context (CLI, scripts).
+| Sync Method                  | Async Method                       | When to Use                      |
+| ---------------------------- | ---------------------------------- | -------------------------------- |
+| `create_tables()`            | `create_tables_async()`            | Table creation in FastAPI/pytest |
+| `close()`                    | `close_async()`                    | Connection cleanup               |
+| `_ensure_migration_tables()` | `_ensure_migration_tables_async()` | Migration system                 |
 
-## #3: Docker/Async Deployment (FIXED)
-
-`auto_migrate=True` now works in Docker/async. Uses sync DDL drivers (psycopg2/sqlite3) for table creation, async drivers (asyncpg/aiosqlite) for CRUD.
+#### Sync Context Still Works
 
 ```python
-# Zero-config Docker pattern
-db = DataFlow("postgresql://...")  # auto_migrate=True default, works
+# ✅ Sync methods work in sync context (CLI, scripts)
+if __name__ == "__main__":
+    db = DataFlow(":memory:")
+    db.create_tables()  # Works in sync context
+    db.close()
 ```
 
-In-memory SQLite uses URI shared-cache mode automatically. For manual control:
+**Impact**: Immediate `RuntimeError` with clear message. Use async methods in async contexts.
+
+---
+
+### ✅ #2.5: Docker/FastAPI Deployment (FIXED in current version)
+
+**`auto_migrate=True` NOW WORKS in Docker/FastAPI!**
+
+DataFlow uses synchronous database drivers (psycopg2, sqlite3) for table creation, avoiding event loop boundary issues.
+
+#### Zero-Config Docker Pattern (current version)
 
 ```python
+from dataflow import DataFlow
+from fastapi import FastAPI
+
+# Zero-config: auto_migrate=True (default) now works!
+db = DataFlow("postgresql://...")
+
+@db.model  # Tables created immediately via sync DDL
+class User:
+    id: str
+    name: str
+
+app = FastAPI()
+
+@app.post("/users")
+async def create_user(data: dict):
+    return await db.express.create("User", data)
+```
+
+#### How the Fix Works
+
+- Uses psycopg2 (PostgreSQL) or sqlite3 (SQLite) for DDL - no asyncio
+- Tables are created synchronously at model registration time
+- CRUD operations continue using async drivers (asyncpg, aiosqlite)
+- No event loop conflicts because DDL and CRUD use separate connection types
+
+#### ⚠️ In-Memory SQLite: URI Shared-Cache Required
+
+In-memory databases use URI shared-cache mode (`file:name?mode=memory&cache=shared`) so multiple connections see the same database. The adapters handle this automatically — bare `aiosqlite.connect(":memory:")` creates **separate** databases per connection and must not be used directly. Sync DDL still falls back to lazy table creation:
+
+```python
+# In-memory SQLite: Uses URI shared-cache + lazy creation
+db = DataFlow(":memory:", auto_migrate=True)  # Tables created on first access
+# Internally: file:dataflow_<id>?mode=memory&cache=shared
+```
+
+#### When to Use Each Pattern
+
+| Context                 | Pattern                       | Notes                      |
+| ----------------------- | ----------------------------- | -------------------------- |
+| **Docker/FastAPI**      | `auto_migrate=True` (default) | ✅ Works in current version      |
+| **In-Memory SQLite**    | `auto_migrate=True`           | Uses lazy creation (works) |
+| **CLI Scripts**         | `auto_migrate=True` (default) | Works                      |
+| **pytest (sync/async)** | `auto_migrate=True` (default) | Works via sync DDL         |
+
+#### Alternative: Manual Control
+
+```python
+# For explicit control over table creation timing
 db = DataFlow("postgresql://...", auto_migrate=False)
-# Then use await db.create_tables_async() in lifespan
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await db.create_tables_async()  # Or db.create_tables_sync()
+    yield
+    await db.close_async()
+
+app = FastAPI(lifespan=lifespan)
 ```
 
-## #4: Empty Dict Truthiness Bug (FIXED)
+---
 
-Upgrade to latest DataFlow. Previously `{}` was treated as falsy in filters.
+### 0. Empty Dict Truthiness Bug ⚠️ CRITICAL
+
+#### The Bug
+
+Python treats empty dict `{}` as falsy, causing incorrect behavior in filter operations.
+
+#### Symptoms (Before Fix)
 
 ```python
-# WRONG pattern in custom code
-if filter_dict:          # Empty dict is falsy!
+# This would return ALL records instead of filtered records in older versions
+workflow.add_node("UserListNode", "query", {
+    "filter": {"status": {"$ne": "inactive"}}
+})
+# Expected: 2 users (active only)
+# Actual (older versions): 3 users (ALL records)
+```
+
+#### The Fix
+
+✅ **Upgrade to Latest DataFlow**
+
+```bash
+pip install --upgrade kailash-dataflow
+```
+
+✅ All filter operators now work correctly:
+
+- $ne (not equal)
+- $nin (not in)
+- $in (in)
+- $not (logical NOT)
+- All comparison operators ($gt, $lt, $gte, $lte)
+
+#### Prevention Pattern
+
+When checking if a parameter was provided:
+
+```python
+# ❌ WRONG - treats empty dict as "not provided"
+if filter_dict:
     process_filter()
 
-# CORRECT
-if "filter" in kwargs:   # Check key existence
+# ✅ CORRECT - checks if key exists
+if "filter" in kwargs:
     process_filter()
 ```
 
-## #5: Primary Key MUST Be 'id'
+#### Root Cause
+
+Two locations had truthiness bugs:
+
+1. ListNode at nodes.py:1810 - `if filter_dict:` → `if "filter" in kwargs:`
+2. BulkDeleteNode at bulk_delete.py:177 - `not filter_conditions` → `"filter" not in validated_inputs`
+
+#### Impact
+
+**High**: All query filtering was affected in older versions. Ensure you're using the latest DataFlow version.
+
+---
+
+### 0.1. Primary Key MUST Be Named 'id' ⚠️ HIGH IMPACT
 
 ```python
-# WRONG
+# WRONG - Custom primary key names FAIL
 @db.model
 class User:
-    user_id: str  # FAILS
+    user_id: str  # FAILS - DataFlow requires 'id'
+    name: str
 
-# CORRECT
+# WRONG - Other variations also fail
+@db.model
+class Agent:
+    agent_id: str  # FAILS
+    model_id: str  # FAILS
+```
+
+**Why**: DataFlow's auto-generated nodes expect `id` as the primary key field name.
+
+**Fix: Use 'id' Exactly**
+
+```python
+# CORRECT - Primary key MUST be 'id'
 @db.model
 class User:
-    id: str  # REQUIRED
+    id: str  # ✅ REQUIRED - must be exactly 'id'
     name: str
 ```
 
-## #6: CreateNode vs UpdateNode Pattern
+**Impact**: 10-20 minutes debugging if violated. Use `id` for all models, always.
+
+### 0.1. CreateNode vs UpdateNode Pattern Difference ⚠️ CRITICAL
 
 ```python
-# CreateNode: FLAT
+# WRONG - Applying CreateNode pattern to UpdateNode
+workflow.add_node("UserUpdateNode", "update", {
+    "db_instance": "my_db",
+    "model_name": "User",
+    "id": "user_001",  # ❌ Individual fields don't work for UpdateNode
+    "name": "Alice",
+    "status": "active"
+})
+# Error: "column user_id does not exist" (misleading!)
+```
+
+**Why**: CreateNode and UpdateNode use FUNDAMENTALLY DIFFERENT patterns:
+
+- **CreateNode**: Flat individual fields at top level
+- **UpdateNode**: Nested `filter` + `fields` dicts
+
+**Fix: Use Correct Pattern**
+
+```python
+# CreateNode: FLAT individual fields
 workflow.add_node("UserCreateNode", "create", {
-    "id": "user_001", "name": "Alice", "email": "alice@example.com"
+    "db_instance": "my_db",
+    "model_name": "User",
+    "id": "user_001",  # ✅ Individual fields
+    "name": "Alice",
+    "email": "alice@example.com"
 })
 
 # UpdateNode: NESTED filter + fields
 workflow.add_node("UserUpdateNode", "update", {
-    "filter": {"id": "user_001"},
-    "fields": {"name": "Alice Updated"}
+    "db_instance": "my_db",
+    "model_name": "User",
+    "filter": {"id": "user_001"},  # ✅ Which records
+    "fields": {"name": "Alice Updated"}  # ✅ What to change
+    # ⚠️ Do NOT include created_at or updated_at - auto-managed!
 })
 ```
 
-## #7: NOT an ORM
+**Impact**: 1-2 hours debugging if violated. Different patterns for different operations.
+
+### 0.2. Auto-Managed Timestamp Fields ⚠️
 
 ```python
-# WRONG
-user = User(name="John")  # Not instantiable
-user.save()               # No save() method
-
-# CORRECT
-workflow.add_node("UserCreateNode", "create", {"name": "John"})
+# WRONG - Including auto-managed fields
+workflow.add_node("UserUpdateNode", "update", {
+    "filter": {"id": "user_001"},
+    "fields": {
+        "name": "Alice",
+        "updated_at": datetime.now()  # ❌ FAILS - auto-managed
+    }
+})
+# Error: "multiple assignments to same column 'updated_at'"
 ```
 
-## #8: Template Syntax Conflicts with PostgreSQL
+**Why**: DataFlow automatically manages `created_at` and `updated_at` fields.
+
+**Fix: Omit Auto-Managed Fields**
 
 ```python
-# WRONG
-"customer_id": "${create_customer.id}"  # Conflicts with PostgreSQL
+# CORRECT - Omit auto-managed fields
+workflow.add_node("UserUpdateNode", "update", {
+    "filter": {"id": "user_001"},
+    "fields": {
+        "name": "Alice"  # ✅ Only your fields
+        # created_at, updated_at auto-managed by DataFlow
+    }
+})
+```
 
-# CORRECT: Use connections
+**Impact**: 5-10 minutes debugging. Never manually set `created_at` or `updated_at`.
+
+### 1. DataFlow is NOT an ORM
+
+```python
+# WRONG - Models are not instantiable
+from dataflow import DataFlow
+db = DataFlow()
+
+@db.model
+class User:
+    name: str
+
+user = User(name="John")  # FAILS - not supported by design
+user.save()  # FAILS - no save() method
+```
+
+**Why**: DataFlow is workflow-native, not object-oriented. Models are schemas, not classes.
+
+**Fix: Use Workflow Nodes**
+
+```python
+workflow = WorkflowBuilder()
+workflow.add_node("UserCreateNode", "create", {
+    "name": "John"  # Correct pattern
+})
+```
+
+### 2. Template Syntax Conflicts with PostgreSQL
+
+```python
+# WRONG - ${} conflicts with PostgreSQL
+workflow.add_node("OrderCreateNode", "create", {
+    "customer_id": "${create_customer.id}"  # FAILS with PostgreSQL
+})
+```
+
+**Fix: Use Workflow Connections**
+
+```python
+workflow.add_node("OrderCreateNode", "create", {
+    "total": 100.0
+})
 workflow.add_connection("create_customer", "id", "create", "customer_id")
 ```
 
-## #9: Nexus Integration
+### 3. Nexus Integration Blocks Startup
 
 ```python
-# WRONG - dataflow_config does NOT exist in Nexus
-nexus = Nexus(dataflow_config={"integration": db})
+# WRONG - dataflow_config does NOT exist in Nexus v1.1.3!
+db = DataFlow()
+nexus = Nexus(dataflow_config={"integration": db})  # THIS WILL FAIL
+```
 
-# CORRECT
-nexus = Nexus(auto_discovery=False)  # CRITICAL: prevents blocking
+**Fix: Use auto_discovery=False and manual workflow registration**
+
+```python
+# DataFlow current version: auto_migrate=True works in Docker/FastAPI
+db = DataFlow(
+    database_url="postgresql://...",
+    auto_migrate=True,  # Works
+)
+
+# Nexus v1.1.3: ALWAYS use auto_discovery=False
+nexus = Nexus(
+    api_port=8000,
+    auto_discovery=False,  # CRITICAL: Prevents blocking startup
+)
+
+# Register DataFlow workflows manually with Nexus
+from kailash.workflow.builder import WorkflowBuilder
+workflow = WorkflowBuilder()
+workflow.add_node("ProductCreateNode", "create", {"name": "${input.name}"})
 nexus.register("create_product", workflow.build())
 ```
 
-## #10: Result Access Patterns
+### 4. Wrong Result Access Pattern ⚠️
 
-| Node Type  | Access Pattern                          |
-| ---------- | --------------------------------------- |
-| ListNode   | `results["list"]["records"]` -> list    |
-| CountNode  | `results["count"]["count"]` -> int      |
-| ReadNode   | `results["read"]` -> dict or None       |
-| CreateNode | `results["create"]` -> record           |
-| UpdateNode | `results["update"]` -> record           |
-| UpsertNode | `results["upsert"]["record"]` -> record |
+Each node type returns results under specific keys:
 
-## #11: soft_delete Auto-Filters
+| Node Type      | Result Key                    | Example                                      |
+| -------------- | ----------------------------- | -------------------------------------------- |
+| **ListNode**   | `records`                     | `results["list"]["records"]` → list of dicts |
+| **CountNode**  | `count`                       | `results["count"]["count"]` → integer        |
+| **ReadNode**   | (direct)                      | `results["read"]` → dict or None             |
+| **CreateNode** | (direct)                      | `results["create"]` → created record         |
+| **UpdateNode** | (direct)                      | `results["update"]` → updated record         |
+| **UpsertNode** | `record`, `created`, `action` | `results["upsert"]["record"]` → record       |
+
+```python
+# WRONG - using generic "result" key
+results, run_id = runtime.execute(workflow.build())
+records = results["list"]["result"]  # ❌ FAILS - wrong key
+
+# CORRECT - use proper key for node type
+records = results["list"]["records"]  # ✅ ListNode returns "records"
+count = results["count"]["count"]  # ✅ CountNode returns "count"
+record = results["read"]  # ✅ ReadNode returns dict directly
+```
+
+### 4.1 soft_delete Auto-Filters Queries  ✅ FIXED
+
+**DataFlow introduced auto-filtering for soft_delete models!**
 
 ```python
 @db.model
@@ -163,30 +507,190 @@ class Patient:
     deleted_at: Optional[str] = None
     __dataflow__ = {"soft_delete": True}
 
-# Default: excludes soft-deleted
+# ✅ Current: Auto-filters by default - excludes soft-deleted records
 workflow.add_node("PatientListNode", "list", {"filter": {}})
+# Returns ONLY non-deleted patients (deleted_at IS NULL)
 
-# Include deleted
-workflow.add_node("PatientListNode", "all", {
-    "filter": {}, "include_deleted": True
+# ✅ To include soft-deleted records, use include_deleted=True
+workflow.add_node("PatientListNode", "list_all", {
+    "filter": {},
+    "include_deleted": True  # Returns ALL patients including deleted
+})
+
+# Also works with ReadNode and CountNode
+workflow.add_node("PatientReadNode", "read", {
+    "id": "patient-123",
+    "include_deleted": True  # Return even if soft-deleted
+})
+
+workflow.add_node("PatientCountNode", "count_active", {
+    "filter": {"status": "active"},
+    # Automatically excludes soft-deleted (no need to add deleted_at filter)
 })
 ```
 
-## #12: Sort/Order Parameters
+**Behavior by Node Type**:
+| Node | Default | include_deleted=True |
+|------|---------|---------------------|
+| ListNode | Excludes deleted | Includes all |
+| CountNode | Counts non-deleted | Counts all |
+| ReadNode | Returns 404 if deleted | Returns record |
 
-All three formats work:
+**Note**: This matches industry standards (Django, Rails, Laravel) where soft_delete auto-filters by default.
+
+### 4.2 Sort/Order Parameters (Both Work) ⚠️
+
+DataFlow supports TWO sorting formats:
 
 ```python
-"order_by": ["-created_at", "name"]                           # Prefix format
-"sort": [{"field": "created_at", "order": "desc"}]            # Explicit format
-"order_by": [{"created_at": -1}, {"name": 1}]                 # Dict format
+# Format 1: order_by with prefix for direction
+workflow.add_node("UserListNode", "list", {
+    "order_by": ["-created_at", "name"]  # - prefix = DESC
+})
+
+# Format 2: sort with explicit structure
+workflow.add_node("UserListNode", "list", {
+    "sort": [
+        {"field": "created_at", "order": "desc"},
+        {"field": "name", "order": "asc"}
+    ]
+})
+
+# Format 3: order_by with dict structure
+workflow.add_node("UserListNode", "list", {
+    "order_by": [{"created_at": -1}, {"name": 1}]  # -1 = DESC, 1 = ASC
+})
 ```
 
-## Historical Fixes (Upgrade to Latest)
+**All formats work.** Choose based on preference.
 
-- **String IDs**: Now fully supported (were converted to int)
-- **VARCHAR(255)**: Now TEXT type (was truncating)
-- **DateTime serialization**: ISO strings auto-converted
-- **Multi-instance isolation**: Fixed (models no longer leak between instances)
+### 5. String IDs (Fixed - Historical Issue)
+
+```python
+# HISTORICAL ISSUE (now fixed)
+@db.model
+class Session:
+    id: str  # String IDs were converted to int in older versions
+
+workflow.add_node("SessionReadNode", "read", {
+    "id": "session-uuid-string"  # Failed in older versions
+})
+```
+
+**Fix: Upgrade to Latest DataFlow**
+
+```python
+# Fixed - string IDs now fully supported
+@db.model
+class Session:
+    id: str  # Fully supported
+
+workflow.add_node("SessionReadNode", "read", {
+    "id": "session-uuid-string"  # Works perfectly
+})
+```
+
+### 6. VARCHAR(255) Content Limits (Fixed - Historical Issue)
+
+```python
+# HISTORICAL ISSUE (now fixed)
+@db.model
+class Article:
+    content: str  # Was VARCHAR(255) in older versions - truncated!
+
+# Long content failed or got truncated
+```
+
+**Fix: Automatic in Current Version**
+
+```python
+# Fixed - now TEXT type
+@db.model
+class Article:
+    content: str  # Unlimited content - TEXT type
+```
+
+### 7. DateTime Serialization (Fixed - Historical Issue)
+
+```python
+# HISTORICAL ISSUE (now fixed)
+from datetime import datetime
+
+workflow.add_node("OrderCreateNode", "create", {
+    "due_date": datetime.now().isoformat()  # String failed validation in older versions
+})
+```
+
+**Fix: Use Native datetime Objects**
+
+```python
+from datetime import datetime
+
+workflow.add_node("OrderCreateNode", "create", {
+    "due_date": datetime.now()  # Native datetime works
+})
+```
+
+### 8. Multi-Instance Context Isolation (Fixed - Historical Issue)
+
+```python
+# HISTORICAL ISSUE (now fixed)
+db_dev = DataFlow("sqlite:///dev.db")
+db_prod = DataFlow("postgresql://...")
+
+@db_dev.model
+class DevModel:
+    name: str
+
+# Model leaked to db_prod instance in older versions!
+```
+
+**Fix: Fixed (Proper Context Isolation)**
+
+```python
+# Fixed - proper isolation now enforced
+db_dev = DataFlow("sqlite:///dev.db")
+db_prod = DataFlow("postgresql://...")
+
+@db_dev.model
+class DevModel:
+    name: str
+# Only in db_dev, not in db_prod
+```
+
+## Documentation References
+
+### Primary Sources
+
+- **DataFlow Specialist**: [`.claude/agents/frameworks/dataflow-specialist.md`](../../dataflow-specialist.md#L28-L72)
+
+### Related Documentation
+
+
+## Related Patterns
+
+- **For models**: See [`dataflow-models`](#)
+- **For result access**: See [`dataflow-result-access`](#)
+- **For Nexus integration**: See [`dataflow-nexus-integration`](#)
+- **For connections**: See [`param-passing-quick`](#)
+
+## When to Escalate to Subagent
+
+Use `dataflow-specialist` when:
+
+- Complex workflow debugging
+- Performance optimization issues
+- Migration failures
+- Multi-database problems
+
+## Quick Tips
+
+- DataFlow is workflow-native, NOT an ORM
+- Use connections, NOT `${}` template syntax
+- Enable critical config for Nexus integration
+- Access results via `results["node"]["result"]`
+- Historical fixes: string IDs, TEXT type, datetime, multi-instance isolation
+
+## Keywords for Auto-Trigger
 
 <!-- Trigger Keywords: DataFlow issues, gotchas, common mistakes DataFlow, troubleshooting DataFlow, DataFlow problems, DataFlow errors, not working, DataFlow bugs -->

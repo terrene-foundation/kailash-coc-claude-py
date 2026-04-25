@@ -5,34 +5,27 @@ scope: baseline
 
 # Zero-Tolerance Rules
 
-
-<!-- slot:neutral-body -->
+See `.claude/guides/rule-extracts/zero-tolerance.md` for extended BLOCKED-pattern examples and Phase 5 audit evidence.
 
 ## Scope
 
 ALL sessions, ALL agents, ALL code, ALL phases. ABSOLUTE and NON-NEGOTIABLE.
 
-## Rule 1: Pre-Existing Failures, Warnings, and Notices MUST Be Resolved Immediately
+## Rule 1: Pre-Existing Failures, Warnings, And Notices MUST Be Resolved Immediately
 
 If you found it, you own it. Fix it in THIS run — do not report, log, or defer.
 
-**Applies to** — "found it" includes, with equal weight:
+**Applies to** ("found it" includes, with equal weight):
 
 - Test failures, build errors, type errors
-- Compiler warnings, linter warnings, deprecation notices
-- WARN/ERROR entries in the workspace's logs since the previous gate
-- Runtime warnings emitted during the session (`DeprecationWarning`, `ResourceWarning`, `RuntimeWarning`)
-- Peer-dependency warnings, missing-module warnings, version-resolution warnings
+- Compiler / linter warnings, deprecation notices
+- WARN/ERROR in workspace logs since previous gate
+- Runtime warnings (`DeprecationWarning`, `ResourceWarning`, `RuntimeWarning`)
+- Peer-dependency / missing-module / version-resolution warnings
 
-A warning is not "less broken" than an error. It is an error that the framework chose to keep running through. Both are owed.
+A warning is not "less broken" than an error. It is an error the framework chose to keep running through.
 
-**Process:**
-
-1. Diagnose root cause
-2. Implement the fix
-3. Write a regression test
-4. Verify with `pytest` (or the project's test command)
-5. Include in current or dedicated commit
+**Process:** diagnose root cause → fix → regression test → verify (`pytest` or project test cmd) → commit.
 
 **BLOCKED responses:**
 
@@ -43,68 +36,69 @@ A warning is not "less broken" than an error. It is an error that the framework 
 - "Warning, non-fatal — proceeding"
 - "Deprecation warning, will address later"
 - "Notice only, not blocking"
-- ANY acknowledgement, logging, or documentation without an actual fix
+- ANY acknowledgement/logging/documentation without an actual fix
 
-**Why:** Deferring broken code creates a ratchet where every session inherits more failures, and the codebase degrades faster than any single session can fix. Warnings are the leading indicator: today's `DeprecationWarning` is next quarter's "it stopped working when we upgraded".
+**Why:** Deferring creates a ratchet — every session inherits more failures; codebase degrades faster than any single session can fix. Warnings are the leading indicator: today's `DeprecationWarning` is next quarter's "it stopped working when we upgraded".
 
-**Mechanism:** The log-triage protocol in `rules/observability.md` MUST Rule 5 provides the concrete commands for scanning test runner output, build tool output, and `*.log` files. If `observability.md` is not loaded (e.g., editing a config file), the agent MUST still scan the most recent test runner and build tool output for WARN+ entries before reporting any gate as complete.
+**Mechanism:** The log-triage protocol in `rules/observability.md` Rule 5 has concrete scan commands. If `observability.md` isn't loaded (config-file edits), MUST still scan most recent test runner + build output for WARN+ entries before reporting any gate complete.
 
-**Exceptions:**
-
-- User explicitly says "skip this issue."
-- Upstream third-party deprecation that cannot be resolved by updating or configuring the dependency in this session. Required disposition: pinned version with documented reason OR upstream issue link OR todo with explicit owner. Silent dismissal is still BLOCKED.
+**Exceptions:** User explicitly says "skip this"; OR upstream third-party deprecation unresolvable in this session → pinned version + documented reason OR upstream issue link OR todo with explicit owner. Silent dismissal still BLOCKED.
 
 ### Rule 1a: Scanner-Surface Symmetry
 
-Findings reported by a security scanner on a PR scan MUST be treated identically to findings reported on a main scan. The argument "this also exists on main, therefore not introduced here" is BLOCKED.
+Findings reported by a security scanner on a PR scan MUST be treated identically to findings on a main scan. "This also exists on main, therefore not introduced here" is BLOCKED.
 
 ```python
 # DO — fix the finding in this PR regardless of main's state
-# CodeQL alert py/clear-text-logging-sensitive-data on log_redis_url() -> fix it here.
 logger.info("redis.connect", url=mask_url(redis_url))
-
-# DO NOT — rationalize based on main's scanner output
-# "Same alert on main, out of scope for this PR"
-logger.info("redis.connect", url=redis_url)  # still leaks, still my problem
+# DO NOT — "same alert on main, out of scope"
+logger.info("redis.connect", url=redis_url)  # still leaks
 ```
 
-**BLOCKED responses:**
+**BLOCKED responses:** "Pre-existing on main, out of scope" / "CodeQL only flags PR diffs" / "Will be addressed when main re-scans" / "Same alert ID upstream" / "Main branch baseline suppresses it".
 
-- "Pre-existing on main, out of scope"
-- "CodeQL only flags it on PR diffs"
-- "Will be addressed when main re-scans"
-- "Same alert ID exists upstream"
-- "The main branch baseline suppresses it"
+**Why:** "Same on main" is the institutional ratchet that defers fixes forever. Rule 1 covers this in spirit; an explicit scanner-surface clause closes the rationalization gap. See guide for `__all__` / `__getattr__` second-instance variant (PR #506).
 
-**Why:** "Same on main" is the institutional ratchet that defers fixes forever. Rule 1 already covers this in spirit; an explicit scanner-surface clause closes the rationalization gap.
+### Rule 1b: Scanner Deferral Requires Tracking Issue + Runtime-Safety Proof
 
-**Second instance — CodeQL `py/modification-of-default-value` via lazy `__getattr__` in `__all__`:**
+Rule 1a mandates that scanner findings MUST be fixed, not dismissed. A LEGITIMATE deferral disposition exists for findings that are provably runtime-safe AND require architectural refactor out of release-scope — but ONLY if all four conditions are met. Missing any one of them, the "deferral" IS silent dismissal under a different name and is BLOCKED.
 
-```python
-# DO — eager-import new `__all__` entries so CodeQL resolves them
-# __init__.py
-from .client import TypedServiceClient  # eager import
-from .decoder import DecoderRegistry
+Required conditions (ALL four):
 
-__all__ = ["TypedServiceClient", "DecoderRegistry", ...]
+1. **Runtime-safety proof** — the finding is verified safe (e.g., every cyclic import is `TYPE_CHECKING`-guarded; the "unsafe" path is unreachable at runtime). Verification is a PR comment citing the guard lines.
+2. **Tracking issue** — filed against the repo with title `codeql: defer <rule-id> — <short-context>`, body including acceptance criteria for the full fix.
+3. **Release PR body link** — the tracking issue is linked from the release PR's body with explicit "deferred, safe per #<issue>" language.
+4. **Release-specialist agreement** — release-specialist confirms the deferral in review OR user explicitly overrides with "full fix".
 
-# DO NOT — add to __all__ but resolve only via __getattr__
-# __init__.py
-__all__ = ["TypedServiceClient", "DecoderRegistry", ...]
+```markdown
+# DO — release PR body documents the deferred findings
 
-def __getattr__(name):
-    if name == "TypedServiceClient":
-        from .client import TypedServiceClient
-        return TypedServiceClient
-    # CodeQL: "name in __all__ has no definition at module scope"
-    # → rationalization-blocked: "the existing 8 entries do this too"
+## CodeQL findings
+
+- 23 fixed directly (wrong-arguments, undefined-export, uninitialized-locals, warnings)
+- 17 deferred (py/unsafe-cyclic-import) — all TYPE_CHECKING-guarded per #612;
+  release-specialist approved deferral.
+
+# DO NOT — dismiss without any of the four conditions
+
+## CodeQL findings
+
+- Some deferred (pre-existing, not my concern)
 ```
 
-**Why:** A PR adding new `__all__` entries that are only resolvable via lazy `__getattr__` will be flagged by CodeQL even when grandfathered entries use the same pattern. The fix is to eager-import the NEW entries (closing the flag for this PR), not to argue "main does this too." The grandfathered entries remain a separate workstream and are NOT justification for adding more of the same.
+**BLOCKED rationalizations:**
 
-Origin: 2026-04-12 scanner-surface symmetry; extended 2026-04-19 with the `__all__` / `__getattr__` variant from kailash-py PR #506.
+- "The finding is obviously safe, we don't need a tracking issue"
+- "Release-specialist didn't flag it, that's implicit approval"
+- "We'll file the issue after merge"
+- "The PR body is the tracking record; a separate issue is bureaucracy"
+- "Verified by reading the code counts as the runtime-safety proof without writing it down"
 
-## Rule 2: No Stubs, Placeholders, or Deferred Implementation
+**Why:** Without written runtime-safety proof + tracking issue + release PR link + release-specialist signoff, a "deferred" finding is indistinguishable from a silent dismissal — nothing forces the follow-up and nothing surfaces the backlog. The four conditions are the structural defense: verification is the grep-able claim; the tracking issue is the workstream; the release PR link is the audit trail; the release-specialist signoff is the human gate. Rule 1a blocks dismissal; Rule 1b documents the ONLY legitimate path to defer.
+
+Origin: PR #611 release cycle (2026-04-23) — 17 `py/unsafe-cyclic-import` findings deferred via issue #612 after ml-specialist verified all cycles are TYPE_CHECKING-guarded; 23 other CodeQL errors fixed in the release PR.
+
+## Rule 2: No Stubs, Placeholders, Or Deferred Implementation
 
 Production code MUST NOT contain:
 
@@ -113,96 +107,23 @@ Production code MUST NOT contain:
 - `pass # placeholder`, empty function bodies
 - `return None # not implemented`
 
-**No simulated/fake data:**
-
-- `simulated_data`, `fake_response`, `dummy_value`
-- Hardcoded mock responses pretending to be real API calls
-- `return {"status": "ok"}` as placeholder for real logic
-
-**Frontend mock data is a stub:**
-
-- `MOCK_*`, `FAKE_*`, `DUMMY_*`, `SAMPLE_*` constants
-- `generate*()` / `mock*()` functions producing synthetic data
-- `Math.random()` used for display data
+**No simulated/fake data:** `simulated_data`, `fake_response`, `dummy_value`, hardcoded mock responses, placeholder dicts. **Frontend mock is a stub too:** `MOCK_*`, `FAKE_*`, `DUMMY_*`, `SAMPLE_*` constants; `generate*()` / `mock*()` producing synthetic display data; `Math.random()` for UI.
 
 **Why:** Frontend mock data is invisible to Python detection but has the same effect — users see fake data presented as real.
 
-**Extended examples (DataFlow 2.0 Phase 5 audit):** these patterns passed prior audits but were caught by the Phase 5 wiring sweep. They are equally BLOCKED.
+**Extended BLOCKED patterns** (Phase 5 audit + kailash-ml-audit W33b) — see guide for full code examples:
 
-- **Fake encryption** — a class that takes an `encryption_key` parameter, stores it, and does nothing with it:
+- **Fake encryption** — class stores `encryption_key` but `set()` writes plaintext. Audit trail shows "encrypted"; disk shows plaintext.
+- **Fake transaction** — `@contextmanager` named `transaction` that commits after every statement (no BEGIN/COMMIT/rollback).
+- **Fake health** — `/health` returns 200 without probing DB/Redis. Orchestrators make routing decisions on lies.
+- **Fake classification / redaction** — `@classify(REDACT)` stored but never enforced on read. Documented security control ships as no-op.
+- **Fake tenant isolation** — `multi_tenant=True` flag with cache key missing `tenant_id` dimension.
+- **Fake integration via missing handoff field** — frozen dataclass on pipeline's critical path omits the field the NEXT primitive needs. Each primitive's unit tests pass (each constructs its own fixture); the advertised 3-line pipeline breaks on every fresh install. Fix: add missing field; populate at every return site; add Tier-2 E2E regression (see `rules/testing.md` § End-to-End Pipeline Regression). Evidence: kailash-ml W33b `TrainingResult(frozen=True)` without `trainable`; `km.register` raised `ValueError` on fresh install.
+- **Fake metrics** — silent no-op counters because `prometheus_client` missing + no startup warning. Dashboards empty while operators believe they're reporting.
 
-  ```python
-  # BLOCKED — "encrypted" store that writes plaintext
-  class EncryptedStore:
-      def __init__(self, encryption_key: str):
-          self._key = encryption_key
-      def set(self, k, v):
-          self._backend.set(k, v)  # no encryption applied
-  ```
+## Rule 3: No Silent Fallbacks Or Error Hiding
 
-  **Why:** Operators pass a real key and assume data is encrypted at rest. The audit trail shows "encrypted store used"; the disk shows plaintext.
-
-- **Fake transaction** — a context manager that looks like a transaction but commits after every statement:
-
-  ```python
-  # BLOCKED — misnamed context manager
-  @contextmanager
-  def transaction(self):
-      yield  # no BEGIN, no COMMIT, no rollback on exception
-  ```
-
-  **Why:** Callers write `with db.transaction(): ...` expecting atomicity; partial failure leaves half-committed state.
-
-- **Fake health** — a health endpoint that returns 200 without checking anything:
-
-  ```python
-  # BLOCKED — always-green health endpoint
-  @router.get("/health")
-  async def health():
-      return {"status": "healthy"}  # no DB probe, no Redis ping, no nothing
-  ```
-
-  **Why:** Load balancers and orchestrators use the health endpoint to decide routing and restart decisions. A fake-healthy endpoint masks real outages.
-
-- **Fake classification / redaction** — a `@classify("email", REDACT)` decorator that stores the classification but never enforces it on read:
-
-  ```python
-  # BLOCKED — classify promises redaction but read path ignores it
-  @db.model
-  class User:
-      @classify("email", PII, REDACT)
-      email: str
-  # user = db.express.read("User", uid)
-  # user.email  ← still returns the raw PII
-  ```
-
-  **Why:** Documented as a security control; ships as a no-op. The Phase 5.10 audit found this had been non-functional for an unknown period.
-
-- **Fake tenant isolation** — a `multi_tenant=True` flag that silently uses a shared cache key:
-
-  ```python
-  # BLOCKED — multi_tenant flag with no tenant dimension in key
-  @db.model(multi_tenant=True)
-  class Document: ...
-  # cache_key = f"dataflow:v1:Document:{id}"  ← tenant_id missing
-  ```
-
-  **Why:** See `rules/tenant-isolation.md`. This is the Phase 5.7 orphan pattern surfaced at the cache key layer.
-
-- **Fake metrics** — a metrics class where every counter is a no-op because `prometheus_client` isn't installed but there's no warning:
-  ```python
-  # BLOCKED — silent no-op metrics
-  try:
-      from prometheus_client import Counter
-  except ImportError:
-      Counter = lambda *a, **k: _NoOp()
-  # User thinks /fabric/metrics is reporting; it's empty
-  ```
-  **Why:** Operators rely on dashboards. A silent no-op metrics layer removes the observability contract without any signal. The Phase 5.12 fix emits a loud startup WARN AND an explanatory body from the `/fabric/metrics` endpoint.
-
-## Rule 3: No Silent Fallbacks or Error Hiding
-
-- `except: pass` (bare except with pass) — BLOCKED
+- `except: pass` (bare except + pass) — BLOCKED
 - `catch(e) {}` (empty catch) — BLOCKED
 - `except Exception: return None` without logging — BLOCKED
 
@@ -212,7 +133,7 @@ Production code MUST NOT contain:
 
 ### Rule 3a: Typed Delegate Guards For None Backing Objects
 
-Any delegate method that forwards to a lazily-assigned backing object MUST guard with a typed error before access. Allowing `AttributeError` to propagate from `None.method()` is BLOCKED.
+Any delegate method forwarding to a lazily-assigned backing object MUST guard with a typed error before access. Allowing `AttributeError` to propagate from `None.method()` is BLOCKED.
 
 ```python
 # DO — typed guard with actionable message
@@ -225,27 +146,24 @@ class JWTMiddleware:
             )
         return self._validator
 
-    def create_access_token(self, *args, **kwargs):
-        return self._require_validator().create_access_token(*args, **kwargs)
-
 # DO NOT — raw delegation, opaque AttributeError
 class JWTMiddleware:
-    def create_access_token(self, *args, **kwargs):
-        return self._validator.create_access_token(*args, **kwargs)
+    def create_access_token(self, *a, **kw):
+        return self._validator.create_access_token(*a, **kw)
         # AttributeError: 'NoneType' object has no attribute 'create_access_token'
 ```
 
-**Why:** Opaque `AttributeError` blocks N tests at once with no actionable message; a typed guard turns the failure into a one-line fix instruction.
+**Why:** Opaque `AttributeError` blocks N tests at once with no actionable message; typed guard turns the failure into a one-line fix instruction.
 
-## Rule 4: No Workarounds for Core SDK Issues
+## Rule 4: No Workarounds For Core SDK Issues
 
-When you encounter a bug in the Kailash SDK, file a GitHub issue on the SDK repository with a minimal reproduction. Use a supported alternative pattern if one exists.
+This is a BUILD repo. You have the source. Fix bugs directly.
 
-**Why:** Workarounds create a parallel implementation that diverges from the SDK, doubling maintenance cost and masking the root bug from being fixed.
+**Why:** Workarounds create parallel implementations that diverge from the SDK, doubling maintenance cost and masking the root bug.
 
 **BLOCKED:** Naive re-implementations, post-processing, downgrading.
 
-## Rule 5: Version Consistency on Release
+## Rule 5: Version Consistency On Release
 
 ALL version locations updated atomically:
 
@@ -257,15 +175,15 @@ ALL version locations updated atomically:
 ## Rule 6: Implement Fully
 
 - ALL methods, not just the happy path
-- If an endpoint exists, it returns real data
-- If a service is referenced, it is functional
+- If endpoint exists, it returns real data
+- If service is referenced, it is functional
 - Never leave "will implement later" comments
 - If you cannot implement: ask the user what it should do, then do it. If user says "remove it," delete the function.
 
 **Test files excluded:** `test_*`, `*_test.*`, `*.test.*`, `*.spec.*`, `__tests__/`
 
-**Why:** Half-implemented features present working UI with broken backend, causing users to trust outputs that are silently incomplete or wrong.
+**Why:** Half-implemented features present working UI with broken backend — users trust outputs that are silently incomplete or wrong.
 
-**Iterative TODOs:** Permitted when actively tracked.
+**Iterative TODOs:** Permitted when actively tracked (workspace todos, issue-linked).
 
-<!-- /slot:neutral-body -->
+Origin: `workspaces/arbor-upstream-fixes/.session-notes` (2026-04-12) + DataFlow 2.0 Phase 5 audit + kailash-ml-audit 2026-04-23 W33b. See guide for full BLOCKED-pattern code examples + audit evidence.

@@ -136,3 +136,4 @@ Safe against double-close:
 - `rules/dataflow-pool.md` Rule 6 — No orphan runtimes
 - `.claude/hooks/validate-workflow.js` — Lint detection for unmanaged runtimes
 - `tests/integration/runtime/test_runtime_connection_budget.py` — 15 integration tests
+- `src/kailash/runtime/local.py:1365-1420` — Ref counting implementation

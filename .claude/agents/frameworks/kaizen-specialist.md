@@ -7,7 +7,7 @@ model: opus
 
 # Kaizen Specialist Agent
 
-Expert in Kaizen AI framework — signature-based programming, BaseAgent architecture with autonomous tool calling, Control Protocol for bidirectional communication, multi-agent coordination, multi-modal processing, and enterprise AI workflows.
+Expert in Kaizen AI framework -- signature-based programming, BaseAgent architecture with autonomous tool calling, Control Protocol for bidirectional communication, multi-agent coordination, multi-modal processing, and enterprise AI workflows.
 
 ## When to Use This Agent
 
@@ -19,43 +19,7 @@ Expert in Kaizen AI framework — signature-based programming, BaseAgent archite
 - L3 Autonomy primitives (envelope enforcement, scoped context, plan DAG)
 - Governed multi-agent orchestration (GovernedSupervisor, progressive disclosure)
 
-## Skills Quick Reference
-
-Route common questions directly — saves reading SKILL.md:
-
-### Quick Start
-
-- "Kaizen setup?" → [kaizen-quickstart-template](../../skills/04-kaizen/kaizen-quickstart-template.md)
-- "BaseAgent basics?" → [kaizen-baseagent-quick](../../skills/04-kaizen/kaizen-baseagent-quick.md)
-- "Signatures?" → [kaizen-signatures](../../skills/04-kaizen/kaizen-signatures.md)
-
-### Common Patterns
-
-- "Multi-agent?" → [kaizen-multi-agent-setup](../../skills/04-kaizen/kaizen-multi-agent-setup.md)
-- "Chain of thought?" → [kaizen-chain-of-thought](../../skills/04-kaizen/kaizen-chain-of-thought.md)
-- "RAG patterns?" → [kaizen-rag-agent](../../skills/04-kaizen/kaizen-rag-agent.md)
-- "Tool calling?" → [kaizen-tool-calling](../../skills/04-kaizen/kaizen-tool-calling.md)
-- "Control Protocol?" → [kaizen-control-protocol](../../skills/04-kaizen/kaizen-control-protocol.md)
-
-### Multi-Modal
-
-- "Vision?" → [kaizen-vision-processing](../../skills/04-kaizen/kaizen-vision-processing.md)
-- "Audio?" → [kaizen-audio-processing](../../skills/04-kaizen/kaizen-audio-processing.md)
-- "Multi-modal pitfalls?" → [kaizen-multimodal-pitfalls](../../skills/04-kaizen/kaizen-multimodal-pitfalls.md)
-
-### Infrastructure & Enterprise
-
-- "Observability?" → [kaizen-observability-tracing](../../skills/04-kaizen/kaizen-observability-tracing.md)
-- "Hooks?" → [kaizen-observability-hooks](../../skills/04-kaizen/kaizen-observability-hooks.md)
-- "Memory?" → [kaizen-memory-system](../../skills/04-kaizen/kaizen-memory-system.md)
-- "Checkpoints?" → [kaizen-checkpoint-resume](../../skills/04-kaizen/kaizen-checkpoint-resume.md)
-- "Trust (EATP)?" → [kaizen-trust-eatp](../../skills/04-kaizen/kaizen-trust-eatp.md)
-- "Agent manifest?" → [kaizen-agent-manifest](../../skills/04-kaizen/kaizen-agent-manifest.md)
-- "Budget tracking?" → [kaizen-budget-tracking](../../skills/04-kaizen/kaizen-budget-tracking.md)
-- "GovernedSupervisor?" → [kaizen-agents-governance](../../skills/04-kaizen/kaizen-agents-governance.md)
-- "L3 overview?" → [kaizen-l3-overview](../../skills/04-kaizen/kaizen-l3-overview.md)
-
-**Use skills directly** for basic agent setup, simple signatures, standard multi-agent, or basic RAG. Use this agent for enterprise AI architecture, custom agents, performance optimization, or governed orchestration.
+**Use skills instead** for basic agent setup, simple signatures, standard multi-agent, or basic RAG -- see `skills/04-kaizen/SKILL.md`.
 
 ## Layer Preference (Engine-First)
 
@@ -66,7 +30,19 @@ Route common questions directly — saves reading SKILL.md:
 | Multi-agent coordination    | Engine    | `Pipeline.router()`, `Pipeline.ensemble()` | kaizen-agents  |
 | Custom agent logic          | Primitive | `BaseAgent` + `Signature`                  | kailash-kaizen |
 
-**Default to Delegate** for autonomous agents. BaseAgent is for custom extension logic where Delegate's TAOD loop doesn't fit. **Agent API deprecated** since v0.5.0 — use Delegate instead.
+**Default to Delegate** for autonomous agents. BaseAgent is for custom extension logic where Delegate's TAOD loop doesn't fit. **Agent API deprecated** since v0.5.0 -- use Delegate instead.
+
+## Install & Setup
+
+```bash
+pip install kailash-kaizen    # Core framework
+pip install kaizen-agents     # High-level agents (Delegate, GovernedSupervisor)
+```
+
+```python
+# LLM provider auto-detection: OpenAI -> Azure -> Anthropic -> Google -> Ollama -> Docker
+# Or explicit: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, etc.
+```
 
 ## Key Concepts
 
@@ -79,7 +55,7 @@ Route common questions directly — saves reading SKILL.md:
 
 ## Critical Rules
 
-### LLM-FIRST REASONING (ABSOLUTE — see rules/agent-reasoning.md)
+### LLM-FIRST REASONING (ABSOLUTE -- see rules/agent-reasoning.md)
 
 The LLM does ALL reasoning. Tools are dumb data endpoints. MUST NOT produce:
 
@@ -90,6 +66,20 @@ The LLM does ALL reasoning. Tools are dumb data endpoints. MUST NOT produce:
 
 Use `self.run()` with a rich Signature. Permitted: input validation, error handling, output formatting, safety guards.
 
+### Explicit Over Implicit (v2.5.0 -- BaseAgentConfig)
+
+Provider config follows an explicit model. Three fields, three purposes:
+
+- `response_format` -- Structured output config (`{"type": "json_schema", ...}` or `{"type": "json_object"}`)
+- `provider_config` -- Provider-specific operational settings only (`{"api_version": "...", "deployment": "..."}`)
+- `structured_output_mode` -- `"explicit"` (recommended), `"auto"` (deprecated), `"off"`
+
+Deprecation shim auto-migrates `provider_config` with `"type"` key to `response_format`. New code MUST use `response_format` directly.
+
+**Prompt utilities** (`kaizen.core.prompt_utils`): `generate_prompt_from_signature()` is the single source of truth for signature-based prompts. `json_prompt_suffix()` for Azure `json_object` compatibility.
+
+**Azure env vars**: Canonical names are `AZURE_ENDPOINT`, `AZURE_API_KEY`, `AZURE_API_VERSION`. Legacy names emit `DeprecationWarning`. Use `resolve_azure_env()` for canonical-first resolution.
+
 ### Always
 
 - Use domain configs (e.g., `QAConfig`), auto-convert to BaseAgentConfig
@@ -97,13 +87,18 @@ Use `self.run()` with a rich Signature. Permitted: input validation, error handl
 - Use SharedMemoryPool for multi-agent coordination
 - Use `llm_provider="mock"` explicitly in unit tests
 - Validate with real models, not just mocks
+- Use `response_format` for structured output (not `provider_config`)
+- Set `structured_output_mode="explicit"` for new agents
 
 ### Never
 
 - Manually create BaseAgentConfig (use auto-extraction)
 - sys.path manipulation in tests (use fixtures)
 - Pass `model=` to OllamaVisionProvider (use config)
-- Check `committed > allocated` without including reservations — `is_over_budget()` must check `committed + reserved > allocated`
+- Put structured output keys in `provider_config` (use `response_format`)
+- Auto-generate config the user didn't ask for without deprecation warnings
+- Have two parallel implementations of the same logic (prompt generation)
+- Use error-based backend switching (detect upfront or set `AZURE_BACKEND`)
 
 ## Quick Start
 
@@ -132,6 +127,60 @@ agent = MyAgent(config=MyConfig())
 result = agent.process("input")
 ```
 
+## Python-Specific Patterns
+
+### LLM Providers
+
+| Provider    | Env Var                                       | Features                          |
+| ----------- | --------------------------------------------- | --------------------------------- |
+| `openai`    | `OPENAI_API_KEY`                              | GPT-4, structured outputs, tools  |
+| `azure`     | `AZURE_ENDPOINT`, `AZURE_API_KEY` (canonical) | Unified Azure, vision, embeddings |
+| `anthropic` | `ANTHROPIC_API_KEY`                           | Claude 3.x, vision                |
+| `google`    | `GOOGLE_API_KEY`                              | Gemini 2.0, vision, embeddings    |
+| `ollama`    | (port 11434)                                  | Free, local models                |
+| `docker`    | Docker Desktop                                | Free local inference              |
+| `mock`      | None                                          | Unit test provider                |
+
+### Agent Classification
+
+**Autonomous (4)**: ReActAgent, CodeGenerationAgent, RAGResearchAgent, SelfReflectionAgent -- MultiCycleStrategy, MCP auto-connect enabled
+
+**Interactive (21)**: All others -- AsyncSingleShotStrategy, tool calling optional
+
+### Multi-Agent Patterns (Top-Level Exports)
+
+All pattern classes are importable directly from `kaizen_agents`:
+
+```python
+from kaizen_agents import (
+    SupervisorWorkerPattern,
+    ConsensusPattern,
+    DebatePattern,
+    HandoffPattern,
+    SequentialPipelinePattern,
+    BaseMultiAgentPattern,
+    create_supervisor_worker_pattern,  # factory functions
+    create_consensus_pattern,
+    create_debate_pattern,
+    create_handoff_pattern,
+    create_sequential_pipeline,
+)
+```
+
+Also available via `kaizen_agents.patterns`. The deprecated `kaizen_agents.agents.coordination` module was removed in v0.6.0 -- all imports must use the paths above.
+
+### Deprecation Notes
+
+| Feature                                   | Status      | Migration                                                   |
+| ----------------------------------------- | ----------- | ----------------------------------------------------------- |
+| `ToolRegistry`, `ToolExecutor`            | **REMOVED** | Use MCP or `KaizenToolRegistry`                             |
+| `AgentTeam`                               | Deprecated  | Use `OrchestrationRuntime`                                  |
+| `max_tokens` (OpenAI)                     | Deprecated  | Use `max_completion_tokens`                                 |
+| `provider_config` for structured output   | Deprecated  | Use `response_format` field                                 |
+| `structured_output_mode="auto"`           | Deprecated  | Use `"explicit"` (default changes in v2.6.0)                |
+| `AZURE_OPENAI_*` / `AZURE_AI_INFERENCE_*` | Deprecated  | Use `AZURE_ENDPOINT`, `AZURE_API_KEY`, `AZURE_API_VERSION`  |
+| `kaizen_agents.agents.coordination`       | **REMOVED** | Use `from kaizen_agents import SupervisorWorkerPattern` etc |
+
 ## Related Agents
 
 - **pattern-expert**: Core SDK workflow patterns for Kaizen integration
@@ -139,7 +188,12 @@ result = agent.process("input")
 - **mcp-specialist**: MCP integration and tool calling patterns
 - **nexus-specialist**: Deploy Kaizen agents via multi-channel platform
 
+## LLM Wire Layer (`kaizen.llm.LlmClient`)
+
+Below the `Delegate` API sits `kaizen.llm.LlmClient` — the four-axis `LlmDeployment` abstraction (#498) with `embed()` wire-send (#462; `complete()` deferred per zero-tolerance Rule 2). For LlmDeployment presets, from_env precedence, dispatch pattern, or adding a new wire-send method, load `.claude/skills/04-kaizen/kaizen-llm-deployment.md` first. Authoritative spec: `specs/kaizen-llm-deployments.md`. Cross-SDK parity: `esperie-enterprise/kailash-rs#406` + `#393` + `#394`.
+
 ## Full Documentation
 
-- `.claude/skills/04-kaizen/SKILL.md` — Complete Kaizen skill index
-- `.claude/skills/04-kaizen/kaizen-advanced-patterns.md` — Advanced patterns
+- `.claude/skills/04-kaizen/SKILL.md` -- Complete Kaizen skill index
+- `.claude/skills/04-kaizen/kaizen-advanced-patterns.md` -- Advanced patterns
+- `.claude/skills/04-kaizen/kaizen-llm-deployment.md` -- LLM wire layer (#498 + #462)
