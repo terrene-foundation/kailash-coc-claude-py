@@ -75,7 +75,7 @@ The audit runs against `parity_enforcement.cross_cli_drift_audit` config at `.cl
 ## Related Agents
 
 - **cc-architect** — OWNER of `.claude/**` source tree
-- **codex-architect** — OWNER of `.codex/**`, `.codex-plugin/**`, `.claude/codex-mcp-guard/**`, `scripts/hooks/*.js`
+- **codex-architect** — OWNER of `.codex/**`, `.codex-plugin/**`, `.claude/codex-mcp-guard/**`, `.claude/hooks/*.js`
 - **gemini-architect** — OWNER of `.gemini/**`
 - **sync-reviewer** — Gate 1 classifier (BUILD → loom inbound); invokes `arbitrates` when classification is ambiguous
 - **coc-sync** — Gate 2 distributor (loom → USE templates); invokes `orchestrates` for matrix emission

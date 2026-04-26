@@ -28,6 +28,76 @@ Format: `type/description` (e.g., `feat/add-auth`, `fix/api-timeout`)
 
 **Why:** Inconsistent branch names prevent CI pattern-matching rules and make `git branch --list` unreadable across contributors.
 
+### Release-Prep PRs MUST Use `release/v*` Branch Convention (MUST)
+
+Any PR whose diff is metadata-only — version anchors (`pyproject.toml` / `Cargo.toml`, `__init__.py::__version__` / lib.rs `pub const VERSION`), `CHANGELOG.md`, spec/doc version-line updates, and CHANGELOG-paired spec updates — MUST be opened from a branch named `release/v<X.Y.Z>`. Using `feat/`, `fix/`, `chore/`, or any other prefix on a release-prep PR is BLOCKED.
+
+```bash
+# DO — release-prep branch auto-skips PR-gate matrix
+git checkout -b release/v3.23.0
+# Bump versions, update CHANGELOG, edit spec anchors, push
+git push -u origin release/v3.23.0
+gh pr create --title "release(v3.23.0): ..."
+
+# DO NOT — feat/ branch fires the full PR-gate matrix on metadata-only diff
+git checkout -b feat/v3.23.0-release-prep
+# Same diff, but PR-gate jobs (~45 min × N CI cycles) all execute
+# because workflows' `if:` clauses evaluate `!startsWith(head_ref, 'release/')`
+# to TRUE.
+```
+
+**BLOCKED rationalizations:**
+
+- "feat/ is more descriptive of the work"
+- "I'll fold real code changes into the release-prep PR, so it's not metadata-only"
+- "The branch name doesn't matter, the diff does"
+- "Convention is too rigid — every PR is unique"
+- "Skipping CI on a release feels unsafe"
+
+**Why:** Every PR-gate workflow that adopts the `ci-runners.md` § "MUST: Release-prep skip" pattern checks `if: !startsWith(github.head_ref, 'release/')`. Branching from `release/v*` triggers the auto-skip and saves ~45 min × matrix-size of CI minutes per release-prep PR. Branching from anything else burns the full PR-gate matrix on a diff that has no code surface to verify. Evidence: kailash-rs PR #602 (2026-04-25) used `feat/v3.23.0-release-prep` and consumed ~73 min of GitHub-billable runner time on a metadata-only diff that should have skipped to ~0 min. The cross-reference exists in `ci-runners.md` but is path-scoped to `.github/workflows/**`, so it does not load when an agent is choosing a branch name. This clause cross-references the rule from `git.md` (always-loaded baseline) so branch-naming decisions surface the cost lever.
+
+**If the release-prep work IS NOT metadata-only** (e.g., folds in a code fix as part of the same PR), split: keep the code fix on a `feat/` or `fix/` branch with its own PR; cut the release-prep on a separate `release/v*` branch that only updates anchors + CHANGELOG. Two PRs, one with full CI, one near-zero.
+
+Origin: 2026-04-25 kailash-rs session — PR #602 (release-prep for v3.23.0) was opened from `feat/v3.23.0-release-prep`, burning ~120 min of avoidable PR-gate CI on a metadata-heavy diff that bundled #599 + #600 fixes with version bumps. The cost was foreseeable from `ci-runners.md` MUST Rule 8 but the rule's path-scoping prevented it from loading at branch-name-decision time.
+
+### Pre-FIRST-Push CI Parity Discipline (MUST)
+
+Before the FIRST `git push` that creates a remote branch (which opens the door to PR-gate CI), the agent MUST run the project's local CI parity command set. The discipline already exists in language-specific rules (`build-speed.md` § "Run Full CI Job-Set Locally Before Admin-Merge" for Rust; equivalents for Python: `pre-commit run --all-files` + `mypy --strict` + `pytest`) — this clause extends the same gate to the FIRST push, not just admin-merge.
+
+```bash
+# DO — pre-flight ALL local CI commands before first push
+# (See language-specific build-speed.md for the full command set)
+# Rust: cargo +nightly fmt --all --check; cargo +1.95 clippy --workspace --all-targets -- -D warnings;
+#       cargo nextest run --workspace; RUSTDOCFLAGS="-Dwarnings" cargo doc ...
+# Python: pre-commit run --all-files; pytest tests/; mypy --strict src/
+# All MUST exit 0 → push
+git push -u origin feat/<branch>
+
+# DO NOT — push, watch CI, fix-up commit, push again, repeat
+git push -u origin feat/<branch>             # CI run #1 starts
+# CI fails on fmt drift
+git commit -am "style: fmt"
+git push                                      # CI run #2 starts (#1 still billing)
+# CI fails on doc warnings
+git commit -am "fix: doc"
+git push                                      # CI run #3 starts (#2 still billing
+                                              # IF concurrency: cancel-in-progress
+                                              # is not set on the workflow)
+```
+
+**BLOCKED rationalizations:**
+
+- "I'll let CI catch the issue and fix it on the next push"
+- "Running all local commands takes too long"
+- "concurrency: cancel-in-progress will cancel the prior run"
+- "The fix-up cycle is what CI is for"
+- "I'll batch the fix-ups before merging — same total cost"
+- "Local toolchain mismatches will trigger false positives anyway"
+
+**Why:** Each push to an open PR retriggers the full PR-gate matrix. With `concurrency: cancel-in-progress: true` on the workflow, prior in-flight runs are cancelled — but **the cancelled runs are still billed for the wall-clock minutes already consumed before cancellation**. kailash-rs PR #598 (2026-04-25) had a 71-minute Workspace Tests run cancelled mid-flight by a fix-up push; those 71 min were charged. Pre-flighting the local commands takes ~5-10 minutes once + amortized seconds on incremental re-runs; the alternative is N × 45 min of billed CI per fix-up cycle. Local discipline is strictly cheaper. The rule extends to the FIRST push because by the time admin-merge is invoked, every previous fix-up cycle has already burned billable minutes.
+
+Origin: 2026-04-25 kailash-rs session — PR #598 cycle of 5 sequential pushes (08:43Z → 10:14Z) caused 71 min of cancelled-but-billed Workspace Tests. The mid-flight cancellation was triggered by `concurrency: cancel-in-progress: true` (correctly enforced) but the billing meter does not refund cancelled-mid-run minutes.
+
 ## Branch Protection
 
 All protected repos require PRs to main. Direct push is rejected by GitHub.

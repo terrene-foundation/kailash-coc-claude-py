@@ -1,27 +1,44 @@
 {
-  "version": "3.5.19",
+  "version": "3.5.20",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
-  "released": "2026-04-25",
+  "released": "2026-04-26",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "2.8.30",
-    "build_version": "2.10.0",
-    "synced_at": "2026-04-25T11:00:00Z",
+    "version": "2.9.0",
+    "build_version": "2.11.1",
+    "synced_at": "2026-04-26T00:00:00Z",
     "sdk_packages": {
-      "kailash": "2.10.0",
-      "kailash-dataflow": "2.1.2",
+      "kailash": "2.11.1",
+      "kailash-dataflow": "2.3.1",
       "kailash-nexus": "2.3.0",
       "kailash-kaizen": "2.13.1",
-      "kailash-pact": "0.10.0",
-      "kailash-mcp": "0.2.9",
+      "kailash-pact": "0.11.0",
+      "kailash-mcp": "0.2.10",
       "kailash-ml": "1.1.1",
       "kailash-align": "0.6.0",
       "kaizen-agents": "0.9.4"
     }
   },
   "changelog": [
+    {
+      "version": "3.5.20",
+      "date": "2026-04-26",
+      "summary": "Sync loom 2.9.0 — PY CYCLE 8 + RS CYCLE 5 dual-SDK convergence. 4 global rule files updated: rules/agents.md (added 'Verify Specialist Tool Inventory' MUST + Examples table — read-only specialists like security-reviewer/analyst/reviewer MUST NOT be delegated implementation work; cross-SDK independent re-discovery from py Wave 4 + rs v3.23 W3). rules/build-repo-release-discipline.md (added MUST Rule 5 'PR Review MUST Sweep Sub-Package Version Bumps Before Merge' — mechanical pre-merge sweep). rules/git.md (added 'Release-Prep PRs MUST Use release/v* Branch Convention' + 'Pre-FIRST-Push CI Parity Discipline' under Branch Naming). rules/ci-runners.md (added Rule 6a 'Binding-CI paths-ignore' + Rule 7 'Workflow Crons Cost Footer' + Rule 8 'Release PRs Skip PR-Gate Suite'). SDK pin deltas: kailash 2.10.0→2.11.1, kailash-dataflow 2.1.2→2.3.1, kailash-mcp 0.2.9→0.2.10, kailash-pact 0.10.0→0.11.0.",
+      "changes": [
+        "GLOBAL rules/agents.md: added MUST 'Verify Specialist Tool Inventory Before Implementation Delegation' + Examples 'Tool Inventory Verification' (specialist tool-inventory table, 17+ specialists categorized by Has Edit?/Has Bash?). Read-only specialists (security-reviewer, analyst, reviewer, gold-standards-validator, value-auditor) MUST NOT be delegated implementation tasks.",
+        "GLOBAL rules/build-repo-release-discipline.md: added MUST Rule 5 'PR Review MUST Sweep Sub-Package Version Bumps Before Merge'. Bash sweep snippet for PR-review automation. Cross-SDK applicable.",
+        "GLOBAL rules/git.md: added MUST 'Release-Prep PRs MUST Use release/v* Branch Convention' + MUST 'Pre-FIRST-Push CI Parity Discipline' under Branch Naming. Cross-references ci-runners.md Rule 8 + build-speed.md.",
+        "GLOBAL rules/ci-runners.md: added MUST Rule 6a 'Binding-CI paths-ignore Covers ALL Doc-Only Surfaces' (extends to .claude/**, docs/**, specs/**, workspaces/**, memory/**, .github/ISSUE_TEMPLATE/**, .github/PULL_REQUEST_TEMPLATE.md). MUST Rule 7 'Workflow Crons MUST Have Explicit Cost Footer'. MUST Rule 8 'Release PRs MUST Skip The PR-Gate Suite' (`if: !startsWith(github.head_ref, 'release/')`).",
+        "SDK PIN: kailash 2.10.0→2.11.1 (PyPI-live patch).",
+        "SDK PIN: kailash-dataflow 2.1.2→2.3.1 (PyPI-live).",
+        "SDK PIN: kailash-mcp 0.2.9→0.2.10 (PyPI-live, security fix from Wave 4 PR #632).",
+        "SDK PIN: kailash-pact 0.10.0→0.11.0 (PyPI-live).",
+        "Held: kailash-kaizen 2.13.1, kailash-nexus 2.3.0, kailash-ml 1.1.1, kailash-align 0.6.0, kaizen-agents 0.9.4 (all at prior PyPI-live tips, no PR diff this cycle).",
+        "uv sync ran clean: 5 packages updated."
+      ]
+    },
     {
       "version": "3.5.19",
       "date": "2026-04-25",

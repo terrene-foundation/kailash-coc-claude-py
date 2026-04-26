@@ -1,0 +1,11 @@
+# COC Obsoleted Paths — managed by loom /sync (v2.9.1)
+# Each path was a former COC artifact location moved/renamed in loom.
+# Downstream /sync MUST recursively delete every match before installing
+# the new layout. Format: one repo-relative path per line. Trailing slash
+# means directory. Comments start with #. See sync-manifest.yaml :: obsoleted:
+# in the loom source tree for the originating definition + per-entry
+# rationale.
+
+scripts/hooks/
+.claude/scripts/
+scripts/resolve-template.js

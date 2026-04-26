@@ -1,4 +1,16 @@
+---
+priority: 10
+scope: path-scoped
+paths:
+  - ".github/workflows/**"
+  - "**/ci/**"
+  - "**/.github/**"
+---
+
+# CI Runner Rules
+
 <!-- slot:neutral-body -->
+
 
 Self-hosted CI runner hygiene for kailash-py (macOS + Linux self-hosted runners, `terrene-foundation/kailash-py` repo). Language-agnostic MUSTs apply to every project using GitHub Actions self-hosted runners; §6 and §7 below capture kailash-py-specific dispatcher-state remediation with concrete runner hostnames and `launchctl` / `systemctl` invocations.
 

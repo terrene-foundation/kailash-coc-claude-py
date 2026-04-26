@@ -1,1 +1,52 @@
-synced=2026-04-25T11:50:00Z from=loom/2.8.30 init-py-import-guard+latent-failure-clause SDK-pins=kailash-2.10.0+nexus-2.3.0+kaizen-2.13.1 template=3.5.18->3.5.19
+# COC Sync Marker — kailash-coc-claude-py
+timestamp: 2026-04-26T14:55:53.636Z
+source: loom/.claude
+loom_version: 2.9.1
+variant: py
+clis: [claude]
+stats:
+  updated: 0
+  created: 0
+  unchanged: 705
+  composed: 171
+  variant_replacements: 0
+  variant_only: 24
+  preserved: 2
+  baselines_emitted:
+    cc: 0
+    codex: 0
+    gemini: 0
+  baseline_emission_bytes:
+    block_cap_bytes: 61440
+    warn_cap_bytes: 32768
+    codex:
+      rules: null
+      bytes: null
+      tier: n/a
+      headroom_bytes: null
+      headroom_pct: null
+    gemini:
+      rules: null
+      bytes: null
+      tier: n/a
+      headroom_bytes: null
+      headroom_pct: null
+  cli_artifacts:
+    codex:
+      prompts: 0
+      skills: 0
+    gemini:
+      commands: 0
+      skills: 0
+      agents: 0
+  mcp_guard:
+    policies_populated: false
+    predicates_extracted: 0
+obsoleted_purged:
+  []  # idempotent run — no obsoleted paths present (already purged in prior sync)
+obsoleted_paths_declared: 3  # see .coc-obsoleted in this dir + manifest 'obsoleted:' section
+verification:
+  findings: 0
+  hooks_resolved: 12
+  hooks_total: 12
+

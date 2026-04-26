@@ -1,5 +1,5 @@
 ---
-name: frontend-developer
+name: react-specialist
 description: "Frontend development patterns with Kailash. Use when asking 'frontend patterns', 'frontend development', or 'UI integration'."
 ---
 
@@ -20,8 +20,8 @@ description: "Frontend development patterns with Kailash. Use when asking 'front
        │ HTTP/REST
        ▼
 ┌─────────────┐
-│    Nexus    │  (Python/Kailash)
-│  (API+CLI)  │
+│ WorkflowAPI │  (Python/Kailash)
+│   (Nexus)   │
 └──────┬──────┘
        │
        ▼
@@ -34,7 +34,6 @@ description: "Frontend development patterns with Kailash. Use when asking 'front
 ## State Management
 
 ### Frontend State (React)
-
 ```typescript
 // Use React Query for API calls
 import { useQuery, useMutation } from 'react-query';
@@ -67,19 +66,19 @@ function Chat() {
 // Frontend error handling
 async function executeWorkflow(message: string) {
   try {
-    const response = await fetch("/execute", {
-      method: "POST",
-      body: JSON.stringify({ inputs: { message } }),
+    const response = await fetch('/execute', {
+      method: 'POST',
+      body: JSON.stringify({inputs: {message}})
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.detail || "Workflow failed");
+      throw new Error(error.detail || 'Workflow failed');
     }
 
     return response.json();
   } catch (error) {
-    console.error("Workflow error:", error);
+    console.error('Workflow error:', error);
     // Show user-friendly error message
     throw error;
   }

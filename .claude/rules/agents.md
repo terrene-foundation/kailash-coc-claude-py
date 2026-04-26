@@ -72,6 +72,24 @@ Pre-existing failures MUST be fixed (`rules/zero-tolerance.md` Rule 1). No worka
 
 **Why:** Workarounds create parallel implementations that diverge from the SDK, doubling maintenance cost.
 
+## MUST: Verify Specialist Tool Inventory Before Implementation Delegation
+
+When delegating IMPLEMENTATION work (any task involving file edits, commits, build/test invocation, version bumps), the orchestrator MUST select a specialist whose declared tool set includes `Edit` AND `Bash`. Read-only specialists (`security-reviewer`, `analyst`, `reviewer`, `gold-standards-validator`, `value-auditor`) MUST NOT be delegated implementation tasks — their tool set is `Read, Write, Grep, Glob` (and a few have `Task`), with no Edit + no Bash. Pure-research / pure-review delegations are fine.
+
+See **Examples § Tool Inventory Verification** below for the CLI-specific delegation syntax and the specialist tool-inventory table.
+
+**BLOCKED rationalizations:**
+
+- "security-reviewer is the security domain, so security-relevant edits go there"
+- "The agent will figure out its tool limitations"
+- "I'll re-launch with a different specialist if it halts"
+- "Read-only review IS implementation when the diff is trivial"
+- "The agent has Write — that's enough for code edits"
+
+**Why:** Read-only specialists halt mid-instruction at file-edit boundaries with no recovery — the agent emits "Now let me wire X" then exits with zero tool calls because Edit is not available, OR fabricates commit-style language without actually committing (violating `git.md` § "Commit-Message Claim Accuracy"). Either outcome wastes one full shard's budget AND requires re-launch with a tools-equipped specialist. Verifying tool inventory pre-launch is O(1); re-launch + re-read of all context is O(N) on shard size.
+
+Origin: Session 2026-04-26 Wave 4 (kailash-py) — security-reviewer launched twice for alg_id Layer-1 threading + JWT iss claim implementation; both halted at edit boundaries; re-launched with pact-specialist (Shard B) + orchestrator-takeover (Shard D) to recover. Cross-SDK independent re-discovery: 2026-04-25 v3.23 sprint Wave 2 W3 (kailash-rs) — security-reviewer assigned to apply CodeQL Class 1 fingerprint helper + connection.rs migration + ≥5 commits + cargo verification; agent's tool set was `Read, Write, Grep, Glob` only; reported "audit complete, code edits blocked by tool constraints" after writing audit doc + fingerprint.rs without committing; re-launch as tdd-implementer (with Bash) completed the mission.
+
 ## MUST: Worktree Isolation for Compiling Agents
 
 Agents that compile (Rust `cargo`, Python editable installs at scale) MUST use the CLI's worktree-isolation primitive to avoid build-directory lock contention.
@@ -175,6 +193,34 @@ Origin: Session 2026-04-20 kailash-ml 0.13.0 + kailash 2.8.10 parallel-release (
 Agent({subagent_type: "reviewer", run_in_background: true, prompt: "Review all changes since last gate..."})
 Agent({subagent_type: "security-reviewer", run_in_background: true, prompt: "Security audit all changes..."})
 ```
+
+### Tool Inventory Verification
+
+```python
+# DO — pact-specialist for trust-code threading (has Edit + Bash)
+Agent(subagent_type="pact-specialist", prompt="Thread alg_id through Layer-1 sites...")
+
+# DO — dataflow-specialist for SecurityDefinerBuilder edits
+Agent(subagent_type="dataflow-specialist", prompt="Add function_owner field + emit ALTER OWNER TO...")
+
+# DO — security-reviewer for review-only tasks
+Agent(subagent_type="security-reviewer", prompt="Audit the diff for SQLi vectors...")
+
+# DO NOT — security-reviewer for implementation
+Agent(subagent_type="security-reviewer", prompt="Thread alg_id through 4 sites...")
+# ↑ Halts at "Now let me wire ..." with no Edit tool; budget wasted.
+```
+
+**Tool inventory by specialist** (verify in agent definition frontmatter before delegating):
+
+| Specialist                                                                                                                                          | Has Edit? | Has Bash? | Use for                    |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | --------- | -------------------------- |
+| pact-specialist, dataflow-specialist, nexus-specialist, kaizen-specialist, mcp-specialist, mcp-platform-specialist, ml-specialist, align-specialist | YES       | YES       | Implementation in domain   |
+| pattern-expert, tdd-implementer, build-fix                                                                                                          | YES       | YES       | Workflow / TDD / build     |
+| react-specialist, flutter-specialist, uiux-designer                                                                                                 | YES       | YES       | Frontend implementation    |
+| testing-specialist, release-specialist                                                                                                              | YES       | YES       | Tests / releases           |
+| analyst, reviewer, security-reviewer, gold-standards-validator, value-auditor                                                                       | NO        | NO        | Pure review / audit only   |
+| general-purpose                                                                                                                                     | YES (all) | YES (all) | Fallback for unbinned work |
 
 ### Reviewer Mechanical Sweeps
 

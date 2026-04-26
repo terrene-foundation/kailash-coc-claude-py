@@ -7,7 +7,7 @@ model: opus
 
 # Codex CLI Architecture Specialist
 
-Peer to cc-architect and gemini-architect. Owns the Codex-facing substrate of every COC-enabled repo: `.codex/` config tree (repo-local + user-global at `~/.codex/`), `.claude/codex-mcp-guard/` MCP server, `scripts/hooks/*.js` shim runtime, emitted `AGENTS.md` baseline context, and Codex-native hooks / prompts / skills.
+Peer to cc-architect and gemini-architect. Owns the Codex-facing substrate of every COC-enabled repo: `.codex/` config tree (repo-local + user-global at `~/.codex/`), `.claude/codex-mcp-guard/` MCP server, `.claude/hooks/*.js` shim runtime, emitted `AGENTS.md` baseline context, and Codex-native hooks / prompts / skills.
 
 **Verified capability envelope (2026-04-22 research, Phase J1):** Codex has a rich native config surface — the legacy "MCP-guard-is-the-only-enforcement-option" framing from Phase D was wrong. Codex has real hooks, skills, custom slash commands, and subagent delegation; the MCP guard remains load-bearing only for non-Bash tool enforcement (see Native Primitives table below).
 
@@ -16,7 +16,7 @@ Peer to cc-architect and gemini-architect. Owns the Codex-facing substrate of ev
 OWNER:
 
 - `.codex/**`, `.codex-plugin/**`, `.claude/codex-mcp-guard/**` — Codex config + MCP guardrail companion
-- `scripts/hooks/*.js` (top-level, shim runtime) — Codex-native via `.codex/hooks.json` hook registration; MCP-guard fallback for non-Bash tools (see "Hooks coverage" below)
+- `.claude/hooks/*.js` (top-level, shim runtime) — Codex-native via `.codex/hooks.json` hook registration; MCP-guard fallback for non-Bash tools (see "Hooks coverage" below)
 - `bin/coc-*` — generated shell wrappers from `.claude/wrappers/*.sh.template`
 - `~/.codex/skills/<name>/SKILL.md` (user-global) or `.codex/skills/<name>/SKILL.md` (repo-local) — native progressive-disclosure skills
 - `~/.codex/prompts/<name>.md` (user-global) or `.codex/prompts/<name>.md` (repo-local) — custom slash commands (invoked `/prompts:<name>`, note the namespace prefix)
@@ -31,7 +31,7 @@ CONSUMER (read-only at emit time):
 
 1. **Emit** `AGENTS.md` under the v6 abridgement_protocol from `.claude/sync-manifest.yaml → cli_variants.context/root.md.codex`. Respect warn_cap_bytes (32768) and block_cap_bytes (61440); WARN tier is the expected steady state.
 2. **Generate** shell wrappers at `bin/coc-{name}` from `.claude/wrappers/*.sh.template`, honoring `native_primitive_override` (e.g. skip `coc-review` when `codex review` is the CLI-native replacement). Every wrapper MUST include `-c project_doc_max_bytes=65536` per §2.2 to override Codex's default 32 KiB cap.
-3. **Populate** `.claude/codex-mcp-guard/server.js` POLICIES table via AST extraction of `scripts/hooks/*.js` predicate functions (spec v6 §4.4 validator 13). Bijection MUST hold — divergence hard-blocks sync.
+3. **Populate** `.claude/codex-mcp-guard/server.js` POLICIES table via AST extraction of `.claude/hooks/*.js` predicate functions (spec v6 §4.4 validator 13). Bijection MUST hold — divergence hard-blocks sync.
 4. **Apply** slot overlays from `.claude/variants/codex/**` and `.claude/variants/<lang>-codex/**` when emitting baseline context + rules. Never edit the global rule; always overlay.
 5. **Validate** TOML-header safety for `agents/**.md` per `cli_variants.agents/**.md.codex.toml_key_safety = iterate_and_classify` (spec v3 §2.2).
 6. **Emit native skills + prompts** — for every `.claude/skills/<nn-name>/SKILL.md` and `.claude/commands/<name>.md`, emit a Codex-native equivalent at `.codex/skills/<nn-name>/SKILL.md` and `.codex/prompts/<name>.md` respectively (Phase J2+).
@@ -65,7 +65,7 @@ For these, the `.claude/codex-mcp-guard/` MCP server remains the only enforcemen
 
 ## MCP Guardrail Companion (`.claude/codex-mcp-guard/`)
 
-The server ships with `POLICIES_POPULATED=false` and structurally refuses to start (exit 2) until validator 13 (Phase E6) populates the POLICIES table from the AST of `scripts/hooks/*.js` predicate functions per §4.4.
+The server ships with `POLICIES_POPULATED=false` and structurally refuses to start (exit 2) until validator 13 (Phase E6) populates the POLICIES table from the AST of `.claude/hooks/*.js` predicate functions per §4.4.
 
 **Predicate function definition (v6 three-shape extension):**
 
