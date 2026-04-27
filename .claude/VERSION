@@ -1,14 +1,14 @@
 {
-  "version": "3.5.21",
+  "version": "3.5.22",
   "type": "coc-use-template",
   "description": "COC USE template for Python SDK projects",
   "released": "2026-04-27",
   "upstream": {
     "name": "kailash",
     "type": "coc-source",
-    "version": "2.9.0",
+    "version": "2.9.3",
     "build_version": "2.11.1",
-    "synced_at": "2026-04-26T00:00:00Z",
+    "synced_at": "2026-04-27T00:00:00+00:00",
     "sdk_packages": {
       "kailash": "2.11.1",
       "kailash-dataflow": "2.3.1",
@@ -22,6 +22,14 @@
     }
   },
   "changelog": [
+    {
+      "version": "3.5.22",
+      "date": "2026-04-27",
+      "summary": "PATCH: rename /send-it → /decisive (slang removal + directive realignment to autonomous-execution + permission-envelope). The slang command name 'send-it' was unfamiliar to non-technical COC users (motorsports/skate slang); renamed to 'decisive' which names the posture without slang. Directive body rewritten to align with the user's standing principle 'autonomous execution to full with my permission, with the most optimal, complete, root-cause approach for the long-term … rigorous, prudent as well.' Added: § Prudence (permission envelope — destructive/hard-to-reverse/visible-to-others ops still require confirmation; BUILD-repo + downstream-of-USE commit/push carve-out per standing user feedback) + § Rigor (verify-before-commit — mechanical sweeps, cite paths/lines, distinguish observed-vs-assumed). Old send-it.md/.toml purged via .coc-obsoleted; new decisive command emitted to .claude/commands/ + (multi-CLI templates only) .codex/prompts/ + .gemini/commands/.",
+      "changes": [
+        "ADDED: .claude/commands/decisive.md. PURGED: .claude/commands/send-it.md (via .coc-obsoleted v2.9.3 entry). OBSOLETED: appended 3 send-it paths to .claude/.coc-obsoleted."
+      ]
+    },
     {
       "version": "3.5.21",
       "date": "2026-04-27",
@@ -227,7 +235,9 @@
       "version": "3.5.8",
       "date": "2026-04-19",
       "summary": "Sync loom 2.8.21 — 3 global rule additions from kailash-py 2026-04-19 parallel-shard ML codify session: rules/worktree-isolation.md gained Rule 4 (parent-checkout path ban) + Rule 5 (incremental commit discipline); rules/agents.md gained MUST reviewer-mechanical-sweep section after Quality Gates. kailash-ml 0.12.0 NOT YET ON PYPI (BUILD repo still declares 0.11.1) — pin held at >=0.11.1 per rules/deployment.md (extras must pin to PyPI-resolvable versions).",
-      "changes": ["(prior changelog entries preserved \u2026)"]
+      "changes": [
+        "(prior changelog entries preserved …)"
+      ]
     }
   ],
   "updated": "2026-04-21T02:55:43Z"

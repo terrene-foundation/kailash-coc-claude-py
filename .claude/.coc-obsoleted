@@ -9,3 +9,8 @@
 scripts/hooks/
 .claude/scripts/
 scripts/resolve-template.js
+
+# v2.9.3 — /send-it renamed to /decisive (slang removal + directive realignment)
+.claude/commands/send-it.md
+.codex/prompts/send-it.md
+.gemini/commands/send-it.toml
